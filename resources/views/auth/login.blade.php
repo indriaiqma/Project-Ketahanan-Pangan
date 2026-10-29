@@ -652,6 +652,49 @@
             transform: translateY(0);
         }
 
+        /* =====================================================
+           BACK TO HOME BUTTON
+        ===================================================== */
+
+        .btn-back-home {
+            width: 100%;
+            height: 42px;
+
+            margin-top: 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            background: #FFFFFF;
+
+            border: 1px solid #CFE0D5;
+            border-radius: 8px;
+
+            color: #245B47;
+
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 750;
+
+            text-decoration: none;
+
+            transition: .18s;
+        }
+
+        .btn-back-home:hover {
+            background: #EAF4ED;
+            border-color: #3E9B68;
+
+            transform: translateY(-1px);
+        }
+
+        .btn-back-home:focus-visible {
+            outline: 3px solid rgba(62,155,104,.3);
+            outline-offset: 2px;
+        }
 
         /* =====================================================
            FORM INFORMATION
@@ -730,6 +773,42 @@
             line-height: 1.6;
         }
 
+        /* =====================================================
+           FONT LEBIH BESAR
+        ===================================================== */
+
+        /* --- Sisi kiri (brand) --- */
+        .brand-label            { font-size: 12px; }
+        .brand-content h1       { font-size: 36px; }
+        .brand-content p        { font-size: 15px; max-width: 480px; }
+        .brand-info-icon        { font-size: 11px; width: 44px; height: 44px; min-width: 44px; }
+        .brand-info strong      { font-size: 13px; }
+        .brand-info span        { font-size: 12px; }
+        .brand-footer           { font-size: 12px; }
+
+        /* --- Sisi kanan (form) --- */
+        .form-container         { max-width: 400px; }
+        .form-label-top         { font-size: 11px; }
+        .form-header h2         { font-size: 30px; }
+        .form-header p          { font-size: 14px; }
+
+        .error-box              { font-size: 12px; }
+        .error-mark             { font-size: 11px; width: 21px; height: 21px; min-width: 21px; }
+
+        .form-label             { font-size: 13px; margin-bottom: 8px; }
+        .input-code             { font-size: 10px; width: 30px; height: 30px; }
+        .form-control           { height: 48px; font-size: 14px; padding-left: 54px; }
+        .password-wrapper .form-control { padding-right: 80px; }
+        .password-toggle        { font-size: 10px; right: 12px; }
+
+        .btn-login              { height: 48px; font-size: 14px; }
+        .btn-back-home          { height: 48px; font-size: 14px; }
+
+        .login-info-mark        { font-size: 10px; width: 32px; height: 32px; min-width: 32px; }
+        .login-info strong      { font-size: 12px; }
+        .login-info span        { font-size: 11px; }
+
+        .form-footer            { font-size: 11px; }
 
         /* =====================================================
            RESPONSIVE
@@ -1102,7 +1181,17 @@
                     >
                         Masuk ke Sistem
                     </button>
+    
 
+                    {{-- BACK TO HOME BUTTON --}} 
+
+                    <a
+                        href="{{ route('dashboard') }}"
+                        class="btn-back-home"
+                    >
+                        <span aria-hidden="true">←</span>
+                        Kembali ke Beranda
+                    </a>
 
                 </form>
 
