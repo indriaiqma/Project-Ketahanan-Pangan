@@ -44,9 +44,14 @@ class LahanKritisImport implements ToModel, WithHeadingRow
             'luar_agak_kritis' => $row['luar_agak_kritis'] ?? 0,
             'luar_potensial_kritis' => $row['luar_potensial_kritis'] ?? 0,
             'luar_tidak_kritis' => $row['luar_tidak_kritis'] ?? 0,
-
-            'total_ha' => $row['total_ha'] ?? 0,
         ];
+
+        // Total selalu dihitung dari 10 kolom luas (sama seperti form tambah/ubah),
+        // jadi kolom total_ha di file Excel tidak wajib dan tidak bisa salah hitung.
+        $data['total_ha'] = array_sum(array_map(
+            fn ($nilai) => (float) $nilai,
+            array_diff_key($data, ['kabupaten' => true])
+        ));
 
         $existing = LahanKritis::where('kabupaten', $data['kabupaten'])
             ->where('kecamatan', $row['kecamatan'])
