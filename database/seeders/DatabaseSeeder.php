@@ -21,5 +21,25 @@ class DatabaseSeeder extends Seeder
                 'role'     => 'admin',
             ]
         );
+
+        // Akun petugas awal. Dibuat sekali saja; jika sudah ada tidak diubah.
+        User::firstOrCreate(
+            ['email' => 'petugas@bakorwil3.jatimprov.go.id'],
+            [
+                'name'     => 'Petugas',
+                'password' => Hash::make('PetugasBakorwil123'),
+                'role'     => 'petugas',
+            ]
+        );
+
+        // Akun viewer awal (hanya-baca). Dibuat sekali saja; jika sudah ada tidak diubah.
+        User::firstOrCreate(
+            ['email' => 'viewer@bakorwil3.jatimprov.go.id'],
+            [
+                'name'     => 'Viewer',
+                'password' => Hash::make('ViewerBakorwil123'),
+                'role'     => 'viewer',
+            ]
+        );
     }
 }

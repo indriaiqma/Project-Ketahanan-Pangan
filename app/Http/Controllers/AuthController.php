@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,20 +22,21 @@ class AuthController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | LOGIN KHUSUS ADMIN
+        | LOGIN ADMIN & PETUGAS
         |--------------------------------------------------------------------------
+        | Hanya akun dengan role yang terdaftar di User::ROLES yang boleh masuk.
         */
 
-        $credentials['role'] = 'admin';
+        $credentials[] = fn ($query) => $query->whereIn('role', array_keys(User::ROLES));
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/');
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         return back()->withErrors([
-            'email' => 'Email, password, atau role akun tidak sesuai. Hanya Admin yang dapat login.',
+            'email' => 'Email atau password salah, atau akun Anda tidak memiliki akses.',
         ])->onlyInput('email');
     }
 

@@ -17,9 +17,11 @@ use App\Http\Controllers\ProfileController;
 */
 
 Route::get('/login', [AuthController::class, 'showLogin'])
+    ->middleware('guest')
     ->name('login');
 
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login'])
+    ->middleware('throttle:5,1');
 
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
@@ -99,11 +101,14 @@ Route::get('/sdm', function () {
 |--------------------------------------------------------------------------
 | ADMIN
 |--------------------------------------------------------------------------
-| Semua URL /admin/... membutuhkan login.
+| Semua URL /admin/... membutuhkan login (Admin, Petugas, atau Viewer).
+| - Viewer      : hanya melihat & export
+| - Petugas     : + tambah, ubah, import   (role:admin,petugas)
+| - Admin       : + hapus & kelola pengguna (role:admin)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
@@ -146,16 +151,20 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])
         ->name('admin.profile');
 
-    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('admin.profile.update');
 
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword']);
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])
+        ->name('admin.profile.password');
 
 
     /*
     |--------------------------------------------------------------------------
-    | USERS
+    | USERS (khusus Admin)
     |--------------------------------------------------------------------------
     */
+
+    Route::middleware('role:admin')->group(function () {
 
     Route::get('/users', [UserController::class, 'index'])
         ->name('admin.users.index');
@@ -178,6 +187,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->whereNumber('user')
         ->name('admin.users.destroy');
 
+    });
+
 
     /*
     |--------------------------------------------------------------------------
@@ -189,12 +200,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->name('admin.kawasan-hutan.index');
 
     Route::get('/kawasan-hutan/tambah', [KawasanHutanController::class, 'create'])
+        ->middleware('role:admin,petugas')
         ->name('admin.kawasan-hutan.create');
 
     Route::post('/kawasan-hutan', [KawasanHutanController::class, 'store'])
+        ->middleware('role:admin,petugas')
         ->name('admin.kawasan-hutan.store');
 
     Route::post('/kawasan-hutan/import', [KawasanHutanController::class, 'import'])
+        ->middleware('role:admin,petugas')
         ->name('admin.kawasan-hutan.import');
 
     Route::get('/kawasan-hutan/export', [KawasanHutanController::class, 'export'])
@@ -202,14 +216,17 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::get('/kawasan-hutan/{kawasanHutan}/edit', [KawasanHutanController::class, 'edit'])
         ->whereNumber('kawasanHutan')
+        ->middleware('role:admin,petugas')
         ->name('admin.kawasan-hutan.edit');
 
     Route::put('/kawasan-hutan/{kawasanHutan}', [KawasanHutanController::class, 'update'])
         ->whereNumber('kawasanHutan')
+        ->middleware('role:admin,petugas')
         ->name('admin.kawasan-hutan.update');
 
     Route::delete('/kawasan-hutan/{kawasanHutan}', [KawasanHutanController::class, 'destroy'])
         ->whereNumber('kawasanHutan')
+        ->middleware('role:admin')
         ->name('admin.kawasan-hutan.destroy');
 
 
@@ -223,12 +240,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         ->name('admin.lahan-kritis.index');
 
     Route::get('/lahan-kritis/tambah', [LahanKritisController::class, 'create'])
+        ->middleware('role:admin,petugas')
         ->name('admin.lahan-kritis.create');
 
     Route::post('/lahan-kritis', [LahanKritisController::class, 'store'])
+        ->middleware('role:admin,petugas')
         ->name('admin.lahan-kritis.store');
 
     Route::post('/lahan-kritis/import', [LahanKritisController::class, 'import'])
+        ->middleware('role:admin,petugas')
         ->name('admin.lahan-kritis.import');
 
     Route::get('/lahan-kritis/export', [LahanKritisController::class, 'export'])
@@ -236,14 +256,17 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 
     Route::get('/lahan-kritis/{lahanKriti}/edit', [LahanKritisController::class, 'edit'])
         ->whereNumber('lahanKriti')
+        ->middleware('role:admin,petugas')
         ->name('admin.lahan-kritis.edit');
 
     Route::put('/lahan-kritis/{lahanKriti}', [LahanKritisController::class, 'update'])
         ->whereNumber('lahanKriti')
+        ->middleware('role:admin,petugas')
         ->name('admin.lahan-kritis.update');
 
     Route::delete('/lahan-kritis/{lahanKriti}', [LahanKritisController::class, 'destroy'])
         ->whereNumber('lahanKriti')
+        ->middleware('role:admin')
         ->name('admin.lahan-kritis.destroy');
 
 });

@@ -49,12 +49,12 @@ class KawasanHutanController extends Controller
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
-                $q->where('nama_kawasan', 'like', "%{$search}%")
-                    ->orWhere('desa', 'like', "%{$search}%")
-                    ->orWhere('kecamatan', 'like', "%{$search}%")
-                    ->orWhere('jenis_kawasan', 'like', "%{$search}%")
-                    ->orWhere('kabupaten', 'like', "%{$search}%")
-                    ->orWhere('keterangan', 'like', "%{$search}%");
+                $q->where('nama_kawasan', $this->likeOperator(), "%{$search}%")
+                    ->orWhere('desa', $this->likeOperator(), "%{$search}%")
+                    ->orWhere('kecamatan', $this->likeOperator(), "%{$search}%")
+                    ->orWhere('jenis_kawasan', $this->likeOperator(), "%{$search}%")
+                    ->orWhere('kabupaten', $this->likeOperator(), "%{$search}%")
+                    ->orWhere('keterangan', $this->likeOperator(), "%{$search}%");
             });
         }
 
@@ -65,54 +65,50 @@ class KawasanHutanController extends Controller
 
 
         // ==========================================
-        // DAFTAR KECAMATAN
+        // REKAP PER KECAMATAN (1 query)
+        // Dipakai untuk statistik, daftar kecamatan, dan grafik
+        // agar tidak perlu banyak query ke database.
         // ==========================================
 
-        $daftarKecamatan = KawasanHutan::select('kecamatan')
-            ->whereNotNull('kecamatan')
-            ->distinct()
+        $rekap = KawasanHutan::selectRaw('
+                kecamatan,
+                COUNT(*) as jumlah,
+                COALESCE(SUM(luas_ha), 0) as total_luas
+            ')
+            ->groupBy('kecamatan')
             ->orderBy('kecamatan')
-            ->pluck('kecamatan');
+            ->get();
+
+        $perKecamatan = $rekap->whereNotNull('kecamatan')->values();
+
+        $daftarKecamatan = $perKecamatan->pluck('kecamatan');
 
 
         // ==========================================
         // STATISTIK
         // ==========================================
 
-        $totalKawasan = KawasanHutan::count();
+        $totalKawasan = (int) $rekap->sum('jumlah');
 
-        $totalLuas = KawasanHutan::sum('luas_ha');
+        $totalLuas = (float) $rekap->sum('total_luas');
 
-        $jumlahKecamatan = KawasanHutan::whereNotNull('kecamatan')
-            ->distinct()
-            ->count('kecamatan');
+        $jumlahKecamatan = $perKecamatan->count();
 
-        $jumlahJenisKawasan = KawasanHutan::whereNotNull('jenis_kawasan')
-            ->distinct()
-            ->count('jenis_kawasan');
+        // Tanpa filter, tabel sudah berisi semua data: tidak perlu query lagi
+        $jumlahJenisKawasan = $request->filled('kecamatan') || $request->filled('search')
+            ? KawasanHutan::whereNotNull('jenis_kawasan')->distinct()->count('jenis_kawasan')
+            : $kawasanHutans->pluck('jenis_kawasan')->filter()->unique()->count();
 
 
         // ==========================================
         // DATA GRAFIK
         // ==========================================
 
-        $grafikKecamatan = KawasanHutan::selectRaw(
-            'kecamatan, SUM(luas_ha) as total_luas'
-        )
-            ->whereNotNull('kecamatan')
-            ->groupBy('kecamatan')
-            ->orderBy('kecamatan')
-            ->get();
+        $labelGrafik = $daftarKecamatan->values();
 
-        $labelGrafik = $grafikKecamatan
-            ->pluck('kecamatan')
-            ->values();
-
-        $dataGrafik = $grafikKecamatan
+        $dataGrafik = $perKecamatan
             ->pluck('total_luas')
-            ->map(function ($luas) {
-                return (float) $luas;
-            })
+            ->map(fn ($luas) => (float) $luas)
             ->values();
 
 
@@ -146,7 +142,7 @@ class KawasanHutanController extends Controller
     // ==========================================
     public function create()
     {
-        return view('kawasan-hutan.create');
+        return view('admin.kawasan-hutan.create');
     }
 
 
@@ -161,7 +157,7 @@ class KawasanHutanController extends Controller
             'desa'          => 'nullable|string|max:255',
             'nama_kawasan'  => 'required|string|max:255',
             'jenis_kawasan' => 'required|string|max:255',
-            'luas_ha'       => 'nullable|numeric',
+            'luas_ha'       => 'nullable|numeric|min:0|max:9999999999.99',
             'keterangan'    => 'nullable|string',
         ]);
 
@@ -189,7 +185,7 @@ class KawasanHutanController extends Controller
     public function edit(KawasanHutan $kawasanHutan)
     {
         return view(
-            'kawasan-hutan.edit',
+            'admin.kawasan-hutan.edit',
             compact('kawasanHutan')
         );
     }
@@ -208,7 +204,7 @@ class KawasanHutanController extends Controller
             'desa'          => 'nullable|string|max:255',
             'nama_kawasan'  => 'required|string|max:255',
             'jenis_kawasan' => 'required|string|max:255',
-            'luas_ha'       => 'nullable|numeric',
+            'luas_ha'       => 'nullable|numeric|min:0|max:9999999999.99',
             'keterangan'    => 'nullable|string',
         ]);
 
@@ -239,10 +235,19 @@ class KawasanHutanController extends Controller
             'file' => 'required|mimes:xlsx,xls,csv|max:2048',
         ]);
 
-        Excel::import(
-            new KawasanHutanImport(),
-            $request->file('file')
-        );
+        try {
+            Excel::import(
+                new KawasanHutanImport(),
+                $request->file('file')
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with(
+                'error',
+                'Import gagal. Pastikan file Excel memakai format kolom yang sesuai (kabupaten, kecamatan, desa, nama_kawasan, jenis_kawasan, luas_ha, keterangan).'
+            );
+        }
 
         return redirect('/admin/kawasan-hutan')
             ->with(

@@ -14,7 +14,7 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
 
-        return view('profile.index', compact('user'));
+        return view('admin.profile.index', compact('user'));
     }
 
 
@@ -35,7 +35,7 @@ class ProfileController extends Controller
             'email' => $request->email,
         ]);
 
-        return redirect('/profile')
+        return redirect()->route('admin.profile')
             ->with('success', 'Profil berhasil diperbarui.');
     }
 
@@ -62,7 +62,7 @@ class ProfileController extends Controller
             'password' => Hash::make($request->password_baru),
         ]);
 
-        return redirect('/profile')
+        return redirect()->route('admin.profile')
             ->with('success', 'Password berhasil diperbarui.');
     }
 }

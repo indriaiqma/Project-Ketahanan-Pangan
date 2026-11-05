@@ -18,83 +18,7 @@ class LahanKritisController extends Controller
      */
     public function index(Request $request)
     {
-        $query = LahanKritis::query();
-
-        // Filter kecamatan
-        if ($request->filled('kecamatan')) {
-            $query->where('kecamatan', $request->kecamatan);
-        }
-
-        // Pencarian kabupaten / kecamatan
-        if ($request->filled('search')) {
-            $search = $request->search;
-
-            $query->where(function ($q) use ($search) {
-                $q->where('kabupaten', 'like', '%' . $search . '%')
-                    ->orWhere('kecamatan', 'like', '%' . $search . '%');
-            });
-        }
-
-        // Data tabel
-        $lahanKritis = $query
-            ->orderBy('kecamatan')
-            ->get();
-
-        // Daftar kecamatan
-        $daftarKecamatan = LahanKritis::select('kecamatan')
-            ->whereNotNull('kecamatan')
-            ->where('kecamatan', '!=', '')
-            ->distinct()
-            ->orderBy('kecamatan')
-            ->pluck('kecamatan');
-
-        // Statistik
-        $jumlahKecamatan = LahanKritis::whereNotNull('kecamatan')
-            ->where('kecamatan', '!=', '')
-            ->distinct()
-            ->count('kecamatan');
-
-        $totalLahan = LahanKritis::sum('total_ha');
-
-        $totalSangatKritis =
-            LahanKritis::sum('dalam_sangat_kritis') +
-            LahanKritis::sum('luar_sangat_kritis');
-
-        $totalKritis =
-            LahanKritis::sum('dalam_kritis') +
-            LahanKritis::sum('luar_kritis');
-
-        // Data grafik
-        $grafikKecamatan = LahanKritis::selectRaw(
-            'kecamatan, SUM(total_ha) as total_luas'
-        )
-            ->whereNotNull('kecamatan')
-            ->where('kecamatan', '!=', '')
-            ->groupBy('kecamatan')
-            ->orderBy('kecamatan')
-            ->get();
-
-        $labelGrafik = $grafikKecamatan
-            ->pluck('kecamatan')
-            ->values();
-
-        $dataGrafik = $grafikKecamatan
-            ->pluck('total_luas')
-            ->map(function ($nilai) {
-                return (float) $nilai;
-            })
-            ->values();
-
-        return view('lahan-kritis.index', compact(
-            'lahanKritis',
-            'daftarKecamatan',
-            'jumlahKecamatan',
-            'totalLahan',
-            'totalSangatKritis',
-            'totalKritis',
-            'labelGrafik',
-            'dataGrafik'
-        ));
+        return view('lahan-kritis.index', $this->getData($request));
     }
 
 
@@ -105,6 +29,17 @@ class LahanKritisController extends Controller
      * =========================================================
      */
     public function adminIndex(Request $request)
+    {
+        return view('admin.lahan-kritis.index', $this->getData($request));
+    }
+
+
+    /**
+     * =========================================================
+     * DATA UNTUK HALAMAN VIEWER & ADMIN
+     * =========================================================
+     */
+    private function getData(Request $request): array
     {
         $query = LahanKritis::query();
 
@@ -118,8 +53,8 @@ class LahanKritisController extends Controller
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
-                $q->where('kabupaten', 'like', '%' . $search . '%')
-                    ->orWhere('kecamatan', 'like', '%' . $search . '%');
+                $q->where('kabupaten', $this->likeOperator(), '%' . $search . '%')
+                    ->orWhere('kecamatan', $this->likeOperator(), '%' . $search . '%');
             });
         }
 
@@ -128,52 +63,42 @@ class LahanKritisController extends Controller
             ->orderBy('kecamatan')
             ->get();
 
-        // Daftar kecamatan
-        $daftarKecamatan = LahanKritis::select('kecamatan')
-            ->whereNotNull('kecamatan')
-            ->where('kecamatan', '!=', '')
-            ->distinct()
-            ->orderBy('kecamatan')
-            ->pluck('kecamatan');
-
-        // Statistik
-        $jumlahKecamatan = LahanKritis::whereNotNull('kecamatan')
-            ->where('kecamatan', '!=', '')
-            ->distinct()
-            ->count('kecamatan');
-
-        $totalLahan = LahanKritis::sum('total_ha');
-
-        $totalSangatKritis =
-            LahanKritis::sum('dalam_sangat_kritis') +
-            LahanKritis::sum('luar_sangat_kritis');
-
-        $totalKritis =
-            LahanKritis::sum('dalam_kritis') +
-            LahanKritis::sum('luar_kritis');
-
-        // Data grafik
-        $grafikKecamatan = LahanKritis::selectRaw(
-            'kecamatan, SUM(total_ha) as total_luas'
-        )
-            ->whereNotNull('kecamatan')
-            ->where('kecamatan', '!=', '')
+        // Rekap per kecamatan (1 query) untuk statistik, daftar kecamatan,
+        // dan grafik, agar tidak perlu banyak query ke database.
+        $rekap = LahanKritis::selectRaw('
+                kecamatan,
+                COALESCE(SUM(dalam_sangat_kritis + luar_sangat_kritis), 0) as sangat_kritis,
+                COALESCE(SUM(dalam_kritis + luar_kritis), 0) as kritis,
+                COALESCE(SUM(dalam_agak_kritis + luar_agak_kritis), 0) as agak_kritis,
+                COALESCE(SUM(total_ha), 0) as total_ha
+            ')
             ->groupBy('kecamatan')
             ->orderBy('kecamatan')
             ->get();
 
-        $labelGrafik = $grafikKecamatan
-            ->pluck('kecamatan')
-            ->values();
+        $grafikKecamatan = $rekap->filter(fn ($r) => filled($r->kecamatan))->values();
 
-        $dataGrafik = $grafikKecamatan
-            ->pluck('total_luas')
-            ->map(function ($nilai) {
-                return (float) $nilai;
-            })
-            ->values();
+        // Daftar kecamatan
+        $daftarKecamatan = $grafikKecamatan->pluck('kecamatan');
 
-        return view('admin.lahan-kritis.index', compact(
+        // Statistik
+        $jumlahKecamatan = $grafikKecamatan->count();
+
+        $totalLahan = (float) $rekap->sum('total_ha');
+
+        $totalSangatKritis = (float) $rekap->sum('sangat_kritis');
+
+        $totalKritis = (float) $rekap->sum('kritis');
+
+        $labelGrafik = $grafikKecamatan->pluck('kecamatan')->values();
+
+        $dataGrafik = [
+            'sangat_kritis' => $grafikKecamatan->pluck('sangat_kritis')->map(fn ($v) => (float) $v)->values(),
+            'kritis'        => $grafikKecamatan->pluck('kritis')->map(fn ($v) => (float) $v)->values(),
+            'agak_kritis'   => $grafikKecamatan->pluck('agak_kritis')->map(fn ($v) => (float) $v)->values(),
+        ];
+
+        return compact(
             'lahanKritis',
             'daftarKecamatan',
             'jumlahKecamatan',
@@ -182,9 +107,8 @@ class LahanKritisController extends Controller
             'totalKritis',
             'labelGrafik',
             'dataGrafik'
-        ));
+        );
     }
-
 
     /**
      * =========================================================
@@ -222,55 +146,20 @@ class LahanKritisController extends Controller
             'kabupaten' => 'required|string|max:255',
             'kecamatan' => 'required|string|max:255',
 
-            'dalam_sangat_kritis' => 'nullable|numeric',
-            'dalam_kritis' => 'nullable|numeric',
-            'dalam_agak_kritis' => 'nullable|numeric',
-            'dalam_potensial_kritis' => 'nullable|numeric',
-            'dalam_tidak_kritis' => 'nullable|numeric',
+            'dalam_sangat_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'dalam_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'dalam_agak_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'dalam_potensial_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'dalam_tidak_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
 
-            'luar_sangat_kritis' => 'nullable|numeric',
-            'luar_kritis' => 'nullable|numeric',
-            'luar_agak_kritis' => 'nullable|numeric',
-            'luar_potensial_kritis' => 'nullable|numeric',
-            'luar_tidak_kritis' => 'nullable|numeric',
+            'luar_sangat_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'luar_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'luar_agak_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'luar_potensial_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'luar_tidak_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
         ]);
 
-        $data = $request->only([
-            'kabupaten',
-            'kecamatan',
-
-            'dalam_sangat_kritis',
-            'dalam_kritis',
-            'dalam_agak_kritis',
-            'dalam_potensial_kritis',
-            'dalam_tidak_kritis',
-
-            'luar_sangat_kritis',
-            'luar_kritis',
-            'luar_agak_kritis',
-            'luar_potensial_kritis',
-            'luar_tidak_kritis',
-        ]);
-
-        // Nilai kosong menjadi 0
-        foreach ($data as $key => $value) {
-            if ($key !== 'kabupaten' && $key !== 'kecamatan') {
-                $data[$key] = $value ?? 0;
-            }
-        }
-
-        // Hitung total luas
-        $data['total_ha'] =
-            $data['dalam_sangat_kritis'] +
-            $data['dalam_kritis'] +
-            $data['dalam_agak_kritis'] +
-            $data['dalam_potensial_kritis'] +
-            $data['dalam_tidak_kritis'] +
-            $data['luar_sangat_kritis'] +
-            $data['luar_kritis'] +
-            $data['luar_agak_kritis'] +
-            $data['luar_potensial_kritis'] +
-            $data['luar_tidak_kritis'];
+        $data = $this->prepareData($request);
 
         LahanKritis::create($data);
 
@@ -310,55 +199,20 @@ class LahanKritisController extends Controller
             'kabupaten' => 'required|string|max:255',
             'kecamatan' => 'required|string|max:255',
 
-            'dalam_sangat_kritis' => 'nullable|numeric',
-            'dalam_kritis' => 'nullable|numeric',
-            'dalam_agak_kritis' => 'nullable|numeric',
-            'dalam_potensial_kritis' => 'nullable|numeric',
-            'dalam_tidak_kritis' => 'nullable|numeric',
+            'dalam_sangat_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'dalam_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'dalam_agak_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'dalam_potensial_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'dalam_tidak_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
 
-            'luar_sangat_kritis' => 'nullable|numeric',
-            'luar_kritis' => 'nullable|numeric',
-            'luar_agak_kritis' => 'nullable|numeric',
-            'luar_potensial_kritis' => 'nullable|numeric',
-            'luar_tidak_kritis' => 'nullable|numeric',
+            'luar_sangat_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'luar_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'luar_agak_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'luar_potensial_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
+            'luar_tidak_kritis' => 'nullable|numeric|min:0|max:999999999999.99',
         ]);
 
-        $data = $request->only([
-            'kabupaten',
-            'kecamatan',
-
-            'dalam_sangat_kritis',
-            'dalam_kritis',
-            'dalam_agak_kritis',
-            'dalam_potensial_kritis',
-            'dalam_tidak_kritis',
-
-            'luar_sangat_kritis',
-            'luar_kritis',
-            'luar_agak_kritis',
-            'luar_potensial_kritis',
-            'luar_tidak_kritis',
-        ]);
-
-        // Nilai kosong menjadi 0
-        foreach ($data as $key => $value) {
-            if ($key !== 'kabupaten' && $key !== 'kecamatan') {
-                $data[$key] = $value ?? 0;
-            }
-        }
-
-        // Hitung ulang total luas
-        $data['total_ha'] =
-            $data['dalam_sangat_kritis'] +
-            $data['dalam_kritis'] +
-            $data['dalam_agak_kritis'] +
-            $data['dalam_potensial_kritis'] +
-            $data['dalam_tidak_kritis'] +
-            $data['luar_sangat_kritis'] +
-            $data['luar_kritis'] +
-            $data['luar_agak_kritis'] +
-            $data['luar_potensial_kritis'] +
-            $data['luar_tidak_kritis'];
+        $data = $this->prepareData($request);
 
         $lahanKriti->update($data);
 
@@ -382,10 +236,19 @@ class LahanKritisController extends Controller
             'file' => 'required|mimes:xlsx,xls,csv|max:2048',
         ]);
 
-        Excel::import(
-            new LahanKritisImport(),
-            $request->file('file')
-        );
+        try {
+            Excel::import(
+                new LahanKritisImport(),
+                $request->file('file')
+            );
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with(
+                'error',
+                'Import gagal. Pastikan file Excel memakai format kolom yang sesuai (kabupaten, kecamatan, dalam_sangat_kritis, dst).'
+            );
+        }
 
         return redirect()
             ->route('admin.lahan-kritis.index')
@@ -425,5 +288,40 @@ class LahanKritisController extends Controller
                 'success',
                 'Data lahan kritis berhasil dihapus.'
             );
+    }
+
+
+    /**
+     * =========================================================
+     * SIAPKAN DATA DARI REQUEST
+     * Nilai kosong / tidak dikirim menjadi 0, lalu hitung total luas.
+     * =========================================================
+     */
+    private function prepareData(Request $request): array
+    {
+        $kolomLuas = [
+            'dalam_sangat_kritis',
+            'dalam_kritis',
+            'dalam_agak_kritis',
+            'dalam_potensial_kritis',
+            'dalam_tidak_kritis',
+
+            'luar_sangat_kritis',
+            'luar_kritis',
+            'luar_agak_kritis',
+            'luar_potensial_kritis',
+            'luar_tidak_kritis',
+        ];
+
+        $data = $request->only(['kabupaten', 'kecamatan']);
+
+        foreach ($kolomLuas as $kolom) {
+            $data[$kolom] = (float) ($request->input($kolom) ?? 0);
+        }
+
+        // Hitung total luas
+        $data['total_ha'] = array_sum(array_intersect_key($data, array_flip($kolomLuas)));
+
+        return $data;
     }
 }

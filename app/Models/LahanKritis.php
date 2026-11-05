@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class LahanKritis extends Model
 {
@@ -29,4 +31,13 @@ class LahanKritis extends Model
 
         'total_ha',
     ];
+
+    protected static function booted(): void
+    {
+        // Ringkasan dashboard di-cache; hapus cache setiap kali data berubah
+        $hapusCache = fn () => Cache::forget(DashboardController::CACHE_KEY);
+
+        static::saved($hapusCache);
+        static::deleted($hapusCache);
+    }
 }
