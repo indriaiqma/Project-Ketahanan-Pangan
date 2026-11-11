@@ -1,0 +1,7 @@
+/* CSS layout viewer (global, dipakai semua halaman viewer) */
+@import './viewer.css';
+
+/* Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

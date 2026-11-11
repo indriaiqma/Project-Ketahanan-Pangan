@@ -103,7 +103,7 @@ Route::get('/sdm', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
