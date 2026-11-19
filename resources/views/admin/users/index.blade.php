@@ -55,6 +55,9 @@
                                     <span class="badge green"><i class="bi bi-shield-check"></i> {{ $user->roleLabel() }}</span>
                                 @elseif ($user->isPetugas())
                                     <span class="badge sky"><i class="bi bi-person-badge"></i> {{ $user->roleLabel() }}</span>
+                                    <small class="muted" style="display:block;font-size:12px;margin-top:4px">
+                                        {{ $user->aksesBidang->map(fn ($a) => \App\Support\Bidang::labelPenugasan($a->bidang, $a->sub_bidang))->implode(', ') ?: 'Belum ditugaskan' }}
+                                    </small>
                                 @elseif ($user->isViewer())
                                     <span class="badge"><i class="bi bi-eye"></i> {{ $user->roleLabel() }}</span>
                                 @else

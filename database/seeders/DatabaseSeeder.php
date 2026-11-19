@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
         );
 
         // Akun petugas awal. Dibuat sekali saja; jika sudah ada tidak diubah.
-        User::firstOrCreate(
+        $petugas = User::firstOrCreate(
             ['email' => 'petugas@bakorwil3.jatimprov.go.id'],
             [
                 'name'     => 'Petugas',
@@ -31,6 +31,11 @@ class DatabaseSeeder extends Seeder
                 'role'     => 'petugas',
             ]
         );
+
+        // Petugas awal ditugaskan mengelola data kehutanan (Sub Bidang Sarpras II)
+        if ($petugas->wasRecentlyCreated) {
+            $petugas->aksesBidang()->firstOrCreate(['bidang' => 'sarana-prasarana', 'sub_bidang' => 'sarpras-2']);
+        }
 
         // Akun viewer awal (hanya-baca). Dibuat sekali saja; jika sudah ada tidak diubah.
         User::firstOrCreate(

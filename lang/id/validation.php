@@ -10,6 +10,13 @@ return [
     'in'        => ':Attribute yang dipilih tidak valid.',
     'mimes'     => ':Attribute harus berupa file dengan format: :values.',
     'file'      => ':Attribute harus berupa file.',
+    'integer'   => ':Attribute harus berupa bilangan bulat.',
+    'boolean'   => ':Attribute tidak valid.',
+    'exists'    => ':Attribute yang dipilih tidak ditemukan.',
+    'uploaded'  => ':Attribute gagal diunggah. Pastikan ukurannya tidak melebihi batas.',
+    'lte'       => [
+        'numeric' => ':Attribute tidak boleh melebihi :value.',
+    ],
     'min'       => [
         'numeric' => ':Attribute minimal :min.',
         'string'  => ':Attribute minimal :min karakter.',
@@ -26,6 +33,7 @@ return [
         'email'                  => 'email',
         'password'               => 'password',
         'role'                   => 'hak akses',
+        'penugasan'              => 'penugasan bidang (minimal satu untuk petugas)',
         'password_lama'          => 'password lama',
         'password_baru'          => 'password baru',
         'file'                   => 'file',

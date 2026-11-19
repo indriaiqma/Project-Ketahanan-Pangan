@@ -15,24 +15,15 @@
     $user = auth()->user();
     $inisial = strtoupper(mb_substr($user->name, 0, 1));
 
-    $menu = [
-        'Utama' => [
-            ['admin.dashboard', 'admin.dashboard', 'grid-1x2', 'Dashboard'],
-        ],
-        'Data Kehutanan' => [
-            ['admin.kawasan-hutan.index', 'admin.kawasan-hutan.*', 'tree', 'Kawasan Hutan'],
-            ['admin.lahan-kritis.index', 'admin.lahan-kritis.*', 'exclamation-triangle', 'Lahan Kritis'],
-        ],
-        'Modul Lain' => [
-            ['admin.lingkungan-hidup.index', 'admin.lingkungan-hidup.*', 'globe-asia-australia', 'Lingkungan Hidup', 'Segera'],
-            ['admin.sdm.index', 'admin.sdm.*', 'people', 'SDM', 'Segera'],
-        ],
-        'Pengaturan' => array_values(array_filter([
-            // Kelola pengguna khusus Admin
-            $user->isAdmin() ? ['admin.users.index', 'admin.users.*', 'person-gear', 'Pengguna'] : null,
-            ['admin.profile', 'admin.profile', 'person-circle', 'Profil Saya'],
-        ])),
+    // Menu bidang dibaca dari config/bidang.php (komponen x-sidebar-bidang)
+    $menuUtama = [
+        ['admin.dashboard', 'admin.dashboard', 'grid-1x2', 'Dashboard'],
     ];
+    $menuPengaturan = array_values(array_filter([
+        // Kelola pengguna khusus Admin
+        $user->isAdmin() ? ['admin.users.index', 'admin.users.*', 'person-gear', 'Pengguna'] : null,
+        ['admin.profile', 'admin.profile', 'person-circle', 'Profil Saya'],
+    ]));
 @endphp
 
 <div class="admin">
@@ -41,16 +32,22 @@
             <x-brand variant="dark" size="sm" sub="Panel Pengelola SIKP" />
         </a>
 
-        <nav>
-            @foreach ($menu as $grup => $items)
-                <div class="group">{{ $grup }}</div>
-                @foreach ($items as $item)
-                    @php([$route, $pola, $ikon, $label] = $item)
-                    <a href="{{ route($route) }}" @class(['active' => request()->routeIs($pola)])>
-                        <i class="bi bi-{{ $ikon }}"></i> {{ $label }}
-                        @isset($item[4])<span class="tag">{{ $item[4] }}</span>@endisset
-                    </a>
-                @endforeach
+        <nav aria-label="Menu panel pengelola">
+            <div class="group">Utama</div>
+            @foreach ($menuUtama as [$route, $pola, $ikon, $label])
+                <a href="{{ route($route) }}" @class(['active' => request()->routeIs($pola)])>
+                    <i class="bi bi-{{ $ikon }}"></i> {{ $label }}
+                </a>
+            @endforeach
+
+            <div class="group">Bidang</div>
+            <x-sidebar-bidang />
+
+            <div class="group">Pengaturan</div>
+            @foreach ($menuPengaturan as [$route, $pola, $ikon, $label])
+                <a href="{{ route($route) }}" @class(['active' => request()->routeIs($pola)])>
+                    <i class="bi bi-{{ $ikon }}"></i> {{ $label }}
+                </a>
             @endforeach
         </nav>
 

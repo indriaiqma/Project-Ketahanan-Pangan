@@ -906,6 +906,112 @@ body.has-hero .site-nav { position: fixed; left: 0; right: 0; top: 0; }
 .auth-aside a:hover .brandmark { opacity: .9; }
 .auth-mobile-logo .brandmark { margin-bottom: 4px; }
 
+/* =========================================================================
+   SIDEBAR: MENU BIDANG (accordion + pencarian) — komponen <x-sidebar-bidang>
+   ========================================================================= */
+.sidebar :focus-visible { outline-color: #6ee7a8; }
+
+/* Atribut hidden harus selalu menyembunyikan, walau kelasnya punya display sendiri (mis. .alert) */
+[hidden] { display: none !important; }
+
+/* Tabel modul data: judul kolom panjang boleh turun baris agar tabel tidak melebar */
+.table.wrap-head th { white-space: normal; line-height: 1.3; vertical-align: bottom; }
+.table .sub-info { display: block; font-size: 12px; font-weight: 400; color: var(--ink-500); margin-top: 2px; }
+
+.side-search { position: relative; margin: 0 2px 8px; }
+.side-search > i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); font-size: 13px; color: #8fb19e; pointer-events: none; }
+.side-search input {
+    width: 100%; height: 36px; padding: 0 32px 0 32px; border-radius: 10px;
+    background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .1);
+    color: #fff; font-size: 13px; transition: border-color .2s, background .2s;
+}
+.side-search input::placeholder { color: #8fb19e; }
+.side-search input:focus { outline: none; border-color: #4fd18d; background: rgba(255, 255, 255, .09); }
+.side-search input::-webkit-search-cancel-button { display: none; }
+.side-search .clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: #8fb19e; cursor: pointer; padding: 4px; line-height: 1; }
+.side-search .clear:hover { color: #fff; }
+.side-empty { margin: 4px 12px 10px; font-size: 12.5px; color: #8fb19e; }
+
+.acc + .acc { margin-top: 2px; }
+.acc-btn {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    padding: 10px 12px; border: 0; border-radius: 10px; background: none; cursor: pointer;
+    color: #c4d8cc; font-weight: 500; font-size: 13.5px; text-align: left;
+    transition: background .2s, color .2s;
+}
+.acc-btn > i:first-child { font-size: 17px; width: 20px; text-align: center; opacity: .85; }
+.acc-btn span { flex: 1; min-width: 0; line-height: 1.3; }
+.acc-btn .chev { font-size: 11px; opacity: .7; transition: transform .2s ease; }
+.acc-btn:hover { background: rgba(255, 255, 255, .06); color: #fff; }
+.acc.open > .acc-btn { color: #fff; }
+.acc.open > .acc-btn .chev { transform: rotate(180deg); }
+.acc-btn.current > i:first-child { color: #6ee7a8; opacity: 1; }
+
+/* Buka/tutup halus: tinggi panel dianimasikan lewat grid-template-rows */
+.acc-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s ease; }
+.acc.open > .acc-panel { grid-template-rows: 1fr; }
+.acc-inner { overflow: hidden; min-height: 0; }
+
+.sidebar nav .acc-overview { margin: 4px 0 2px 21px; padding: 7px 10px; gap: 8px; font-size: 12.5px; color: #a7c7b5; }
+.sidebar nav .acc-overview i { font-size: 13px; width: auto; }
+.sidebar nav .acc-overview:hover { padding-left: 12px; }
+.acc-sub { padding: 10px 0 4px 33px; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6ee7a8; }
+.acc-tree { list-style: none; margin: 0 0 4px 21px; padding: 0 0 0 10px; border-left: 1px solid rgba(255, 255, 255, .12); }
+.sidebar nav .acc-tree a {
+    display: flex; align-items: center; gap: 8px; margin: 1px 0; padding: 7px 10px;
+    font-size: 13px; color: #b8cfc2; border-radius: 8px;
+}
+.sidebar nav .acc-tree a:hover { padding-left: 13px; }
+.acc-tree .nm { flex: 1; min-width: 0; line-height: 1.35; }
+.sidebar nav .acc-tree a.segera { color: #8fb19e; }
+.sidebar nav .acc-tree a.segera .nm { opacity: .75; }
+.sidebar nav .acc-tree a.active,
+.sidebar nav .acc-overview.active { background: linear-gradient(90deg, rgba(79, 209, 141, .2), rgba(79, 209, 141, .03)); box-shadow: inset 3px 0 0 #4fd18d; color: #fff; }
+.acc-tree .tag { margin-left: auto; font-size: 9.5px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: rgba(255, 255, 255, .1); color: #a7c7b5; }
+
+/* =========================================================================
+   HALAMAN BIDANG & MODUL
+   ========================================================================= */
+.bidang-head .ico-box { width: 56px; height: 56px; flex: none; border-radius: 16px; display: grid; place-items: center; font-size: 26px; background: var(--brand-100); color: var(--brand-700); }
+.bidang-head .head-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+.bidang-head h1 { margin-top: 0; }
+.bidang-head .head-row p { margin-top: 4px; }
+
+.modul-list { list-style: none; margin: 0; padding: 0; }
+.modul-list li + li { border-top: 1px solid var(--line-soft); }
+.modul-row { display: flex; align-items: center; gap: 14px; padding: 14px 22px; color: inherit; }
+a.modul-row { transition: background .15s; }
+a.modul-row:hover { background: #f8fbf9; color: inherit; }
+.modul-row .st { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; font-size: 15px; background: var(--brand-50); color: var(--brand-600); }
+.modul-row.segera .st { background: var(--line-soft); color: var(--ink-400); }
+.modul-row .info { flex: 1; min-width: 0; }
+.modul-row .info b { display: block; font-size: 14px; font-weight: 600; }
+.modul-row.segera .info b { color: var(--ink-500); }
+.modul-row .info small { display: block; font-size: 12.5px; color: var(--ink-500); margin-top: 1px; }
+.modul-row .go { color: var(--ink-400); transition: transform .15s; }
+a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
+
+.status-pill { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.status-pill.baik { background: var(--brand-100); color: var(--brand-700); }
+.status-pill.bawah { background: var(--amber-50); color: #a5680a; }
+.status-pill.belum { background: var(--line-soft); color: var(--ink-500); }
+
+.periode-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.periode-form .select { width: auto; min-width: 140px; }
+.computed { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.computed .chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: var(--brand-50); font-size: 13px; color: var(--brand-800); }
+.computed .chip b { font-variant-numeric: tabular-nums; }
+.alert a { color: inherit; font-weight: 700; text-decoration: underline; }
+
+/* Pilihan penugasan bidang di form pengguna */
+.akses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.akses-bidang { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+.akses-bidang h4 { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 650; margin-bottom: 8px; }
+.akses-bidang h4 i { color: var(--brand-600); }
+.check { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 13.5px; cursor: pointer; }
+.check input { width: 16px; height: 16px; accent-color: var(--brand-600); }
+
 /* Hormati pengguna yang menonaktifkan animasi */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

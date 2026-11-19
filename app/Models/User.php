@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -76,14 +77,46 @@ class User extends Authenticatable
         return array_key_exists($this->role, self::ROLES);
     }
 
-    /** Boleh menambah, mengubah, dan mengimpor data (admin & petugas). */
+    /**
+     * Boleh menambah, mengubah, dan mengimpor data KEHUTANAN
+     * (Kawasan Hutan & Lahan Kritis, Sub Bidang Sarpras II).
+     * Dipakai dashboard dan halaman kehutanan. Untuk modul lain gunakan canEditModul().
+     */
     public function canEditData(): bool
     {
-        return $this->isAdmin() || $this->isPetugas();
+        return $this->canEditModul('sarana-prasarana', 'sarpras-2');
     }
 
     public function roleLabel(): string
     {
         return self::ROLES[$this->role] ?? ucfirst((string) $this->role);
+    }
+
+    /** Penugasan bidang / sub bidang (khusus petugas). */
+    public function aksesBidang(): HasMany
+    {
+        return $this->hasMany(UserBidangAccess::class)->orderBy('id');
+    }
+
+    /**
+     * Boleh input/edit data modul di bidang & sub bidang tertentu?
+     * - admin   : selalu boleh
+     * - petugas : hanya pada sub bidang (atau seluruh bidang) yang ditugaskan
+     * - viewer  : tidak pernah
+     */
+    public function canEditModul(string $bidang, ?string $subBidang = null): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        if (! $this->isPetugas()) {
+            return false;
+        }
+
+        return $this->aksesBidang->contains(
+            fn ($akses) => $akses->bidang === $bidang
+                && ($akses->sub_bidang === null || $akses->sub_bidang === $subBidang)
+        );
     }
 }

@@ -1,0 +1,181 @@
+<?php
+
+namespace App\Support;
+
+use App\Models\User;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
+
+/**
+ * Akses terpusat ke struktur Bidang -> Sub Bidang -> Modul (config/bidang.php).
+ *
+ * Setiap modul yang dikembalikan sudah dilengkapi:
+ *   bidang, bidang_nama, sub, sub_nama, href, aktif (bool)
+ */
+class Bidang
+{
+    private static ?Collection $cache = null;
+
+    /** Semua bidang, sudah dinormalisasi. */
+    public static function semua(): Collection
+    {
+        return self::$cache ??= collect(config('bidang.bidang', []))->map(function (array $b) {
+            $b['sub_bidang'] = collect($b['sub_bidang'] ?? [])->map(function (array $s) use ($b) {
+                $s['modul'] = collect($s['modul'] ?? [])->map(fn ($m) => self::lengkapiModul($m, $b, $s))->all();
+
+                return $s;
+            })->all();
+
+            // Bidang tanpa sub bidang (mis. Jabatan Fungsional) punya modul langsung
+            $b['modul'] = collect($b['modul'] ?? [])->map(fn ($m) => self::lengkapiModul($m, $b, null))->all();
+
+            return $b;
+        });
+    }
+
+    /** Untuk pengujian / setelah config diubah saat runtime. */
+    public static function reset(): void
+    {
+        self::$cache = null;
+    }
+
+    public static function cari(string $slug): ?array
+    {
+        return self::semua()->firstWhere('slug', $slug);
+    }
+
+    /**
+     * Kelompok modul dalam satu bidang: [['sub' => array|null, 'modul' => [...]], ...]
+     * Bidang tanpa sub bidang menghasilkan satu kelompok dengan sub = null.
+     */
+    public static function kelompok(array $bidang): array
+    {
+        $kelompok = collect($bidang['sub_bidang'])->map(fn ($s) => ['sub' => $s, 'modul' => $s['modul']])->all();
+
+        if (! empty($bidang['modul'])) {
+            $kelompok[] = ['sub' => null, 'modul' => $bidang['modul']];
+        }
+
+        return $kelompok;
+    }
+
+    /** Semua modul dalam satu bidang (datar). */
+    public static function modulBidang(array $bidang): Collection
+    {
+        return collect(self::kelompok($bidang))->flatMap(fn ($k) => $k['modul']);
+    }
+
+    /** Semua modul di seluruh bidang (datar). */
+    public static function semuaModul(): Collection
+    {
+        return self::semua()->flatMap(fn ($b) => self::modulBidang($b));
+    }
+
+    public static function cariModul(string $bidang, string $modul): ?array
+    {
+        $b = self::cari($bidang);
+
+        return $b ? self::modulBidang($b)->firstWhere('slug', $modul) : null;
+    }
+
+    /** Cari modul berdasarkan kunci definisi data generiknya. */
+    public static function cariModulData(string $kunci): ?array
+    {
+        return self::semuaModul()->first(fn ($m) => ($m['data'] ?? null) === $kunci);
+    }
+
+    /**
+     * Bidang & modul yang sedang dibuka, berdasarkan route saat ini.
+     * Mengembalikan ['bidang' => slug|null, 'modul' => slug|null].
+     */
+    public static function posisiSaatIni(): array
+    {
+        $route = Route::current();
+        if (! $route) {
+            return ['bidang' => null, 'modul' => null];
+        }
+
+        // Modul lama yang memakai route sendiri (Kawasan Hutan, Lahan Kritis)
+        foreach (self::semuaModul() as $m) {
+            if (! empty($m['pola']) && request()->routeIs($m['pola'])) {
+                return ['bidang' => $m['bidang'], 'modul' => $m['slug']];
+            }
+        }
+
+        $bidang = $route->parameter('bidang');
+
+        return [
+            'bidang' => is_string($bidang) && self::cari($bidang) ? $bidang : null,
+            'modul' => is_string($route->parameter('modul')) ? $route->parameter('modul') : null,
+        ];
+    }
+
+    /** Bidang yang boleh tampil untuk pengguna (memperhatikan opsi 'hidden'). */
+    public static function untuk(?User $user): Collection
+    {
+        return self::semua()->filter(fn ($b) => self::bolehLihat($user, $b['slug']))->values();
+    }
+
+    public static function bolehLihat(?User $user, string $bidang): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        if (config('bidang.akses_luar_penugasan') !== 'hidden' || ! $user->isPetugas()) {
+            return true;
+        }
+
+        return $user->aksesBidang->contains('bidang', $bidang);
+    }
+
+    public static function bolehUbah(?User $user, string $bidang, ?string $sub = null): bool
+    {
+        return $user?->canEditModul($bidang, $sub) ?? false;
+    }
+
+    /**
+     * Pilihan penugasan untuk form pengguna:
+     * [['bidang' => ..., 'nama' => ..., 'opsi' => [['nilai' => 'bidang|sub', 'label' => ...], ...]], ...]
+     * Bidang tanpa sub bidang ditugaskan sebagai satu kesatuan (nilai 'bidang|').
+     */
+    public static function opsiPenugasan(): array
+    {
+        return self::semua()->map(fn ($b) => [
+            'bidang' => $b['slug'],
+            'nama' => $b['nama'],
+            'icon' => $b['icon'],
+            'opsi' => empty($b['sub_bidang'])
+                ? [['nilai' => $b['slug'].'|', 'label' => 'Seluruh '.$b['nama']]]
+                : collect($b['sub_bidang'])->map(fn ($s) => ['nilai' => $b['slug'].'|'.$s['slug'], 'label' => $s['nama']])->all(),
+        ])->all();
+    }
+
+    /** Label singkat penugasan, mis. "Sub Bidang Sarpras II". */
+    public static function labelPenugasan(string $bidang, ?string $sub): string
+    {
+        $b = self::cari($bidang);
+        if (! $b) {
+            return $bidang;
+        }
+        if (! $sub) {
+            return $b['nama'];
+        }
+
+        return collect($b['sub_bidang'])->firstWhere('slug', $sub)['nama'] ?? $sub;
+    }
+
+    private static function lengkapiModul(array $m, array $b, ?array $s): array
+    {
+        $m['bidang'] = $b['slug'];
+        $m['bidang_nama'] = $b['nama'];
+        $m['sub'] = $s['slug'] ?? null;
+        $m['sub_nama'] = $s['nama'] ?? null;
+        $m['aktif'] = ($m['status'] ?? 'segera') === 'aktif';
+        $m['href'] = ! empty($m['route'])
+            ? route($m['route'])
+            : route('admin.bidang.modul', ['bidang' => $b['slug'], 'modul' => $m['slug']]);
+
+        return $m;
+    }
+}

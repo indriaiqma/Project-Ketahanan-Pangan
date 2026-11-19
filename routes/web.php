@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BidangController;
+use App\Http\Controllers\ModulDataController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KawasanHutanController;
 use App\Http\Controllers\LahanKritisController;
@@ -122,24 +124,63 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
 
     /*
     |--------------------------------------------------------------------------
-    | LINGKUNGAN HIDUP - ADMIN
+    | ROUTE LAMA LINGKUNGAN HIDUP & SDM
     |--------------------------------------------------------------------------
+    | Kini menjadi bagian struktur bidang (config/bidang.php). Nama route
+    | dipertahankan agar tautan lama tetap berfungsi (redirect permanen).
     */
 
-    Route::get('/lingkungan-hidup', function () {
-        return view('admin.lingkungan-hidup.index');
-    })->name('admin.lingkungan-hidup.index');
+    Route::permanentRedirect('/lingkungan-hidup', '/admin/bidang/sarana-prasarana/lingkungan-hidup')
+        ->name('admin.lingkungan-hidup.index');
+
+    Route::permanentRedirect('/sdm', '/admin/bidang/kemasyarakatan')
+        ->name('admin.sdm.index');
 
 
     /*
     |--------------------------------------------------------------------------
-    | SDM - ADMIN
+    | BIDANG & MODUL (struktur dari config/bidang.php)
     |--------------------------------------------------------------------------
+    | - bidang:lihat  : bidang harus ada (dan tidak disembunyikan untuk user)
+    | - bidang:ubah   : petugas harus ditugaskan di sub bidang modul tersebut
     */
 
-    Route::get('/sdm', function () {
-        return view('admin.sdm.index');
-    })->name('admin.sdm.index');
+    Route::middleware('bidang:lihat')->group(function () {
+        Route::get('/bidang/{bidang}', [BidangController::class, 'show'])
+            ->name('admin.bidang.show');
+
+        Route::get('/bidang/{bidang}/{modul}', [BidangController::class, 'modul'])
+            ->name('admin.bidang.modul');
+
+        // Modul data generik (lihat config/modul_data.php)
+        Route::get('/bidang/{bidang}/{modul}/export', [ModulDataController::class, 'export'])
+            ->name('admin.modul.export');
+
+        Route::get('/bidang/{bidang}/{modul}/lampiran/{lampiran}', [ModulDataController::class, 'lampiran'])
+            ->whereNumber('lampiran')
+            ->name('admin.modul.lampiran');
+    });
+
+    Route::middleware(['role:admin,petugas', 'bidang:ubah'])->group(function () {
+        Route::get('/bidang/{bidang}/{modul}/tambah', [ModulDataController::class, 'create'])
+            ->name('admin.modul.create');
+
+        Route::post('/bidang/{bidang}/{modul}', [ModulDataController::class, 'store'])
+            ->name('admin.modul.store');
+
+        Route::get('/bidang/{bidang}/{modul}/{id}/edit', [ModulDataController::class, 'edit'])
+            ->whereNumber('id')
+            ->name('admin.modul.edit');
+
+        Route::put('/bidang/{bidang}/{modul}/{id}', [ModulDataController::class, 'update'])
+            ->whereNumber('id')
+            ->name('admin.modul.update');
+    });
+
+    Route::delete('/bidang/{bidang}/{modul}/{id}', [ModulDataController::class, 'destroy'])
+        ->whereNumber('id')
+        ->middleware(['role:admin', 'bidang:lihat'])
+        ->name('admin.modul.destroy');
 
 
     /*
@@ -200,15 +241,15 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
         ->name('admin.kawasan-hutan.index');
 
     Route::get('/kawasan-hutan/tambah', [KawasanHutanController::class, 'create'])
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.kawasan-hutan.create');
 
     Route::post('/kawasan-hutan', [KawasanHutanController::class, 'store'])
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.kawasan-hutan.store');
 
     Route::post('/kawasan-hutan/import', [KawasanHutanController::class, 'import'])
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.kawasan-hutan.import');
 
     Route::get('/kawasan-hutan/export', [KawasanHutanController::class, 'export'])
@@ -216,12 +257,12 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
 
     Route::get('/kawasan-hutan/{kawasanHutan}/edit', [KawasanHutanController::class, 'edit'])
         ->whereNumber('kawasanHutan')
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.kawasan-hutan.edit');
 
     Route::put('/kawasan-hutan/{kawasanHutan}', [KawasanHutanController::class, 'update'])
         ->whereNumber('kawasanHutan')
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.kawasan-hutan.update');
 
     Route::delete('/kawasan-hutan/{kawasanHutan}', [KawasanHutanController::class, 'destroy'])
@@ -240,15 +281,15 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
         ->name('admin.lahan-kritis.index');
 
     Route::get('/lahan-kritis/tambah', [LahanKritisController::class, 'create'])
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.lahan-kritis.create');
 
     Route::post('/lahan-kritis', [LahanKritisController::class, 'store'])
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.lahan-kritis.store');
 
     Route::post('/lahan-kritis/import', [LahanKritisController::class, 'import'])
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.lahan-kritis.import');
 
     Route::get('/lahan-kritis/export', [LahanKritisController::class, 'export'])
@@ -256,12 +297,12 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
 
     Route::get('/lahan-kritis/{lahanKriti}/edit', [LahanKritisController::class, 'edit'])
         ->whereNumber('lahanKriti')
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.lahan-kritis.edit');
 
     Route::put('/lahan-kritis/{lahanKriti}', [LahanKritisController::class, 'update'])
         ->whereNumber('lahanKriti')
-        ->middleware('role:admin,petugas')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.lahan-kritis.update');
 
     Route::delete('/lahan-kritis/{lahanKriti}', [LahanKritisController::class, 'destroy'])

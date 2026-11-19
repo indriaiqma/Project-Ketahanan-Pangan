@@ -26,12 +26,36 @@
             <div class="form-grid">
                 <x-field label="Password" name="password" type="password" :required="$baru" minlength="6" icon="lock"
                          autocomplete="new-password" :hint="$baru ? 'Minimal 6 karakter.' : 'Biarkan kosong untuk mempertahankan password lama.'" />
-                <x-field label="Hak Akses" name="role" type="select" required
-                         hint="Viewer: hanya melihat & export. Petugas: + tambah, ubah, import. Administrator: semua akses, termasuk hapus data dan kelola pengguna.">
+                <x-field label="Hak Akses" name="role" type="select" required data-pilih-role
+                         hint="Viewer: hanya melihat & export. Petugas: + tambah, ubah, import di sub bidang yang ditugaskan. Administrator: semua akses, termasuk hapus data dan kelola pengguna.">
                     @foreach (\App\Models\User::ROLES as $nilai => $label)
                         <option value="{{ $nilai }}" @selected(old('role', $user?->role ?? 'petugas') === $nilai)>{{ $label }}</option>
                     @endforeach
                 </x-field>
+            </div>
+        </div>
+
+        {{-- Penugasan bidang: hanya untuk Petugas (pilihan dibaca dari config/bidang.php) --}}
+        @php($terpilih = collect(old('penugasan', $user?->aksesBidang->map(fn ($a) => $a->bidang.'|'.$a->sub_bidang)->all() ?? [])))
+        <div class="form-section" data-bagian-penugasan>
+            <h3>Penugasan Bidang</h3>
+            <p>Petugas hanya dapat menginput dan mengubah data pada sub bidang yang dicentang. Bidang lain tetap bisa dilihat.</p>
+            @error('penugasan')
+                <div class="alert alert-error" role="alert" style="margin-bottom:12px"><i class="bi bi-exclamation-triangle-fill"></i><div>{{ $message }}</div></div>
+            @enderror
+            <div class="akses-grid">
+                @foreach (\App\Support\Bidang::opsiPenugasan() as $grup)
+                    <fieldset class="akses-bidang">
+                        <legend class="sr-only">{{ $grup['nama'] }}</legend>
+                        <h4 aria-hidden="true"><i class="bi bi-{{ $grup['icon'] }}"></i> {{ $grup['nama'] }}</h4>
+                        @foreach ($grup['opsi'] as $opsi)
+                            <label class="check">
+                                <input type="checkbox" name="penugasan[]" value="{{ $opsi['nilai'] }}" @checked($terpilih->contains($opsi['nilai']))>
+                                {{ $opsi['label'] }}
+                            </label>
+                        @endforeach
+                    </fieldset>
+                @endforeach
             </div>
         </div>
     </div>
@@ -41,3 +65,16 @@
         <button type="submit" class="btn btn-primary" data-loading="Menyimpan…"><i class="bi bi-check-lg"></i> Simpan</button>
     </div>
 </form>
+
+@push('scripts')
+<script>
+    // Bagian penugasan hanya relevan untuk role Petugas
+    document.addEventListener('DOMContentLoaded', () => {
+        const role = document.querySelector('[data-pilih-role]');
+        const bagian = document.querySelector('[data-bagian-penugasan]');
+        const atur = () => { bagian.hidden = role.value !== 'petugas'; };
+        role.addEventListener('change', atur);
+        atur();
+    });
+</script>
+@endpush

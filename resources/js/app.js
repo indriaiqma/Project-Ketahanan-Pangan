@@ -278,3 +278,93 @@ if (!kurangiGerak && 'IntersectionObserver' in window) {
     // Angka yang tidak berada di dalam elemen ber-animasi tetap dihitung naik
     angka.forEach((el) => { if (!el.closest('.reveal')) io.observe(el); });
 }
+
+/* =========================================================================
+   Sidebar: menu BIDANG (accordion satu-terbuka + pencarian modul)
+   Markup: resources/views/components/sidebar-bidang.blade.php
+   ========================================================================= */
+const daftarBidang = document.querySelector('[data-acc-list]');
+
+if (daftarBidang) {
+    const semuaAcc = [...daftarBidang.querySelectorAll('[data-acc]')];
+    const inputCari = document.querySelector('[data-side-search-input]');
+    const tombolHapus = document.querySelector('[data-side-search-clear]');
+    const pesanKosong = document.querySelector('[data-side-empty]');
+
+    const setBuka = (acc, buka) => {
+        acc.classList.toggle('open', buka);
+        acc.querySelector('[data-acc-btn]').setAttribute('aria-expanded', String(buka));
+        // Panel tertutup tidak bisa difokus dengan Tab
+        acc.querySelector('.acc-panel').inert = !buka;
+    };
+
+    // Klik bidang: buka bidang itu, tutup yang lain (kecuali saat mencari)
+    daftarBidang.addEventListener('click', (e) => {
+        const tombol = e.target.closest('[data-acc-btn]');
+        if (!tombol) return;
+        const acc = tombol.closest('[data-acc]');
+        const akanBuka = !acc.classList.contains('open');
+        if (!inputCari?.value.trim()) semuaAcc.forEach((a) => a !== acc && setBuka(a, false));
+        setBuka(acc, akanBuka);
+    });
+
+    // Navigasi keyboard antar-bidang: panah atas/bawah, Home, End
+    daftarBidang.addEventListener('keydown', (e) => {
+        const tombol = e.target.closest('[data-acc-btn]');
+        if (!tombol || !['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(e.key)) return;
+        const tombols = semuaAcc.filter((a) => !a.hidden).map((a) => a.querySelector('[data-acc-btn]'));
+        const i = tombols.indexOf(tombol);
+        const tujuan = { ArrowDown: tombols[i + 1], ArrowUp: tombols[i - 1], Home: tombols[0], End: tombols.at(-1) }[e.key];
+        if (tujuan) { e.preventDefault(); tujuan.focus(); }
+    });
+
+    const cari = () => {
+        const q = inputCari.value.trim().toLowerCase();
+        tombolHapus.hidden = !q;
+        let adaHasil = false;
+
+        semuaAcc.forEach((acc) => {
+            if (!q) {
+                // Kembali ke keadaan awal: hanya bidang halaman aktif yang terbuka
+                acc.hidden = false;
+                acc.querySelectorAll('[data-item], [data-group]').forEach((el) => (el.hidden = false));
+                setBuka(acc, acc.dataset.awal === '1');
+                return;
+            }
+
+            const cocokBidang = acc.dataset.cari.includes(q);
+            let tampil = 0;
+
+            acc.querySelectorAll('[data-group]').forEach((grup) => {
+                const cocokSub = grup.dataset.cari && grup.dataset.cari.includes(q);
+                let tampilGrup = 0;
+                grup.querySelectorAll('[data-item]').forEach((item) => {
+                    const cocok = cocokBidang || cocokSub || item.dataset.cari.includes(q);
+                    item.hidden = !cocok;
+                    tampilGrup += cocok ? 1 : 0;
+                });
+                grup.hidden = !tampilGrup;
+                tampil += tampilGrup;
+            });
+
+            // Tautan "Ringkasan bidang" hanya tampil bila nama bidang yang cocok
+            const ringkasan = acc.querySelector('.acc-overview');
+            if (ringkasan) ringkasan.hidden = !cocokBidang;
+
+            acc.hidden = !tampil && !cocokBidang;
+            setBuka(acc, !acc.hidden);
+            adaHasil ||= !acc.hidden;
+        });
+
+        pesanKosong.hidden = !q || adaHasil;
+    };
+
+    inputCari?.addEventListener('input', cari);
+    inputCari?.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') { inputCari.value = ''; cari(); }
+    });
+    tombolHapus?.addEventListener('click', () => { inputCari.value = ''; cari(); inputCari.focus(); });
+
+    // Bidang yang sedang dibuka terlihat tanpa perlu menggulir sidebar
+    daftarBidang.querySelector('.acc-tree a.active, .acc-overview.active')?.scrollIntoView({ block: 'center' });
+}

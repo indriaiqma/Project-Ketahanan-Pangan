@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\Bidang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -11,7 +13,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::orderBy('id', 'asc')->get();
+        $users = User::with('aksesBidang')->orderBy('id', 'asc')->get();
 
         return view('admin.users.index', compact('users'));
     }
@@ -28,14 +30,18 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'role' => ['required', Rule::in(array_keys(User::ROLES))],
-        ]);
+        ] + $this->aturanPenugasan($request));
 
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
+        DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
+            ]);
+
+            $this->simpanPenugasan($user, $request);
+        });
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Pengguna berhasil ditambahkan.');
@@ -53,7 +59,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|min:6',
             'role' => ['required', Rule::in(array_keys(User::ROLES))],
-        ]);
+        ] + $this->aturanPenugasan($request));
 
         // Admin tidak boleh menurunkan role akunnya sendiri,
         // agar sistem tidak kehilangan administrator.
@@ -73,7 +79,10 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
         }
 
-        $user->update($data);
+        DB::transaction(function () use ($user, $data, $request) {
+            $user->update($data);
+            $this->simpanPenugasan($user, $request);
+        });
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Pengguna berhasil diperbarui.');
@@ -90,5 +99,34 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')
             ->with('success', 'Pengguna berhasil dihapus.');
+    }
+
+    /**
+     * Validasi penugasan bidang. Nilai berbentuk "bidang|sub_bidang"
+     * dan harus ada di config/bidang.php. Petugas wajib punya minimal satu.
+     */
+    private function aturanPenugasan(Request $request): array
+    {
+        $valid = collect(Bidang::opsiPenugasan())->flatMap(fn ($g) => array_column($g['opsi'], 'nilai'))->all();
+
+        return [
+            'penugasan' => [$request->input('role') === 'petugas' ? 'required' : 'nullable', 'array'],
+            'penugasan.*' => ['string', Rule::in($valid)],
+        ];
+    }
+
+    /** Simpan ulang penugasan; hanya petugas yang memiliki penugasan. */
+    private function simpanPenugasan(User $user, Request $request): void
+    {
+        $user->aksesBidang()->delete();
+
+        if ($user->role !== 'petugas') {
+            return;
+        }
+
+        foreach (array_unique($request->input('penugasan', [])) as $nilai) {
+            [$bidang, $sub] = explode('|', $nilai, 2) + [1 => ''];
+            $user->aksesBidang()->create(['bidang' => $bidang, 'sub_bidang' => $sub !== '' ? $sub : null]);
+        }
     }
 }
