@@ -69,13 +69,16 @@
         @foreach (ModulData::grupField($def) as $grup => $fields)
             <div class="form-section">
                 <h3>{{ $grup }}</h3>
-                <p>Isi dengan angka bulat (0 jika tidak ada).</p>
+                <p>Isi dengan angka (0 jika tidak ada). Gunakan titik untuk desimal, mis. 12.5</p>
                 <div class="form-grid">
                     @foreach ($fields as $kunci => $f)
-                        <x-field :label="$f['label']" :name="$kunci" type="number" required min="0" step="1"
+                        @php($desimal = ($f['tipe'] ?? 'bulat') === 'desimal')
+                        <x-field :label="$f['label']" :name="$kunci" type="number" required min="0" :step="$desimal ? '0.01' : '1'" :data-desimal="$desimal ? '1' : null"
                                  :value="$baris?->{$kunci}" :suffix="$f['satuan'] ?? null" placeholder="0"
-                                 :hint="isset($f['maks']) ? ($f['hint'] ?? 'Tidak boleh melebihi '.mb_strtolower($def['fields'][$f['maks']]['label']).'.') : ($f['hint'] ?? null)"
-                                 data-angka :data-maks="$f['maks'] ?? null" />
+                                 :hint="isset($f['maks']) ? ($f['hint'] ?? 'Tidak boleh melebihi '.mb_strtolower(ModulData::info($def, $f['maks'])['label']).'.') : ($f['hint'] ?? null)"
+                                 data-angka :data-maks="$f['maks'] ?? null"
+                                 :data-maks-dari="isset($f['maks'], $def['total'][$f['maks']]) ? implode(',', $def['total'][$f['maks']]['dari']) : null"
+                                 :data-maks-label="isset($f['maks']) ? ModulData::info($def, $f['maks'])['label'] : null" />
                     @endforeach
                 </div>
             </div>
@@ -136,7 +139,7 @@
         const sudahAda = @json($sudahAda);
         const kolomPeriode = @json($kolom);
         const nf = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 1 });
-        const nilai = (nama) => parseInt(form.elements[nama]?.value, 10) || 0;
+        const nilai = (nama) => parseFloat(form.elements[nama]?.value) || 0;
 
         // Total & persentase otomatis
         const hitung = () => {
@@ -153,11 +156,17 @@
         const cekBatas = () => {
             form.querySelectorAll('[data-angka]').forEach((input) => {
                 let pesan = '';
-                if (input.value !== '' && (Number(input.value) < 0 || !Number.isInteger(Number(input.value)))) {
-                    pesan = 'Isi dengan angka bulat 0 atau lebih.';
-                } else if (input.dataset.maks && input.value !== '' && nilai(input.name) > nilai(input.dataset.maks)) {
-                    const labelMaks = form.querySelector(`label[for="f-${input.dataset.maks}"]`)?.textContent.replace('*', '').trim();
-                    pesan = `Tidak boleh melebihi ${labelMaks || 'nilai totalnya'}.`;
+                const desimal = input.dataset.desimal === '1';
+                if (input.value !== '' && (Number(input.value) < 0 || (!desimal && !Number.isInteger(Number(input.value))))) {
+                    pesan = desimal ? 'Isi dengan angka 0 atau lebih.' : 'Isi dengan angka bulat 0 atau lebih.';
+                } else if (input.dataset.maks && input.value !== '') {
+                    // Batas atas: field lain, atau total otomatis dari beberapa field
+                    const batas = input.dataset.maksDari
+                        ? input.dataset.maksDari.split(',').reduce((s, f) => s + nilai(f), 0)
+                        : nilai(input.dataset.maks);
+                    if (nilai(input.name) > batas) {
+                        pesan = `Tidak boleh melebihi ${(input.dataset.maksLabel || 'nilai totalnya').toLowerCase()}.`;
+                    }
                 }
                 input.setCustomValidity(pesan);
                 input.classList.toggle('is-invalid', !!pesan);

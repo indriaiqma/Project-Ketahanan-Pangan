@@ -14,7 +14,8 @@ use Maatwebsite\Excel\Facades\Excel;
 
 /**
  * Controller generik untuk semua modul data (config/modul_data.php).
- * Satu baris data = 1 wilayah x 1 periode.
+ *   - jenis "rekap"  : 1 baris = 1 wilayah x 1 periode
+ *   - jenis "daftar" : 1 baris = 1 entri bebas
  *
  * Akses sudah diperiksa di route:
  *   - lihat & export  : bidang:lihat
@@ -24,24 +25,33 @@ use Maatwebsite\Excel\Facades\Excel;
 class ModulDataController extends Controller
 {
     /**
-     * Halaman list: filter periode, kartu metrik, grafik per wilayah, tabel status.
+     * Halaman list modul.
      * URL: /admin/bidang/{bidang}/{modul}  (dipanggil dari BidangController)
      */
     public function index(Request $request, string $bidang, string $modul)
     {
         [$b, $m, $def] = $this->resolve($bidang, $modul);
-        $model = $def['model'];
+        $bisaUbah = Bidang::bolehUbah($request->user(), $b['slug'], $m['sub']);
+
+        return ModulData::isDaftar($def)
+            ? $this->indexDaftar($request, $b, $m, $def, $bisaUbah)
+            : $this->indexRekap($request, $b, $m, $def, $bisaUbah);
+    }
+
+    /** Rekap: filter periode, kartu metrik, grafik per wilayah, tabel status. */
+    private function indexRekap(Request $request, array $b, array $m, array $def, bool $bisaUbah)
+    {
         $kolom = ModulData::kolomPeriode($def);
 
         // Periode bawaan: periode terakhir yang sudah ada datanya, atau periode berjalan
         [$tahunIni, $periodeIni] = ModulData::periodeSekarang($def);
-        $terakhir = $model::query()->orderByDesc('tahun')->orderByDesc($kolom)->first(['tahun', $kolom]);
+        $terakhir = ModulData::query($def)->orderByDesc('tahun')->orderByDesc($kolom)->first(['tahun', $kolom]);
         $tahun = (int) $request->input('tahun', $terakhir->tahun ?? $tahunIni);
         $periode = (int) $request->input('periode', $terakhir ? $terakhir->{$kolom} : $periodeIni);
         abort_unless(array_key_exists($periode, ModulData::opsiPeriode($def)) && $tahun >= 2000 && $tahun <= $tahunIni + 1, 404);
 
         $wilayah = Wilayah::urut()->get();
-        $data = $model::query()
+        $data = ModulData::query($def)
             ->with(['lampiran:id,nama_file,ukuran', 'pembuat:id,name'])
             ->where('tahun', $tahun)->where($kolom, $periode)
             ->get()->keyBy('wilayah_id');
@@ -59,7 +69,7 @@ class ModulDataController extends Controller
         // Jumlah seluruh wilayah pada periode ini -> kartu metrik
         $jumlah = [];
         foreach (array_merge(array_keys($def['fields']), array_keys($def['total'])) as $k) {
-            $jumlah[$k] = $data->sum($k);
+            $jumlah[$k] = $data->sum(fn ($r) => (float) $r->{$k});
         }
         $metrik = collect($def['metrik'])->map(fn ($k) => [
             'kunci' => $k,
@@ -67,7 +77,7 @@ class ModulDataController extends Controller
             'nilai' => $data->isEmpty() ? null : ModulData::nilai($def, $jumlah, $k),
         ])->all();
 
-        $daftarTahun = $model::query()->distinct()->pluck('tahun')
+        $daftarTahun = ModulData::query($def)->distinct()->pluck('tahun')
             ->push($tahunIni, $tahun)->map(fn ($t) => (int) $t)->unique()->sortDesc()->values();
 
         return view('admin.modul.index', [
@@ -87,11 +97,52 @@ class ModulDataController extends Controller
                 'labels' => $wilayah->pluck('nama')->all(),
                 'datasets' => collect($def['grafik'])->map(fn ($f) => [
                     'label' => ModulData::info($def, $f)['label'],
-                    'data' => $wilayah->map(fn ($w) => (int) ($data->get($w->id)?->{$f} ?? 0))->all(),
+                    'data' => $wilayah->map(fn ($w) => (float) ($data->get($w->id)?->{$f} ?? 0))->all(),
                 ])->all(),
-                'ada' => $data->isNotEmpty(),
+                'ada' => $data->isNotEmpty() && ! empty($def['grafik']),
             ],
-            'bisaUbah' => Bidang::bolehUbah($request->user(), $b['slug'], $m['sub']),
+            'bisaUbah' => $bisaUbah,
+        ]);
+    }
+
+    /** Daftar: pencarian, filter pilihan, kartu metrik, grafik per kategori, tabel entri. */
+    private function indexDaftar(Request $request, array $b, array $m, array $def, bool $bisaUbah)
+    {
+        $semua = ModulData::query($def)->with(['lampiran:id,nama_file,ukuran', 'pembuat:id,name'])->latest()->get();
+        $wilayah = Wilayah::urut()->get()->keyBy('id');
+
+        $entri = $semua;
+        if ($q = mb_strtolower(trim((string) $request->input('cari')))) {
+            $entri = $entri->filter(fn ($e) => collect($def['cari'])->contains(fn ($f) => str_contains(mb_strtolower((string) $e->{$f}), $q)));
+        }
+        if ($def['filter'] && $request->filled('filter')) {
+            $entri = $entri->where($def['filter'], $request->input('filter'));
+        }
+        $entri = $entri->values();
+
+        // Grafik: jumlah entri per kategori (field pilihan) atau per kecamatan (field wilayah)
+        $grafik = ['ada' => false];
+        if ($fg = $def['grafik'][0] ?? null) {
+            $f = $def['fields'][$fg];
+            $label = ($f['tipe'] ?? null) === 'wilayah' ? $wilayah->pluck('nama', 'id')->all() : array_combine($f['opsi'], $f['opsi']);
+            $grafik = [
+                'judul' => 'Jumlah per '.mb_strtolower($f['label']),
+                'labels' => array_values($label),
+                'datasets' => [['label' => 'Jumlah', 'data' => array_map(fn ($k) => $semua->filter(fn ($e) => (string) $e->{$fg} === (string) $k)->count(), array_keys($label))]],
+                'ada' => $semua->isNotEmpty(),
+            ];
+        }
+
+        return view('admin.modul.daftar', [
+            'bidang' => $b,
+            'modul' => $m,
+            'def' => $def,
+            'entri' => $entri,
+            'jumlahSemua' => $semua->count(),
+            'wilayah' => $wilayah,
+            'metrik' => collect($def['metrik'])->map(fn ($mt) => $mt + ['hasil' => ModulData::metrikDaftar($mt, $semua)])->all(),
+            'grafik' => $grafik,
+            'bisaUbah' => $bisaUbah,
         ]);
     }
 
@@ -132,7 +183,7 @@ class ModulDataController extends Controller
     public function edit(string $bidang, string $modul, int $id)
     {
         [$b, $m, $def] = $this->resolve($bidang, $modul);
-        $baris = $def['model']::with('lampiran:id,nama_file,ukuran')->findOrFail($id);
+        $baris = ModulData::query($def)->with('lampiran:id,nama_file,ukuran')->findOrFail($id);
 
         return $this->form($b, $m, $def, $baris, [
             'wilayah_id' => $baris->wilayah_id,
@@ -144,7 +195,7 @@ class ModulDataController extends Controller
     public function update(Request $request, string $bidang, string $modul, int $id)
     {
         [$b, $m, $def] = $this->resolve($bidang, $modul);
-        $baris = $def['model']::findOrFail($id);
+        $baris = ModulData::query($def)->findOrFail($id);
 
         if ($duplikat = $this->cariDuplikat($request, $def, $baris->id)) {
             return $this->tolakDuplikat($b, $m, $def, $duplikat);
@@ -177,8 +228,7 @@ class ModulDataController extends Controller
     public function destroy(string $bidang, string $modul, int $id)
     {
         [$b, $m, $def] = $this->resolve($bidang, $modul);
-        $baris = $def['model']::findOrFail($id);
-        $kolom = ModulData::kolomPeriode($def);
+        $baris = ModulData::query($def)->findOrFail($id);
 
         DB::transaction(function () use ($baris) {
             $lampiran = $baris->lampiran_id;
@@ -188,17 +238,20 @@ class ModulDataController extends Controller
             }
         });
 
-        return redirect()
-            ->route('admin.bidang.modul', ['bidang' => $b['slug'], 'modul' => $m['slug'], 'tahun' => $baris->tahun, 'periode' => $baris->{$kolom}])
-            ->with('success', 'Data berhasil dihapus.');
+        $kembali = ['bidang' => $b['slug'], 'modul' => $m['slug']];
+        if (! ModulData::isDaftar($def)) {
+            $kembali += ['tahun' => $baris->tahun, 'periode' => $baris->{ModulData::kolomPeriode($def)}];
+        }
+
+        return redirect()->route('admin.bidang.modul', $kembali)->with('success', 'Data berhasil dihapus.');
     }
 
-    /** Export Excel periode terpilih (atau semua periode dengan ?periode=semua). */
+    /** Export Excel. Rekap: periode terpilih (atau semua dengan ?periode=semua). Daftar: semua entri. */
     public function export(Request $request, string $bidang, string $modul)
     {
         [, $m, $def] = $this->resolve($bidang, $modul);
 
-        $semua = $request->input('periode') === 'semua';
+        $semua = ModulData::isDaftar($def) || $request->input('periode') === 'semua';
         $tahun = $semua ? null : ($request->integer('tahun') ?: null);
         $periode = $semua ? null : ($request->integer('periode') ?: null);
 
@@ -211,7 +264,7 @@ class ModulDataController extends Controller
     public function lampiran(string $bidang, string $modul, int $lampiran)
     {
         [, , $def] = $this->resolve($bidang, $modul);
-        abort_unless($def['model']::where('lampiran_id', $lampiran)->exists(), 404);
+        abort_unless(ModulData::query($def)->where('lampiran_id', $lampiran)->exists(), 404);
 
         $file = Lampiran::findOrFail($lampiran);
         $isi = base64_decode($file->isi);
@@ -238,10 +291,20 @@ class ModulDataController extends Controller
 
     private function form(array $b, array $m, array $def, ?Model $baris, array $awal)
     {
+        if (ModulData::isDaftar($def)) {
+            return view('admin.modul.daftar-form', [
+                'bidang' => $b,
+                'modul' => $m,
+                'def' => $def,
+                'baris' => $baris,
+                'wilayah' => Wilayah::urut()->get(['id', 'nama']),
+            ]);
+        }
+
         $kolom = ModulData::kolomPeriode($def);
 
         // Kombinasi wilayah+periode yang sudah ada -> peringatan duplikat di browser
-        $sudahAda = $def['model']::query()->get(['id', 'wilayah_id', 'tahun', $kolom])
+        $sudahAda = ModulData::query($def)->get(['id', 'wilayah_id', 'tahun', $kolom])
             ->reject(fn ($r) => $baris && $r->id === $baris->id)
             ->mapWithKeys(fn ($r) => [
                 "{$r->wilayah_id}-{$r->tahun}-{$r->{$kolom}}" => route('admin.modul.edit', ['bidang' => $b['slug'], 'modul' => $m['slug'], 'id' => $r->id]),
@@ -260,22 +323,42 @@ class ModulDataController extends Controller
         ]);
     }
 
-    /** Ambil hanya field yang didefinisikan, lalu hitung kolom total otomatis. */
+    /**
+     * Ambil hanya field yang didefinisikan (rekap: + hitung total otomatis),
+     * lalu sesuaikan bentuknya dengan cara penyimpanan modul.
+     */
     private function dataDariInput(array $def, array $valid): array
     {
-        $kolom = ModulData::kolomPeriode($def);
-        $data = [
-            'wilayah_id' => (int) $valid['wilayah_id'],
-            'tahun' => (int) $valid['tahun'],
-            $kolom => (int) $valid[$kolom],
+        $nilai = [];
+        foreach ($def['fields'] as $f => $info) {
+            $v = $valid[$f] ?? null;
+            $nilai[$f] = match ($info['tipe'] ?? (ModulData::isDaftar($def) ? 'teks' : 'bulat')) {
+                'bulat', 'angka', 'tahun', 'wilayah' => $v === null ? null : (int) $v,
+                'desimal', 'persen' => $v === null ? null : round((float) $v, 2),
+                default => $v,
+            };
+        }
+
+        $umum = [
             'sumber_data' => $valid['sumber_data'] ?? null,
             'keterangan' => $valid['keterangan'] ?? null,
         ];
-        foreach (array_keys($def['fields']) as $f) {
-            $data[$f] = (int) $valid[$f];
+
+        if (ModulData::isDaftar($def)) {
+            return $umum + ['modul' => $def['kunci'], 'nilai' => $nilai];
         }
 
-        return ModulData::hitungTotal($def, $data);
+        $kolom = ModulData::kolomPeriode($def);
+        $periode = [
+            'wilayah_id' => (int) $valid['wilayah_id'],
+            'tahun' => (int) $valid['tahun'],
+            $kolom => (int) $valid[$kolom],
+        ];
+        $nilai = ModulData::hitungTotal($def, $nilai);
+
+        return $def['penyimpanan'] === 'json'
+            ? $umum + $periode + ['modul' => $def['kunci'], 'nilai' => $nilai]
+            : $umum + $periode + $nilai;
     }
 
     private function simpanLampiran(Request $request): ?Lampiran
@@ -297,12 +380,16 @@ class ModulDataController extends Controller
 
     private function cariDuplikat(Request $request, array $def, ?int $abaikanId = null): ?Model
     {
+        if (ModulData::isDaftar($def)) {
+            return null;
+        }
+
         $kolom = ModulData::kolomPeriode($def);
         if (! $request->filled(['wilayah_id', 'tahun', $kolom])) {
             return null;
         }
 
-        return $def['model']::query()
+        return ModulData::query($def)
             ->where('wilayah_id', $request->integer('wilayah_id'))
             ->where('tahun', $request->integer('tahun'))
             ->where($kolom, $request->integer($kolom))
@@ -322,13 +409,11 @@ class ModulDataController extends Controller
 
     private function keDaftar(array $b, array $m, array $def, array $valid, string $pesan)
     {
-        return redirect()
-            ->route('admin.bidang.modul', [
-                'bidang' => $b['slug'],
-                'modul' => $m['slug'],
-                'tahun' => $valid['tahun'],
-                'periode' => $valid[ModulData::kolomPeriode($def)],
-            ])
-            ->with('success', $pesan);
+        $tujuan = ['bidang' => $b['slug'], 'modul' => $m['slug']];
+        if (! ModulData::isDaftar($def)) {
+            $tujuan += ['tahun' => $valid['tahun'], 'periode' => $valid[ModulData::kolomPeriode($def)]];
+        }
+
+        return redirect()->route('admin.bidang.modul', $tujuan)->with('success', $pesan);
     }
 }

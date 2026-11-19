@@ -45,28 +45,31 @@ class RingkasanModul
     private static function modulData(string $kunci): array
     {
         $def = ModulData::def($kunci);
-        $model = $def['model'];
-        $kolom = ModulData::kolomPeriode($def);
+        $terakhirDiubah = ModulData::query($def)->max('updated_at');
 
-        $terakhir = $model::query()->orderByDesc('tahun')->orderByDesc($kolom)->first(['tahun', $kolom]);
+        if (ModulData::isDaftar($def)) {
+            $jumlah = ModulData::query($def)->count();
+
+            return self::hasil($jumlah, angka($jumlah, 0).' data', $terakhirDiubah);
+        }
+
+        $kolom = ModulData::kolomPeriode($def);
+        $terakhir = ModulData::query($def)->orderByDesc('tahun')->orderByDesc($kolom)->first(['tahun', $kolom]);
         if (! $terakhir) {
             return ['teks' => 'Belum ada data', 'terakhir' => null];
         }
 
-        $utama = $def['ringkasan'];
-        $r = $model::query()
-            ->where('tahun', $terakhir->tahun)->where($kolom, $terakhir->{$kolom})
-            ->selectRaw('COUNT(*) as jumlah'.($utama ? ", COALESCE(SUM($utama), 0) as utama" : ''))
-            ->first();
+        // Periode terakhir: jumlah wilayah yang melapor + total field utama
+        $data = ModulData::query($def)->where('tahun', $terakhir->tahun)->where($kolom, $terakhir->{$kolom})->get();
 
         $teks = ModulData::labelPeriode($def, $terakhir->tahun, $terakhir->{$kolom})
-            .' · '.angka($r->jumlah, 0).' wilayah';
-        if ($utama) {
+            .' · '.angka($data->count(), 0).' wilayah';
+        if ($utama = $def['ringkasan']) {
             $info = ModulData::info($def, $utama);
-            $teks .= ' · '.angka($r->utama, 0).' '.$info['satuan'];
+            $teks .= ' · '.ModulData::format($def, $utama, $data->sum(fn ($r) => (float) $r->{$utama})).' '.$info['satuan'];
         }
 
-        return self::hasil(1, $teks, $model::max('updated_at'));
+        return self::hasil(1, $teks, $terakhirDiubah);
     }
 
     private static function hasil(int $jumlah, string $teks, $terakhir): array

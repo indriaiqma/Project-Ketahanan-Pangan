@@ -14,6 +14,9 @@ return [
     'boolean'   => ':Attribute tidak valid.',
     'exists'    => ':Attribute yang dipilih tidak ditemukan.',
     'uploaded'  => ':Attribute gagal diunggah. Pastikan ukurannya tidak melebihi batas.',
+    'decimal'   => ':Attribute maksimal :decimal angka di belakang koma.',
+    'date'      => ':Attribute harus berupa tanggal yang valid.',
+    'after_or_equal' => ':Attribute tidak boleh sebelum :date.',
     'lte'       => [
         'numeric' => ':Attribute tidak boleh melebihi :value.',
     ],

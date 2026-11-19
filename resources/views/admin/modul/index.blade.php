@@ -11,8 +11,7 @@
 
     $parameter = ['bidang' => $bidang['slug'], 'modul' => $modul['slug']];
     $warnaGrafik = ['#18774d', '#2f80c2', '#f5a524', '#e5484d', '#7cb82f'];
-    $syaratBaik = collect($def['persentase'])->filter(fn ($p) => isset($p['target']))
-        ->map(fn ($p) => $p['label'].' ≥ '.$p['target'].'%')->implode(' dan ');
+    $syaratBaik = ModulData::syaratBaik($def);
 @endphp
 
 @section('content')
@@ -56,8 +55,9 @@
     <label class="sr-only" for="f-status">Status</label>
     <select id="f-status" name="status" class="select">
         <option value="">Semua status</option>
-        @foreach (ModulData::STATUS as $nilai => $label)
-            <option value="{{ $nilai }}" @selected(request('status') === $nilai)>{{ $label }}</option>
+        @foreach (array_keys(ModulData::STATUS) as $nilai)
+            @continue($nilai === 'bawah' && ! ModulData::punyaTarget($def))
+            <option value="{{ $nilai }}" @selected(request('status') === $nilai)>{{ ModulData::labelStatus($def, $nilai) }}</option>
         @endforeach
     </select>
     <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Terapkan</button>
@@ -75,13 +75,14 @@
             <x-stat :icon="$persen ? 'percent' : ($i === 0 ? 'people-fill' : 'bar-chart-fill')"
                     :label="$mt['info']['label']"
                     :value="ModulData::format($def, $mt['kunci'], $mt['nilai'])"
-                    :unit="$persen ? 'target '.($mt['info']['target'] ?? '–').'%' : ($mt['info']['satuan'] ?? '')"
-                    :tone="$persen ? (($mt['nilai'] ?? 0) >= ($mt['info']['target'] ?? 0) ? null : 'amber') : ($i === 0 ? null : 'sky')" />
+                    :unit="$persen ? ModulData::labelTarget($mt['info']) : ($mt['info']['satuan'] ?? '')"
+                    :tone="$persen ? (ModulData::capaiTarget($mt['info'], $mt['nilai']) ? null : 'amber') : ($i === 0 ? null : 'sky')" />
         @endforeach
     </section>
 @endif
 
 {{-- ===== Grafik per wilayah ===== --}}
+@if (! empty($def['grafik']))
 <section class="card">
     <div class="card-head">
         <div class="card-title">
@@ -104,6 +105,7 @@
         @endif
     </div>
 </section>
+@endif
 
 {{-- ===== Tabel data ===== --}}
 <section class="card">
@@ -112,12 +114,14 @@
             <span class="ico"><i class="bi bi-table"></i></span>
             <div>
                 <h2>Data per Wilayah</h2>
-                <p>Status "Baik" bila {{ $syaratBaik ?: 'data sudah dilaporkan' }}</p>
+                <p>{{ $syaratBaik ? 'Status "Baik" bila '.$syaratBaik : 'Status menunjukkan wilayah yang sudah dan belum melapor' }}</p>
             </div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <span class="status-pill baik"><span class="dot"></span>Baik {{ $hitungStatus['baik'] ?? 0 }}</span>
-            <span class="status-pill bawah"><span class="dot"></span>Di bawah target {{ $hitungStatus['bawah'] ?? 0 }}</span>
+            <span class="status-pill baik"><span class="dot"></span>{{ ModulData::labelStatus($def, 'baik') }} {{ $hitungStatus['baik'] ?? 0 }}</span>
+            @if (ModulData::punyaTarget($def))
+                <span class="status-pill bawah"><span class="dot"></span>Di bawah target {{ $hitungStatus['bawah'] ?? 0 }}</span>
+            @endif
             <span class="status-pill belum"><span class="dot"></span>Belum lapor {{ $hitungStatus['belum'] ?? 0 }}</span>
         </div>
     </div>
@@ -160,7 +164,7 @@
                                 <td class="r">{{ $d ? ModulData::format($def, $k, ModulData::nilai($def, $d, $k)) : '–' }}</td>
                             @endforeach
                             <td>
-                                <span @class(['status-pill', $r['status']])><span class="dot"></span>{{ ModulData::STATUS[$r['status']] }}</span>
+                                <span @class(['status-pill', $r['status']])><span class="dot"></span>{{ ModulData::labelStatus($def, $r['status']) }}</span>
                             </td>
                             <td>
                                 <div class="actions">
