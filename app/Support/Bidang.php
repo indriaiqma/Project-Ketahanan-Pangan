@@ -110,10 +110,32 @@ class Bidang
         ];
     }
 
-    /** Bidang yang boleh tampil untuk pengguna (memperhatikan opsi 'hidden'). */
+    /**
+     * Bidang yang boleh tampil untuk pengguna, SUDAH disaring sampai tingkat sub bidang.
+     * Dengan opsi 'hidden', petugas hanya mendapat bidang & sub bidang yang ditugaskan;
+     * sub bidang lain (beserta modulnya) dibuang dari struktur.
+     */
     public static function untuk(?User $user): Collection
     {
-        return self::semua()->filter(fn ($b) => self::bolehLihat($user, $b['slug']))->values();
+        return self::semua()->map(fn ($b) => self::saring($user, $b))->filter()->values();
+    }
+
+    /** Satu bidang yang sudah disaring untuk pengguna; null bila tidak boleh dilihat. */
+    public static function cariUntuk(?User $user, string $slug): ?array
+    {
+        return self::untuk($user)->firstWhere('slug', $slug);
+    }
+
+    /** Semua modul (datar) yang boleh dilihat pengguna. */
+    public static function modulUntuk(?User $user): Collection
+    {
+        return self::untuk($user)->flatMap(fn ($b) => self::modulBidang($b))->values();
+    }
+
+    /** Apakah penugasan petugas membatasi apa yang terlihat (opsi 'hidden'). */
+    public static function dibatasi(?User $user): bool
+    {
+        return $user !== null && $user->isPetugas() && config('bidang.akses_luar_penugasan') === 'hidden';
     }
 
     public static function bolehLihat(?User $user, string $bidang): bool
@@ -122,11 +144,37 @@ class Bidang
             return false;
         }
 
-        if (config('bidang.akses_luar_penugasan') !== 'hidden' || ! $user->isPetugas()) {
+        if (! self::dibatasi($user)) {
             return true;
         }
 
         return $user->aksesBidang->contains('bidang', $bidang);
+    }
+
+    /**
+     * Boleh melihat sub bidang tertentu? (sub = null: modul langsung di bawah bidang)
+     * Petugas yang dibatasi hanya melihat sub bidang yang ditugaskan, atau seluruh
+     * bidang bila ditugaskan per bidang (mis. Kelompok Jabatan Fungsional).
+     */
+    public static function bolehLihatSub(?User $user, string $bidang, ?string $sub): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return ! self::dibatasi($user) || $user->canEditModul($bidang, $sub);
+    }
+
+    private static function saring(?User $user, array $b): ?array
+    {
+        if (! self::bolehLihat($user, $b['slug'])) {
+            return null;
+        }
+
+        $b['sub_bidang'] = array_values(array_filter($b['sub_bidang'], fn ($s) => self::bolehLihatSub($user, $b['slug'], $s['slug'])));
+        $b['modul'] = self::bolehLihatSub($user, $b['slug'], null) ? $b['modul'] : [];
+
+        return empty($b['sub_bidang']) && empty($b['modul']) ? null : $b;
     }
 
     public static function bolehUbah(?User $user, string $bidang, ?string $sub = null): bool

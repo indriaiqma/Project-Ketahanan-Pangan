@@ -30,16 +30,22 @@ class BidangAccess
             abort(404);
         }
 
-        if ($mode === 'ubah') {
-            if ($sub === null && is_string($slugModul = $request->route('modul'))) {
-                $modul = Bidang::cariModul($bidang, $slugModul);
-                abort_unless($modul, 404);
-                $sub = $modul['sub'];
-            }
+        // Sub bidang: ditulis langsung di route (route lama) atau dari modul yang dibuka
+        $adaSub = $sub !== null;
+        if (! $adaSub && is_string($slugModul = $request->route('modul'))) {
+            $modul = Bidang::cariModul($bidang, $slugModul);
+            abort_unless($modul, 404);
+            $sub = $modul['sub'];
+            $adaSub = true;
+        }
 
-            if (! Bidang::bolehUbah($user, $bidang, $sub)) {
-                abort(403, 'Anda tidak ditugaskan untuk mengubah data di bidang ini.');
-            }
+        // Petugas hanya bisa membuka sub bidang yang ditugaskan; sisanya seperti tidak ada
+        if ($adaSub && ! Bidang::bolehLihatSub($user, $bidang, $sub)) {
+            abort(404);
+        }
+
+        if ($mode === 'ubah' && ! Bidang::bolehUbah($user, $bidang, $sub)) {
+            abort(403, 'Anda tidak ditugaskan untuk mengubah data di bidang ini.');
         }
 
         return $next($request);

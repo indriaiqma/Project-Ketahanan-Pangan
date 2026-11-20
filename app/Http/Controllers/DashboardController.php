@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\KawasanHutan;
 use App\Models\LahanKritis;
+use App\Support\Bidang;
+use App\Support\RingkasanModul;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -32,7 +34,36 @@ class DashboardController extends Controller
      */
     public function adminIndex()
     {
-        return view('admin.dashboard', $this->getDashboardData());
+        $user = auth()->user();
+        $dibatasi = Bidang::dibatasi($user);
+
+        return view('admin.dashboard', $this->getDashboardData() + [
+            // Petugas: dashboard berisi modul tugasnya sendiri
+            'dibatasi' => $dibatasi,
+            'tugas' => $dibatasi ? $this->modulTugas($user) : [],
+            // Ringkasan kehutanan hanya untuk yang boleh melihat Sub Bidang Sarpras II
+            'lihatKehutanan' => Bidang::bolehLihatSub($user, 'sarana-prasarana', 'sarpras-2'),
+        ]);
+    }
+
+    /**
+     * Modul yang ditugaskan ke petugas, dikelompokkan per sub bidang,
+     * lengkap dengan ringkasan angka dan tautan input data.
+     */
+    private function modulTugas($user): array
+    {
+        return Bidang::untuk($user)->flatMap(fn ($b) => collect(Bidang::kelompok($b))->map(fn ($k) => [
+            'bidang' => $b,
+            'sub' => $k['sub'],
+            'modul' => collect($k['modul'])->map(fn ($m) => $m + [
+                'ringkasan' => RingkasanModul::untuk($m),
+                'input' => match (true) {
+                    ! empty($m['route']) => route(str_replace('.index', '.create', $m['route'])),
+                    $m['aktif'] && ! empty($m['data']) => route('admin.modul.create', ['bidang' => $m['bidang'], 'modul' => $m['slug']]),
+                    default => null,
+                },
+            ])->all(),
+        ]))->values()->all();
     }
 
 

@@ -238,6 +238,7 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
     */
 
     Route::get('/kawasan-hutan', [KawasanHutanController::class, 'adminIndex'])
+        ->middleware('bidang:lihat,sarana-prasarana,sarpras-2')
         ->name('admin.kawasan-hutan.index');
 
     Route::get('/kawasan-hutan/tambah', [KawasanHutanController::class, 'create'])
@@ -253,6 +254,7 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
         ->name('admin.kawasan-hutan.import');
 
     Route::get('/kawasan-hutan/export', [KawasanHutanController::class, 'export'])
+        ->middleware('bidang:lihat,sarana-prasarana,sarpras-2')
         ->name('admin.kawasan-hutan.export');
 
     Route::get('/kawasan-hutan/{kawasanHutan}/edit', [KawasanHutanController::class, 'edit'])
@@ -278,6 +280,7 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
     */
 
     Route::get('/lahan-kritis', [LahanKritisController::class, 'adminIndex'])
+        ->middleware('bidang:lihat,sarana-prasarana,sarpras-2')
         ->name('admin.lahan-kritis.index');
 
     Route::get('/lahan-kritis/tambah', [LahanKritisController::class, 'create'])
@@ -293,6 +296,7 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
         ->name('admin.lahan-kritis.import');
 
     Route::get('/lahan-kritis/export', [LahanKritisController::class, 'export'])
+        ->middleware('bidang:lihat,sarana-prasarana,sarpras-2')
         ->name('admin.lahan-kritis.export');
 
     Route::get('/lahan-kritis/{lahanKriti}/edit', [LahanKritisController::class, 'edit'])

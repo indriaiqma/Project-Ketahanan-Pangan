@@ -25,11 +25,13 @@
 return [
 
     /*
-    | Perlakuan bidang di luar penugasan petugas:
-    |   'readonly' : tetap tampil, bisa dilihat, tidak bisa input/edit
-    |   'hidden'   : disembunyikan dari sidebar dan tidak bisa dibuka
+    | Perlakuan bidang & sub bidang di luar penugasan PETUGAS:
+    |   'hidden'   : petugas hanya melihat bidang/sub bidang yang ditugaskan;
+    |                sisanya tidak muncul di menu dan tidak bisa dibuka (404)
+    |   'readonly' : semua tampil, tetapi hanya sub bidang tugas yang bisa diubah
+    | Admin dan Viewer selalu melihat semua bidang.
     */
-    'akses_luar_penugasan' => 'readonly',
+    'akses_luar_penugasan' => 'hidden',
 
     'bidang' => [
 

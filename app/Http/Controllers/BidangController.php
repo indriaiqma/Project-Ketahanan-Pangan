@@ -18,7 +18,8 @@ class BidangController extends Controller
      */
     public function show(string $bidang)
     {
-        $b = Bidang::cari($bidang);
+        // Petugas hanya mendapat sub bidang yang ditugaskan (lihat Bidang::untuk)
+        $b = Bidang::cariUntuk(auth()->user(), $bidang);
         abort_unless($b, 404);
 
         $kelompok = collect(Bidang::kelompok($b))->map(function ($k) {
