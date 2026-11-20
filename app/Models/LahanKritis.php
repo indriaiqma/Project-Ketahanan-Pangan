@@ -35,7 +35,10 @@ class LahanKritis extends Model
     protected static function booted(): void
     {
         // Ringkasan dashboard di-cache; hapus cache setiap kali data berubah
-        $hapusCache = fn () => Cache::forget(DashboardController::CACHE_KEY);
+        $hapusCache = function () {
+            Cache::forget(DashboardController::CACHE_KEY);
+            Cache::forget(\App\Support\RingkasanBidang::CACHE_KEY);
+        };
 
         static::saved($hapusCache);
         static::deleted($hapusCache);

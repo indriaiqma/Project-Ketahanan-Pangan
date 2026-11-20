@@ -25,10 +25,8 @@ class DashboardController extends Controller
 
     public function index()
     {
-        return view('dashboard-viewer', $this->getDashboardData() + [
-            // Ringkasan seluruh bidang (hasil input Admin & Petugas)
-            'bidangPublik' => RingkasanBidang::semua(auth()->user()),
-        ]);
+        // Landing page: hasil input Admin & Petugas di seluruh bidang
+        return view('dashboard-viewer', RingkasanBidang::landing(auth()->user()));
     }
 
     /**

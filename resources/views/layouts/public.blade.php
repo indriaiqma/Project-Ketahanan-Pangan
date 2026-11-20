@@ -27,17 +27,7 @@
         <nav class="site-menu" aria-label="Menu utama">
             <a href="{{ route('dashboard') }}" @class(['active' => request()->routeIs('dashboard')])>Beranda</a>
 
-            <div @class(['dropdown', 'active' => request()->routeIs('kawasan-hutan.*', 'lahan-kritis.*')])>
-                <button type="button" data-dropdown-toggle aria-expanded="false">
-                    Kehutanan <i class="bi bi-chevron-down chev"></i>
-                </button>
-                <div class="dropdown-menu left">
-                    <a href="{{ route('kawasan-hutan.index') }}"><i class="bi bi-tree"></i> Kawasan Hutan</a>
-                    <a href="{{ route('lahan-kritis.index') }}"><i class="bi bi-exclamation-triangle"></i> Lahan Kritis</a>
-                </div>
-            </div>
-
-            <div @class(['dropdown', 'active' => request()->routeIs('data.*')])>
+            <div @class(['dropdown', 'active' => request()->routeIs('data.*', 'kawasan-hutan.*', 'lahan-kritis.*')])>
                 <button type="button" data-dropdown-toggle aria-expanded="false">
                     Data Bidang <i class="bi bi-chevron-down chev"></i>
                 </button>

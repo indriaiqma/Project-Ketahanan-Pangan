@@ -6,68 +6,183 @@ use App\Models\KawasanHutan;
 use App\Models\LahanKritis;
 use App\Models\ModulDataEntri;
 use App\Models\User;
+use App\Models\Wilayah;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 /**
- * Ringkasan jumlah data per bidang untuk halaman publik (landing page & Data Bidang).
- * Semua angka diambil dengan sedikit query rekap (database berada jauh).
+ * Ringkasan hasil input seluruh bidang untuk situs publik (landing page & Data Bidang).
+ *
+ * Data mentah dihitung sekali lalu disimpan di cache (CACHE_KEY) karena database
+ * berada jauh. Cache dihapus otomatis saat data modul berubah (lihat
+ * Concerns\ModulData, KawasanHutan, LahanKritis). Penyaringan per user
+ * (petugas hanya sub bidang tugasnya) dilakukan setelah cache.
  */
 class RingkasanBidang
 {
-    /**
-     * Jumlah data & waktu input terakhir per modul.
-     *
-     * @return array<string, array{jumlah: int, terakhir: ?Carbon}> kunci = slug modul
-     */
-    public static function statistikModul(): array
-    {
-        $hasil = [];
+    public const CACHE_KEY = 'publik.ringkasan';
 
-        // Modul data bersama (tabel modul_data): 1 query untuk semua modul
-        $perKunci = ModulDataEntri::query()
-            ->selectRaw('modul, COUNT(*) as jumlah, MAX(updated_at) as terakhir')
-            ->groupBy('modul')
-            ->get()
-            ->keyBy('modul');
+    /* ==================================================================
+     | Data mentah (di-cache)
+     * ================================================================== */
+
+    /**
+     * @return array{statistik: array, sorotan: array, pembaruan: array, wilayah: array}
+     */
+    public static function mentah(): array
+    {
+        return Cache::remember(self::CACHE_KEY, now()->addMinutes(5), fn () => self::hitung());
+    }
+
+    private static function hitung(): array
+    {
+        $wilayah = Wilayah::urut()->get();
+        $namaWilayah = $wilayah->pluck('nama', 'id');
+
+        // Semua baris modul data (tabel bersama) diambil sekali lalu dikelompokkan di PHP
+        $semuaJson = ModulDataEntri::query()
+            ->get(['id', 'modul', 'wilayah_id', 'tahun', 'periode', 'nilai', 'updated_at'])
+            ->groupBy('modul');
+
+        $statistik = [];
+        $sorotan = [];
+        $pembaruan = collect();
+        $perWilayah = [];
 
         foreach (Bidang::semuaModul() as $m) {
             if (! empty($m['route'])) {
                 continue;
             }
-            if (empty($m['data'])) {
-                $hasil[$m['slug']] = self::isi(0, null);
+            if (! $m['aktif'] || empty($m['data'])) {
+                $statistik[$m['slug']] = self::isi(0, null);
 
                 continue;
             }
 
             $def = ModulData::def($m['data']);
-            if ($def['penyimpanan'] === 'json') {
-                $r = $perKunci->get($def['kunci']);
-                $hasil[$m['slug']] = self::isi($r->jumlah ?? 0, $r->terakhir ?? null);
-            } else {
-                $r = ModulData::query($def)->selectRaw('COUNT(*) as jumlah, MAX(updated_at) as terakhir')->first();
-                $hasil[$m['slug']] = self::isi($r->jumlah ?? 0, $r->terakhir ?? null);
+            $baris = $def['penyimpanan'] === 'json'
+                ? ($semuaJson->get($def['kunci']) ?? collect())
+                : ModulData::query($def)->get();
+
+            $statistik[$m['slug']] = self::isi($baris->count(), $baris->max('updated_at'));
+            if ($baris->isEmpty()) {
+                continue;
+            }
+
+            if ($s = self::sorotanModul($m, $def, $baris)) {
+                $sorotan[] = $s;
+            }
+
+            // Pembaruan terbaru (3 per modul, nanti diurutkan & dipotong)
+            $kolom = ModulData::isDaftar($def) ? null : ModulData::kolomPeriode($def);
+            foreach ($baris->sortByDesc('updated_at')->take(3) as $r) {
+                $pembaruan->push([
+                    'modul' => $m['slug'],
+                    'bidang' => $m['bidang'],
+                    'nama' => $m['nama'],
+                    'icon' => $m['icon'] ?? 'grid',
+                    'bidang_nama' => $m['bidang_nama'],
+                    'keterangan' => $kolom
+                        ? ($namaWilayah[$r->wilayah_id] ?? 'Wilayah').' · '.ModulData::labelPeriode($def, (int) $r->tahun, (int) $r->{$kolom})
+                        : 'Entri baru: '.str((string) $r->{array_key_first($def['fields'])})->limit(48),
+                    'waktu' => Carbon::parse($r->updated_at),
+                ]);
+            }
+
+            // Jumlah data per kecamatan (modul rekap)
+            if ($kolom) {
+                foreach ($baris->countBy('wilayah_id') as $id => $jml) {
+                    $perWilayah[$id] = ($perWilayah[$id] ?? 0) + $jml;
+                }
             }
         }
 
         // Modul kehutanan (tabel sendiri)
         $k = KawasanHutan::selectRaw('COUNT(*) as jumlah, MAX(updated_at) as terakhir')->first();
         $l = LahanKritis::selectRaw('COUNT(*) as jumlah, MAX(updated_at) as terakhir')->first();
-        $hasil['kawasan-hutan'] = self::isi($k->jumlah ?? 0, $k->terakhir ?? null);
-        $hasil['lahan-kritis'] = self::isi($l->jumlah ?? 0, $l->terakhir ?? null);
+        $statistik['kawasan-hutan'] = self::isi($k->jumlah ?? 0, $k->terakhir ?? null);
+        $statistik['lahan-kritis'] = self::isi($l->jumlah ?? 0, $l->terakhir ?? null);
 
-        return $hasil;
+        return [
+            'statistik' => $statistik,
+            'sorotan' => collect($sorotan)->sortByDesc('waktu')->values()->all(),
+            'pembaruan' => $pembaruan->sortByDesc('waktu')->take(30)->values()->all(),
+            'wilayah' => $wilayah->map(fn ($w) => ['nama' => $w->nama, 'jumlah' => $perWilayah[$w->id] ?? 0])->all(),
+        ];
+    }
+
+    /** Satu indikator utama modul pada periode terakhir yang ada datanya. */
+    private static function sorotanModul(array $m, array $def, Collection $baris): ?array
+    {
+        $dasar = [
+            'modul' => $m['slug'],
+            'bidang' => $m['bidang'],
+            'nama' => $m['nama'],
+            'icon' => $m['icon'] ?? 'grid',
+            'sub_nama' => $m['sub_nama'] ?? $m['bidang_nama'],
+            'waktu' => Carbon::parse($baris->max('updated_at')),
+        ];
+
+        if (ModulData::isDaftar($def)) {
+            // Metrik kedua biasanya paling informatif (mis. "Aktif"), metrik pertama = total
+            $metrik = $def['metrik'][1] ?? $def['metrik'][0] ?? ['label' => 'Total Data', 'satuan' => 'data'];
+            $nilai = ModulData::metrikDaftar($metrik, $baris);
+
+            return $dasar + [
+                'label' => $metrik['label'],
+                'nilai' => angka($nilai ?? 0, fmod((float) $nilai, 1) ? 1 : 0),
+                'satuan' => $metrik['satuan'] ?? '',
+                'periode' => 'dari '.angka($baris->count(), 0).' data',
+                'status' => null,
+            ];
+        }
+
+        $kolom = ModulData::kolomPeriode($def);
+        $terakhir = $baris->sortByDesc(fn ($r) => $r->tahun * 100 + $r->{$kolom})->first();
+        $periode = $baris->where('tahun', $terakhir->tahun)->where($kolom, $terakhir->{$kolom});
+
+        $jumlah = [];
+        foreach (array_merge(array_keys($def['fields']), array_keys($def['total'])) as $k) {
+            $jumlah[$k] = $periode->sum(fn ($r) => (float) $r->{$k});
+        }
+
+        // Utamakan persentase bertarget, lalu field ringkasan, lalu metrik pertama
+        $kunci = collect($def['persentase'])->filter(fn ($p) => isset($p['target']) || isset($p['target_maks']))->keys()->first()
+            ?? $def['ringkasan'] ?? $def['metrik'][0] ?? array_key_first($def['fields']);
+        $info = ModulData::info($def, $kunci);
+        $nilai = ModulData::nilai($def, $jumlah, $kunci);
+        $p = $def['persentase'][$kunci] ?? null;
+
+        return $dasar + [
+            'label' => $info['label'],
+            'nilai' => ModulData::format($def, $kunci, $nilai),
+            'satuan' => $p ? '' : ($info['satuan'] ?? ''),
+            'periode' => ModulData::labelPeriode($def, (int) $terakhir->tahun, (int) $terakhir->{$kolom}).' · '.$periode->count().' kecamatan',
+            'status' => $p && (isset($p['target']) || isset($p['target_maks']))
+                ? ['baik' => ModulData::capaiTarget($p, $nilai), 'target' => ModulData::labelTarget($p)]
+                : null,
+        ];
+    }
+
+    /* ==================================================================
+     | Disaring per user
+     * ================================================================== */
+
+    /** Statistik per modul: [slug => ['jumlah' => int, 'terakhir' => ?Carbon]]. */
+    public static function statistikModul(): array
+    {
+        return self::mentah()['statistik'];
     }
 
     /**
-     * Ringkasan setiap bidang yang boleh dilihat user (atau semua bidang untuk tamu).
+     * Ringkasan setiap bidang yang boleh dilihat user (semua bidang untuk tamu).
      *
      * @return Collection<int, array>
      */
-    public static function semua(?User $user, ?array $statistik = null): Collection
+    public static function semua(?User $user): Collection
     {
-        $statistik ??= self::statistikModul();
+        $statistik = self::statistikModul();
         $daftar = $user ? Bidang::untuk($user) : Bidang::semua();
 
         return $daftar->map(function ($b) use ($statistik) {
@@ -85,6 +200,34 @@ class RingkasanBidang
                 'terakhir' => $modul->pluck('statistik.terakhir')->filter()->max(),
             ];
         })->values();
+    }
+
+    /** Data landing page: bidang, sorotan indikator, pembaruan terbaru, cakupan wilayah. */
+    public static function landing(?User $user): array
+    {
+        $mentah = self::mentah();
+        $bidang = self::semua($user);
+
+        // Hanya modul yang boleh dilihat user (petugas: sub bidang tugasnya)
+        $boleh = $bidang->flatMap(fn ($r) => $r['modul']->map(fn ($m) => $m['bidang'].'/'.$m['slug']))->flip();
+        $saring = fn ($daftar) => collect($daftar)
+            ->filter(fn ($s) => isset($boleh[$s['bidang'].'/'.$s['modul']]))
+            ->map(fn ($s) => $s + ['href' => route('data.modul', ['bidang' => $s['bidang'], 'modul' => $s['modul']])])
+            ->values();
+
+        return [
+            'bidang' => $bidang,
+            'sorotan' => $saring($mentah['sorotan'])->take(8),
+            'pembaruan' => $saring($mentah['pembaruan'])->take(6),
+            'wilayah' => collect($mentah['wilayah']),
+            'total' => [
+                'bidang' => $bidang->count(),
+                'modul' => $bidang->sum('jumlah_modul'),
+                'terisi' => $bidang->sum('modul_terisi'),
+                'data' => $bidang->sum('jumlah_data'),
+                'terakhir' => $bidang->pluck('terakhir')->filter()->max(),
+            ],
+        ];
     }
 
     /** Tautan halaman publik sebuah modul. */

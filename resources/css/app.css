@@ -1085,3 +1085,47 @@ a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
     .bp-meter { min-width: 0; width: 100%; }
     .modul-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* =========================================================
+   LANDING: sorotan indikator, pembaruan, cakupan wilayah
+   ========================================================= */
+.gc-bars.wide li { grid-template-columns: 150px minmax(0, 1fr) 40px; }
+.gc-bars.wide li > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.sorotan { display: flex; flex-direction: column; gap: 10px; padding: 20px; color: inherit; transition: border-color .15s, box-shadow .15s, transform .15s; }
+.sorotan:hover { border-color: #bfdccb; box-shadow: var(--shadow); transform: translateY(-2px); color: inherit; }
+.so-head { display: flex; align-items: center; gap: 12px; }
+.so-ico { width: 40px; height: 40px; flex: none; border-radius: 12px; display: grid; place-items: center; font-size: 18px; background: var(--brand-50); color: var(--brand-600); }
+.so-modul { min-width: 0; }
+.so-modul b { display: block; font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.so-modul small { display: block; font-size: 12px; color: var(--ink-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.so-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 22px; font-size: 12.5px; color: var(--ink-500); margin-top: 4px; }
+.so-label .badge { height: 22px; font-size: 11px; flex: none; }
+.so-nilai { font-size: 28px; font-weight: 800; letter-spacing: -.02em; color: var(--brand-900); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.so-nilai small { font-size: 13px; font-weight: 600; color: var(--ink-500); margin-left: 6px; letter-spacing: 0; }
+.so-kunci { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--ink-400); letter-spacing: 0; }
+.so-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line-soft); font-size: 12px; color: var(--ink-500); }
+.so-foot i { margin-right: 4px; }
+
+.timeline { list-style: none; margin: 0; padding: 6px 0; }
+.timeline li { display: flex; align-items: center; gap: 14px; padding: 12px 22px; position: relative; }
+.timeline li + li::before { content: ''; position: absolute; left: 39px; top: -12px; height: 24px; border-left: 2px dashed var(--line); }
+.tl-ico { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 15px; background: var(--brand-50); color: var(--brand-600); position: relative; z-index: 1; box-shadow: 0 0 0 4px #fff; }
+.tl-info { flex: 1; min-width: 0; color: inherit; }
+.tl-info:hover { color: var(--brand-700); }
+.tl-info b { display: block; font-size: 14px; font-weight: 600; }
+.tl-info small { display: block; font-size: 12.5px; color: var(--ink-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.timeline time { flex: none; font-size: 12px; color: var(--ink-400); }
+
+.wilayah-list { list-style: none; margin: 0; padding: 10px 22px 18px; display: grid; gap: 12px; }
+.wilayah-list li { display: grid; grid-template-columns: 170px minmax(0, 1fr) 44px; gap: 12px; align-items: center; font-size: 13.5px; }
+.wilayah-list b { text-align: right; font-variant-numeric: tabular-nums; }
+.wl-nama { display: flex; align-items: center; gap: 8px; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wl-nama .dot { width: 8px; height: 8px; flex: none; border-radius: 50%; background: var(--brand-500); box-shadow: 0 0 0 3px var(--brand-100); }
+.wilayah-list li.kosong { color: var(--ink-400); }
+.wilayah-list li.kosong .dot { background: var(--ink-400); box-shadow: 0 0 0 3px var(--line-soft); }
+
+@media (max-width: 860px) {
+    .wilayah-list li { grid-template-columns: 130px minmax(0, 1fr) 36px; }
+    .gc-bars.wide li { grid-template-columns: 110px minmax(0, 1fr) 36px; }
+}
