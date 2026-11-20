@@ -2,7 +2,7 @@
     Halaman list modul data generik (definisi di config/modul_data.php).
     Dipakai semua modul data; jangan menulis logika khusus satu modul di sini.
 --}}
-@extends('layouts.admin')
+@extends(($publik ?? false) ? 'layouts.public' : 'layouts.admin')
 
 @section('title', $modul['nama'])
 
@@ -10,6 +10,14 @@
     use App\Support\ModulData;
 
     $parameter = ['bidang' => $bidang['slug'], 'modul' => $modul['slug']];
+
+    // Tampilan publik (/data/...) memakai route publik & tanpa tombol ubah/hapus
+    $publik = $publik ?? false;
+    $rute = $publik
+        ? ['bidang' => 'data.bidang', 'modul' => 'data.modul', 'export' => 'data.export', 'lampiran' => 'data.lampiran']
+        : ['bidang' => 'admin.bidang.show', 'modul' => 'admin.bidang.modul', 'export' => 'admin.modul.export', 'lampiran' => 'admin.modul.lampiran'];
+    $bolehHapus = ! $publik && auth()->user()->isAdmin();
+    $adaAksi = $bisaUbah || $bolehHapus;
     $warnaGrafik = ['#18774d', '#2f80c2', '#f5a524', '#e5484d', '#7cb82f'];
     $syaratBaik = ModulData::syaratBaik($def);
 @endphp
@@ -18,7 +26,8 @@
 
 <x-page-header compact :title="$modul['nama']" :description="$def['deskripsi']">
     <x-slot:breadcrumb>
-        <a href="{{ route('admin.bidang.show', $bidang['slug']) }}">{{ $bidang['nama'] }}</a>
+        @if ($publik)<a href="{{ route('data.index') }}">Data Bidang</a><i class="bi bi-chevron-right"></i>@endif
+        <a href="{{ route($rute['bidang'], $bidang['slug']) }}">{{ $bidang['nama'] }}</a>
         @if ($modul['sub_nama'])
             <i class="bi bi-chevron-right"></i>
             <span>{{ $modul['sub_nama'] }}</span>
@@ -27,7 +36,7 @@
         <span aria-current="page">{{ $modul['nama'] }}</span>
     </x-slot:breadcrumb>
     <x-slot:actions>
-        <a href="{{ route('admin.modul.export', $parameter + ['tahun' => $tahun, 'periode' => $periode]) }}" class="btn btn-outline">
+        <a href="{{ route($rute['export'], $parameter + ['tahun' => $tahun, 'periode' => $periode]) }}" class="btn btn-outline">
             <i class="bi bi-download"></i> Export Excel
         </a>
         @if ($bisaUbah)
@@ -39,7 +48,7 @@
 </x-page-header>
 
 {{-- ===== Filter periode ===== --}}
-<form method="GET" action="{{ route('admin.bidang.modul', $parameter) }}" class="card toolbar periode-form" role="search" aria-label="Filter periode">
+<form method="GET" action="{{ route($rute['modul'], $parameter) }}" class="card toolbar periode-form" role="search" aria-label="Filter periode">
     <label class="sr-only" for="f-tahun">Tahun</label>
     <select id="f-tahun" name="tahun" class="select">
         @foreach ($daftarTahun as $t)
@@ -139,7 +148,7 @@
                             <th class="r">{{ ModulData::info($def, $k)['label'] }}</th>
                         @endforeach
                         <th>Status</th>
-                        <th class="r">Aksi</th>
+                        @if ($adaAksi)<th class="r">Aksi</th>@endif
                     </tr>
                 </thead>
                 <tbody>
@@ -153,7 +162,7 @@
                                     <span class="sub-info">
                                         {{ \Illuminate\Support\Str::limit($d->sumber_data ?: 'Sumber belum diisi', 34) }}
                                         @if ($d->lampiran)
-                                            · <a href="{{ route('admin.modul.lampiran', $parameter + ['lampiran' => $d->lampiran->id]) }}" title="Unduh {{ $d->lampiran->nama_file }}">
+                                            · <a href="{{ route($rute['lampiran'], $parameter + ['lampiran' => $d->lampiran->id]) }}" title="Unduh {{ $d->lampiran->nama_file }}">
                                                 <i class="bi bi-paperclip"></i> Lampiran
                                             </a>
                                         @endif
@@ -166,13 +175,14 @@
                             <td>
                                 <span @class(['status-pill', $r['status']])><span class="dot"></span>{{ ModulData::labelStatus($def, $r['status']) }}</span>
                             </td>
+                            @if ($adaAksi)
                             <td>
                                 <div class="actions">
                                     @if ($d)
                                         @if ($bisaUbah)
                                             <a href="{{ route('admin.modul.edit', $parameter + ['id' => $d->id]) }}" class="btn btn-outline btn-icon" title="Ubah" aria-label="Ubah data {{ $r['wilayah']->nama }}"><i class="bi bi-pencil"></i></a>
                                         @endif
-                                        @if (auth()->user()->isAdmin())
+                                        @if ($bolehHapus)
                                             <form action="{{ route('admin.modul.destroy', $parameter + ['id' => $d->id]) }}" method="POST"
                                                   data-confirm="Hapus data {{ $modul['nama'] }} {{ $r['wilayah']->nama }} ({{ $labelPeriode }})? Tindakan ini tidak dapat dibatalkan.">
                                                 @csrf
@@ -189,6 +199,7 @@
                                     @endif
                                 </div>
                             </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>
@@ -198,7 +209,7 @@
     <div class="card-foot">
         <i class="bi bi-info-circle"></i>
         Persentase dihitung otomatis dari angka yang diinput.
-        <a href="{{ route('admin.modul.export', $parameter + ['periode' => 'semua']) }}" style="margin-left:6px">Export semua periode</a>
+        <a href="{{ route($rute['export'], $parameter + ['periode' => 'semua']) }}" style="margin-left:6px">Export semua periode</a>
     </div>
 </section>
 

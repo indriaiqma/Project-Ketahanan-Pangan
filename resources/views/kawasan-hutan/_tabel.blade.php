@@ -18,8 +18,8 @@
                 <p>{{ $difilter ? 'Hasil filter: ' : '' }}{{ angka($kawasanHutans->count(), 0) }} data ditampilkan</p>
             </div>
         </div>
-        @if ($admin)
-            <a href="{{ route('admin.kawasan-hutan.export') }}" class="btn btn-outline btn-sm"><i class="bi bi-download"></i> Export Excel</a>
+        @if ($admin || auth()->check())
+            <a href="{{ route($admin ? 'admin.kawasan-hutan.export' : 'kawasan-hutan.export') }}" class="btn btn-outline btn-sm"><i class="bi bi-download"></i> Export Excel</a>
         @endif
     </div>
 

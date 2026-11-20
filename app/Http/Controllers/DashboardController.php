@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KawasanHutan;
 use App\Models\LahanKritis;
 use App\Support\Bidang;
+use App\Support\RingkasanBidang;
 use App\Support\RingkasanModul;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -24,7 +25,10 @@ class DashboardController extends Controller
 
     public function index()
     {
-        return view('dashboard-viewer', $this->getDashboardData());
+        return view('dashboard-viewer', $this->getDashboardData() + [
+            // Ringkasan seluruh bidang (hasil input Admin & Petugas)
+            'bidangPublik' => RingkasanBidang::semua(auth()->user()),
+        ]);
     }
 
     /**

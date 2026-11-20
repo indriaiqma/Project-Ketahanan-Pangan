@@ -31,7 +31,9 @@ class ModulDataController extends Controller
     public function index(Request $request, string $bidang, string $modul)
     {
         [$b, $m, $def] = $this->resolve($bidang, $modul);
-        $bisaUbah = Bidang::bolehUbah($request->user(), $b['slug'], $m['sub']);
+        // Halaman publik (/data/...) selalu hanya-baca
+        $publik = $request->routeIs('data.*');
+        $bisaUbah = ! $publik && Bidang::bolehUbah($request->user(), $b['slug'], $m['sub']);
 
         return ModulData::isDaftar($def)
             ? $this->indexDaftar($request, $b, $m, $def, $bisaUbah)
@@ -102,6 +104,7 @@ class ModulDataController extends Controller
                 'ada' => $data->isNotEmpty() && ! empty($def['grafik']),
             ],
             'bisaUbah' => $bisaUbah,
+            'publik' => $request->routeIs('data.*'),
         ]);
     }
 
@@ -143,6 +146,7 @@ class ModulDataController extends Controller
             'metrik' => collect($def['metrik'])->map(fn ($mt) => $mt + ['hasil' => ModulData::metrikDaftar($mt, $semua)])->all(),
             'grafik' => $grafik,
             'bisaUbah' => $bisaUbah,
+            'publik' => $request->routeIs('data.*'),
         ]);
     }
 

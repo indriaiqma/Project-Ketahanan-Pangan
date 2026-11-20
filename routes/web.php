@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangController;
+use App\Http\Controllers\DataBidangController;
 use App\Http\Controllers\ModulDataController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KawasanHutanController;
@@ -57,6 +58,10 @@ Route::get('/', [DashboardController::class, 'index'])
 Route::get('/kawasan-hutan', [KawasanHutanController::class, 'index'])
     ->name('kawasan-hutan.index');
 
+Route::get('/kawasan-hutan/export', [KawasanHutanController::class, 'export'])
+    ->middleware('auth')
+    ->name('kawasan-hutan.export');
+
 Route::get('/kawasan-hutan/{kawasanHutan}', [KawasanHutanController::class, 'show'])
     ->whereNumber('kawasanHutan')
     ->name('kawasan-hutan.show');
@@ -71,6 +76,10 @@ Route::get('/kawasan-hutan/{kawasanHutan}', [KawasanHutanController::class, 'sho
 Route::get('/lahan-kritis', [LahanKritisController::class, 'index'])
     ->name('lahan-kritis.index');
 
+Route::get('/lahan-kritis/export', [LahanKritisController::class, 'export'])
+    ->middleware('auth')
+    ->name('lahan-kritis.export');
+
 Route::get('/lahan-kritis/{lahanKriti}', [LahanKritisController::class, 'show'])
     ->whereNumber('lahanKriti')
     ->name('lahan-kritis.show');
@@ -82,9 +91,8 @@ Route::get('/lahan-kritis/{lahanKriti}', [LahanKritisController::class, 'show'])
 |--------------------------------------------------------------------------
 */
 
-Route::get('/lingkungan-hidup', function () {
-    return view('lingkungan-hidup.index');
-})->name('lingkungan-hidup');
+Route::permanentRedirect('/lingkungan-hidup', '/data/sarana-prasarana/lingkungan-hidup')
+    ->name('lingkungan-hidup');
 
 
 /*
@@ -93,9 +101,59 @@ Route::get('/lingkungan-hidup', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/sdm', function () {
-    return view('sdm.index');
-})->name('sdm');
+Route::permanentRedirect('/sdm', '/data/kemasyarakatan')
+    ->name('sdm');
+
+
+/*
+|--------------------------------------------------------------------------
+| DATA BIDANG (situs publik, hanya-baca, wajib login)
+|--------------------------------------------------------------------------
+| Halaman utama role Viewer: melihat hasil input Admin & Petugas di seluruh
+| bidang dengan tampilan landing page. Petugas tetap dibatasi penugasannya
+| (bidang:lihat), Admin & Viewer melihat semua bidang.
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->prefix('data')->group(function () {
+    Route::get('/', [DataBidangController::class, 'index'])
+        ->name('data.index');
+
+    Route::middleware('bidang:lihat')->group(function () {
+        Route::get('/{bidang}', [DataBidangController::class, 'bidang'])
+            ->name('data.bidang');
+
+        Route::get('/{bidang}/{modul}', [DataBidangController::class, 'modul'])
+            ->name('data.modul');
+
+        Route::get('/{bidang}/{modul}/export', [ModulDataController::class, 'export'])
+            ->name('data.export');
+
+        Route::get('/{bidang}/{modul}/lampiran/{lampiran}', [ModulDataController::class, 'lampiran'])
+            ->whereNumber('lampiran')
+            ->name('data.lampiran');
+    });
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| PROFIL (semua role)
+|--------------------------------------------------------------------------
+| Viewer memakai layout landing page, Admin & Petugas layout panel.
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->prefix('admin')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])
+        ->name('admin.profile');
+
+    Route::put('/profile', [ProfileController::class, 'update'])
+        ->name('admin.profile.update');
+
+    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])
+        ->name('admin.profile.password');
+});
 
 
 
@@ -103,14 +161,14 @@ Route::get('/sdm', function () {
 |--------------------------------------------------------------------------
 | ADMIN
 |--------------------------------------------------------------------------
-| Semua URL /admin/... membutuhkan login (Admin, Petugas, atau Viewer).
-| - Viewer      : hanya melihat & export
+| Semua URL /admin/... membutuhkan login Admin atau Petugas.
+| - Viewer      : tidak memakai panel; melihat data di /data (landing page)
 | - Petugas     : + tambah, ubah, import   (role:admin,petugas)
 | - Admin       : + hapus & kelola pengguna (role:admin)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
@@ -183,20 +241,6 @@ Route::middleware(['auth', 'role:admin,petugas,viewer'])->prefix('admin')->group
         ->name('admin.modul.destroy');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | PROFILE
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/profile', [ProfileController::class, 'index'])
-        ->name('admin.profile');
-
-    Route::put('/profile', [ProfileController::class, 'update'])
-        ->name('admin.profile.update');
-
-    Route::put('/profile/password', [ProfileController::class, 'updatePassword'])
-        ->name('admin.profile.password');
 
 
     /*

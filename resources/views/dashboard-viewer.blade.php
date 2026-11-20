@@ -8,6 +8,10 @@
     // Kecamatan wilayah Malang Selatan (sama dengan daftar di import lahan kritis)
     $wilayah = ['Ampelgading', 'Bantur', 'Dampit', 'Donomulyo', 'Gedangan', 'Kalipare', 'Pagak', 'Sumbermanjing Wetan', 'Tirtoyudo'];
     $kecamatanTerdata = array_unique(array_merge(array_keys($lahanPerKecamatan), array_keys($kawasanPerKecamatan)));
+
+    $user = auth()->user();
+    $jumlahModul = $bidangPublik->sum('jumlah_modul');
+    $jumlahDataBidang = $bidangPublik->sum('jumlah_data');
 @endphp
 
 {{-- ===================== HERO ===================== --}}
@@ -30,17 +34,22 @@
             </span>
 
             <h1>Ketahanan Pangan <span class="grad-text">Malang Selatan</span> dalam satu dashboard</h1>
-            <p>Pantau kawasan hutan dan kondisi lahan kritis di {{ count($wilayah) }} kecamatan Malang Selatan. Data resmi Bakorwil III Malang, Provinsi Jawa Timur.</p>
+            <p>Pantau data {{ $bidangPublik->count() }} bidang, mulai dari pemerintahan, ekonomi, kemasyarakatan, hingga kehutanan di {{ count($wilayah) }} kecamatan Malang Selatan. Data resmi Bakorwil III Malang, Provinsi Jawa Timur.</p>
 
             <div class="hero-actions">
-                <a href="#ringkasan" class="btn btn-light btn-lg"><i class="bi bi-bar-chart-line"></i> Lihat Ringkasan</a>
-                <a href="{{ route('lahan-kritis.index') }}" class="btn btn-glass btn-lg">Data Lahan Kritis <i class="bi bi-arrow-right"></i></a>
+                @auth
+                    <a href="{{ route('data.index') }}" class="btn btn-light btn-lg"><i class="bi bi-grid-1x2"></i> Lihat Data Bidang</a>
+                    <a href="#ringkasan" class="btn btn-glass btn-lg">Ringkasan Kehutanan <i class="bi bi-arrow-down"></i></a>
+                @else
+                    <a href="#ringkasan" class="btn btn-light btn-lg"><i class="bi bi-bar-chart-line"></i> Lihat Ringkasan</a>
+                    <a href="#data-bidang" class="btn btn-glass btn-lg">Data Bidang <i class="bi bi-arrow-right"></i></a>
+                @endauth
             </div>
 
             <div class="hero-trust">
                 <div><b data-count-to="{{ $totalKawasan }}">{{ angka($totalKawasan, 0) }}</b><span>kawasan hutan</span></div>
                 <div><b data-count-to="{{ count($wilayah) }}">{{ count($wilayah) }}</b><span>kecamatan</span></div>
-                <div><b>2</b><span>modul aktif</span></div>
+                <div><b data-count-to="{{ $jumlahModul }}">{{ $jumlahModul }}</b><span>modul data</span></div>
             </div>
         </div>
 
@@ -108,27 +117,34 @@
     @include('partials.chart-komposisi', ['ringkasan' => $ringkasan])
 </section>
 
-<div class="section-title">
+<div class="section-title" id="data-bidang">
     <div>
-        <span class="kicker">Modul Data</span>
-        <h2>Jelajahi data sesuai kebutuhan</h2>
-        <p>Setiap modul menyajikan tabel, grafik, dan detail per lokasi.</p>
+        <span class="kicker">Data Bidang</span>
+        <h2>Hasil pendataan {{ $bidangPublik->count() }} bidang</h2>
+        <p>{{ angka($jumlahDataBidang, 0) }} data dari {{ $jumlahModul }} modul, diinput langsung oleh Admin dan Petugas setiap bidang.</p>
     </div>
+    @auth
+        <a href="{{ route('data.index') }}" class="btn btn-outline btn-sm">Semua bidang <i class="bi bi-arrow-right"></i></a>
+    @else
+        <span class="lock-note"><i class="bi bi-lock"></i> Masuk untuk melihat data lengkap</span>
+    @endauth
 </div>
 
-<section class="grid grid-4">
-    @foreach ([
-        ['kawasan-hutan.index', 'tree-fill', 'Kawasan Hutan', 'Lokasi, nama dan jenis kawasan, serta luas area.', true],
-        ['lahan-kritis.index', 'exclamation-triangle-fill', 'Lahan Kritis', 'Kondisi lahan per kecamatan berdasarkan tingkat kekritisan.', true],
-        ['lingkungan-hidup', 'globe-asia-australia', 'Lingkungan Hidup', 'Data lingkungan hidup wilayah Malang Selatan.', false],
-        ['sdm', 'people-fill', 'Sumber Daya Manusia', 'Data SDM pendukung ketahanan pangan.', false],
-    ] as [$rute, $ikon, $judul, $teks, $aktif])
-        <a href="{{ route($rute) }}" class="card tile">
-            <span class="ico"><i class="bi bi-{{ $ikon }}"></i></span>
-            <span>
-                <h3>{{ $judul }} @unless ($aktif)<span class="badge amber" style="height:20px;margin-left:4px">Segera</span>@endunless</h3>
-                <p>{{ $teks }}</p>
-                <span class="more">{{ $aktif ? 'Lihat data' : 'Lihat modul' }} <i class="bi bi-arrow-right"></i></span>
+<section class="grid grid-3">
+    @foreach ($bidangPublik as $r)
+        @php($pct = $r['jumlah_modul'] ? round($r['modul_terisi'] / $r['jumlah_modul'] * 100) : 0)
+        <a href="{{ route('data.bidang', $r['bidang']['slug']) }}" class="card tile bidang-tile">
+            <span class="ico"><i class="bi bi-{{ $r['bidang']['icon'] }}"></i></span>
+            <span style="flex:1;min-width:0">
+                <h3>{{ $r['bidang']['nama'] }}</h3>
+                <p>{{ $r['bidang']['tagline'] }}</p>
+                <span class="stats">
+                    <span><b>{{ $r['jumlah_modul'] }}</b> modul</span>
+                    <span><b>{{ angka($r['jumlah_data'], 0) }}</b> data</span>
+                    <span><b>{{ $r['modul_terisi'] }}</b> terisi</span>
+                </span>
+                <span class="meter" title="{{ $pct }}% modul berisi data"><i style="--w: {{ $pct }}%"></i></span>
+                <span class="more">@auth Lihat data @else Masuk untuk melihat @endauth <i class="bi bi-arrow-right"></i></span>
             </span>
         </a>
     @endforeach
@@ -160,15 +176,25 @@
 
 <section class="cta-band">
     <div class="cta-bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span></div>
-    <div class="cta-copy">
-        <h2>Petugas Bakorwil III Malang?</h2>
-        <p>Masuk ke panel pengelola untuk menambah, memperbarui, serta mengimpor dan mengekspor data.</p>
-    </div>
-    @auth
+    @if ($user && ! $user->isStaff())
+        <div class="cta-copy">
+            <h2>Halo, {{ $user->name }}</h2>
+            <p>Akun Anda dapat melihat dan mengunduh seluruh data bidang yang diinput oleh Admin dan Petugas.</p>
+        </div>
+        <a href="{{ route('data.index') }}" class="btn btn-light btn-lg"><i class="bi bi-grid-1x2"></i> Buka Data Bidang</a>
+    @elseif ($user)
+        <div class="cta-copy">
+            <h2>Kelola data bidang Anda</h2>
+            <p>Buka panel pengelola untuk menambah, memperbarui, serta mengimpor dan mengekspor data.</p>
+        </div>
         <a href="{{ route('admin.dashboard') }}" class="btn btn-light btn-lg"><i class="bi bi-speedometer2"></i> Buka Panel Pengelola</a>
     @else
-        <a href="{{ route('login') }}" class="btn btn-light btn-lg"><i class="bi bi-box-arrow-in-right"></i> Masuk Pengelola</a>
-    @endauth
+        <div class="cta-copy">
+            <h2>Akses data lengkap seluruh bidang</h2>
+            <p>Viewer dapat melihat hasil pendataan semua bidang. Admin dan Petugas mengelola data melalui panel pengelola.</p>
+        </div>
+        <a href="{{ route('login') }}" class="btn btn-light btn-lg"><i class="bi bi-box-arrow-in-right"></i> Masuk</a>
+    @endif
 </section>
 
 @endsection

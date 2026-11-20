@@ -1018,3 +1018,70 @@ a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
     .reveal { opacity: 1; transform: none; }
     .gc-bars .bar i { width: var(--w); }
 }
+
+/* =========================================================
+   DATA BIDANG (situs publik, hanya-baca)
+   ========================================================= */
+.mode-chip {
+    display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px;
+    border-radius: 999px; background: var(--sky-50); color: #22679d; font-size: 13px; font-weight: 600;
+}
+.bidang-panel { overflow: hidden; }
+.bidang-panel-head {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    padding: 20px 22px; border-bottom: 1px solid var(--line-soft);
+    background: linear-gradient(180deg, #fbfdfc, #fff);
+}
+.ico-box { width: 48px; height: 48px; flex: none; border-radius: 14px; display: grid; place-items: center; font-size: 22px; background: var(--brand-100); color: var(--brand-700); }
+.bp-title { flex: 1; min-width: 200px; }
+.bp-title h2 { font-size: 17px; font-weight: 700; color: var(--brand-900); }
+.bp-title p { color: var(--ink-500); font-size: 13px; margin-top: 2px; }
+.bp-meter { display: grid; gap: 6px; min-width: 190px; font-size: 12.5px; color: var(--ink-500); }
+.bp-meter b { color: var(--ink-900); font-size: 14px; }
+.meter { display: block; height: 6px; border-radius: 6px; background: var(--line-soft); overflow: hidden; }
+.meter i { display: block; height: 100%; width: var(--w); border-radius: inherit; background: linear-gradient(90deg, var(--brand-500), #7cb82f); transition: width .8s ease; }
+
+.modul-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; padding: 16px 18px 20px; }
+.modul-chip {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    border: 1px solid var(--line-soft); border-radius: 12px; color: inherit; background: #fff;
+    transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.modul-chip:hover { border-color: #bfdccb; box-shadow: var(--shadow-sm); transform: translateY(-1px); color: inherit; }
+.modul-chip .mc-ico { width: 36px; height: 36px; flex: none; border-radius: 10px; display: grid; place-items: center; font-size: 16px; background: var(--brand-50); color: var(--brand-600); }
+.modul-chip .mc-info { flex: 1; min-width: 0; }
+.modul-chip .mc-info b { display: block; font-size: 13.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.modul-chip .mc-info small { display: block; font-size: 12px; color: var(--brand-700); margin-top: 1px; }
+.modul-chip .mc-go { color: var(--ink-400); font-size: 12px; }
+.modul-chip.kosong .mc-ico { background: var(--line-soft); color: var(--ink-400); }
+.modul-chip.kosong .mc-info small { color: var(--ink-400); }
+
+.bidang-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; }
+.bidang-tabs a {
+    display: inline-flex; align-items: center; gap: 8px; flex: none; height: 38px; padding: 0 16px;
+    border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink-700);
+    font-size: 13.5px; font-weight: 550; transition: background .15s, border-color .15s, color .15s;
+}
+.bidang-tabs a:hover { border-color: #bfdccb; color: var(--brand-700); }
+.bidang-tabs a.active { background: var(--brand-600); border-color: var(--brand-600); color: #fff; }
+
+/* Menu akun Viewer & catatan di navbar publik */
+.avatar.sm { width: 28px; height: 28px; font-size: 12px; }
+.site-menu > .nav-user { margin-left: 10px; }
+.site-menu > .nav-user > button { padding: 0 10px 0 5px; border: 1px solid var(--line); }
+.nav-user .dropdown-menu { min-width: 220px; }
+.nav-user .dropdown-menu form { margin: 0; }
+.nav-user .dropdown-menu button { width: 100%; text-align: left; background: none; border: 0; cursor: pointer; font: inherit; }
+.nav-note { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 12.5px; color: var(--ink-500); }
+
+/* Kartu bidang di landing page */
+.bidang-tile .stats { display: flex; gap: 14px; margin-top: 10px; font-size: 12.5px; color: var(--ink-500); }
+.bidang-tile .stats b { color: var(--ink-900); }
+.bidang-tile .meter { margin-top: 10px; }
+.lock-note { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-500); }
+
+@media (max-width: 860px) {
+    .site-menu > .nav-user { margin-left: 0; }
+    .bp-meter { min-width: 0; width: 100%; }
+    .modul-grid { grid-template-columns: minmax(0, 1fr); }
+}

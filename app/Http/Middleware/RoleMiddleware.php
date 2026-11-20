@@ -18,6 +18,12 @@ class RoleMiddleware
         }
 
         if (! in_array(auth()->user()->role, $roles, true)) {
+            // Viewer tidak memakai panel pengelola: arahkan ke halaman Data Bidang
+            if (auth()->user()->isViewer() && $request->isMethod('GET') && $request->is('admin', 'admin/*')) {
+                return redirect()->route('data.index');
+            }
+
+
             abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk halaman ini.');
         }
 

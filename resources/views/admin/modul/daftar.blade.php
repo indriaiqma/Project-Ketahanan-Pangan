@@ -2,7 +2,7 @@
     Halaman list modul data jenis "daftar" (definisi di config/modul_data.php).
     Dipakai semua modul daftar; jangan menulis logika khusus satu modul di sini.
 --}}
-@extends('layouts.admin')
+@extends(($publik ?? false) ? 'layouts.public' : 'layouts.admin')
 
 @section('title', $modul['nama'])
 
@@ -10,6 +10,14 @@
     use App\Support\ModulData;
 
     $parameter = ['bidang' => $bidang['slug'], 'modul' => $modul['slug']];
+
+    // Tampilan publik (/data/...) memakai route publik & tanpa tombol ubah/hapus
+    $publik = $publik ?? false;
+    $rute = $publik
+        ? ['bidang' => 'data.bidang', 'modul' => 'data.modul', 'export' => 'data.export', 'lampiran' => 'data.lampiran']
+        : ['bidang' => 'admin.bidang.show', 'modul' => 'admin.bidang.modul', 'export' => 'admin.modul.export', 'lampiran' => 'admin.modul.lampiran'];
+    $bolehHapus = ! $publik && auth()->user()->isAdmin();
+    $adaAksi = $bisaUbah || $bolehHapus;
     $fFilter = $def['filter'] ? $def['fields'][$def['filter']] : null;
     $difilter = request()->filled('cari') || request()->filled('filter');
 @endphp
@@ -18,7 +26,8 @@
 
 <x-page-header compact :title="$modul['nama']" :description="$def['deskripsi']">
     <x-slot:breadcrumb>
-        <a href="{{ route('admin.bidang.show', $bidang['slug']) }}">{{ $bidang['nama'] }}</a>
+        @if ($publik)<a href="{{ route('data.index') }}">Data Bidang</a><i class="bi bi-chevron-right"></i>@endif
+        <a href="{{ route($rute['bidang'], $bidang['slug']) }}">{{ $bidang['nama'] }}</a>
         @if ($modul['sub_nama'])
             <i class="bi bi-chevron-right"></i>
             <span>{{ $modul['sub_nama'] }}</span>
@@ -27,7 +36,7 @@
         <span aria-current="page">{{ $modul['nama'] }}</span>
     </x-slot:breadcrumb>
     <x-slot:actions>
-        <a href="{{ route('admin.modul.export', $parameter) }}" class="btn btn-outline"><i class="bi bi-download"></i> Export Excel</a>
+        <a href="{{ route($rute['export'], $parameter) }}" class="btn btn-outline"><i class="bi bi-download"></i> Export Excel</a>
         @if ($bisaUbah)
             <a href="{{ route('admin.modul.create', $parameter) }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Tambah Data</a>
         @endif
@@ -72,7 +81,7 @@
         </div>
     </div>
 
-    <form method="GET" action="{{ route('admin.bidang.modul', $parameter) }}" class="toolbar" role="search">
+    <form method="GET" action="{{ route($rute['modul'], $parameter) }}" class="toolbar" role="search">
         @if (count($def['cari']))
             <div class="input-group grow">
                 <i class="bi bi-search lead"></i>
@@ -89,7 +98,7 @@
         @endif
         <button type="submit" class="btn btn-primary"><i class="bi bi-funnel"></i> Terapkan</button>
         @if ($difilter)
-            <a href="{{ route('admin.bidang.modul', $parameter) }}" class="btn btn-ghost"><i class="bi bi-x-lg"></i> Reset</a>
+            <a href="{{ route($rute['modul'], $parameter) }}" class="btn btn-ghost"><i class="bi bi-x-lg"></i> Reset</a>
         @endif
     </form>
 
@@ -118,7 +127,7 @@
                             @php($tipe = $def['fields'][$k]['tipe'] ?? 'teks')
                             <th @class(['r' => in_array($tipe, ['angka', 'desimal', 'persen', 'tahun'])])>{{ $def['fields'][$k]['label'] }}</th>
                         @endforeach
-                        <th class="r">Aksi</th>
+                        @if ($adaAksi)<th class="r">Aksi</th>@endif
                     </tr>
                 </thead>
                 <tbody>
@@ -138,18 +147,19 @@
                                         {{ ModulData::tampilDaftar($def, $e, $k, $wilayah) }}
                                     @endif
                                     @if ($loop->first && $e->lampiran)
-                                        <a href="{{ route('admin.modul.lampiran', $parameter + ['lampiran' => $e->lampiran->id]) }}" class="sub-info" title="Unduh {{ $e->lampiran->nama_file }}">
+                                        <a href="{{ route($rute['lampiran'], $parameter + ['lampiran' => $e->lampiran->id]) }}" class="sub-info" title="Unduh {{ $e->lampiran->nama_file }}">
                                             <i class="bi bi-paperclip"></i> Lampiran
                                         </a>
                                     @endif
                                 </td>
                             @endforeach
+                            @if ($adaAksi)
                             <td>
                                 <div class="actions">
                                     @if ($bisaUbah)
                                         <a href="{{ route('admin.modul.edit', $parameter + ['id' => $e->id]) }}" class="btn btn-outline btn-icon" title="Ubah" aria-label="Ubah data"><i class="bi bi-pencil"></i></a>
                                     @endif
-                                    @if (auth()->user()->isAdmin())
+                                    @if ($bolehHapus)
                                         <form action="{{ route('admin.modul.destroy', $parameter + ['id' => $e->id]) }}" method="POST"
                                               data-confirm="Hapus data ini dari {{ $modul['nama'] }}? Tindakan ini tidak dapat dibatalkan.">
                                             @csrf
@@ -157,11 +167,12 @@
                                             <button type="submit" class="btn btn-outline btn-icon danger" title="Hapus" aria-label="Hapus data"><i class="bi bi-trash"></i></button>
                                         </form>
                                     @endif
-                                    @if (! $bisaUbah && ! auth()->user()->isAdmin())
+                                    @if (! $bisaUbah && ! $bolehHapus)
                                         <span class="muted" style="font-size:12.5px">–</span>
                                     @endif
                                 </div>
                             </td>
+                            @endif
                         </tr>
                     @endforeach
                 </tbody>

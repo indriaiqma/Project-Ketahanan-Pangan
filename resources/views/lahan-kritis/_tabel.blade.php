@@ -19,8 +19,8 @@
                 <p>{{ $difilter ? 'Hasil filter: ' : '' }}{{ angka($lahanKritis->count(), 0) }} data ditampilkan · luas dalam hektare</p>
             </div>
         </div>
-        @if ($admin)
-            <a href="{{ route('admin.lahan-kritis.export') }}" class="btn btn-outline btn-sm"><i class="bi bi-download"></i> Export Excel</a>
+        @if ($admin || auth()->check())
+            <a href="{{ route($admin ? 'admin.lahan-kritis.export' : 'lahan-kritis.export') }}" class="btn btn-outline btn-sm"><i class="bi bi-download"></i> Export Excel</a>
         @endif
     </div>
 

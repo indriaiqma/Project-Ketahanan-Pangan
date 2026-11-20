@@ -71,10 +71,19 @@ class User extends Authenticatable
         return $this->role === 'viewer';
     }
 
-    /** Semua role terdaftar boleh masuk ke panel pengelolaan. */
+    /**
+     * Role yang memakai panel pengelola (/admin): Admin & Petugas.
+     * Viewer hanya melihat data melalui halaman publik (landing page).
+     */
     public function isStaff(): bool
     {
-        return array_key_exists($this->role, self::ROLES);
+        return in_array($this->role, ['admin', 'petugas'], true);
+    }
+
+    /** Halaman tujuan setelah login sesuai role. */
+    public function beranda(): string
+    {
+        return $this->isStaff() ? route('admin.dashboard') : route('dashboard');
     }
 
     /**
