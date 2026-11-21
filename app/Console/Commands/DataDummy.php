@@ -43,7 +43,7 @@ class DataDummy extends Command
 
         if (! $this->option('hapus')) {
             mt_srand(2026);
-            $jumlah = DB::transaction(fn () => $this->isi());
+            $jumlah = $this->isi();
             $this->info("Data contoh ditambahkan: $jumlah baris.");
         }
 
@@ -107,7 +107,7 @@ class DataDummy extends Command
             $dasar[$w->id] = $this->nilaiRekap($def);
         }
 
-        $n = 0;
+        $semuaBaris = [];
         foreach ($periodeList as $i => [$tahun, $periode]) {
             $terakhir = $i === count($periodeList) - 1;
             foreach ($wilayah as $j => $w) {
@@ -137,14 +137,28 @@ class DataDummy extends Command
                 ];
                 $baris['updated_at'] = $baris['created_at'];
 
-                $def['penyimpanan'] === 'json'
-                    ? ModulDataEntri::insert($baris + ['modul' => $def['kunci'], 'nilai' => json_encode($nilai)])
-                    : $def['model']::insert($baris + $nilai);
-                $n++;
+                $semuaBaris[] = $def['penyimpanan'] === 'json'
+                    ? $baris + ['modul' => $def['kunci'], 'nilai' => json_encode($nilai)]
+                    : $baris + $nilai;
             }
         }
 
-        return $n;
+        return $this->simpan($def['model'], $semuaBaris);
+    }
+
+    /** Insert massal (per 200 baris) agar cepat walau database berada jauh. */
+    private function simpan(string $model, array $baris): int
+    {
+        // Semua baris satu model harus punya kolom yang sama untuk insert massal
+        $kolom = collect($baris)->flatMap(fn ($b) => array_keys($b))->unique()->all();
+        $baris = array_map(fn ($b) => array_merge(array_fill_keys($kolom, null), $b), $baris);
+
+        foreach (array_chunk($baris, 200) as $potongan) {
+            $model::insert($potongan);
+        }
+        $this->line('  '.class_basename($model).': '.count($baris).' baris');
+
+        return count($baris);
     }
 
     /** Nilai acak wajar per field berdasarkan satuan & hubungan antar field. */
@@ -268,7 +282,7 @@ class DataDummy extends Command
 
     private function isiDaftar(array $def, $wilayah, ?int $admin): int
     {
-        $n = 0;
+        $semuaBaris = [];
         $jumlah = mt_rand(6, 10);
         for ($i = 1; $i <= $jumlah; $i++) {
             $nilai = [];
@@ -277,18 +291,17 @@ class DataDummy extends Command
             }
 
             $waktu = now()->subDays(mt_rand(0, 60))->subMinutes(mt_rand(0, 900));
-            ModulDataEntri::insert([
+            $semuaBaris[] = [
                 'modul' => $def['kunci'],
                 'nilai' => json_encode($nilai),
                 'sumber_data' => self::PENANDA,
                 'created_by' => $admin,
                 'created_at' => $waktu,
                 'updated_at' => $waktu,
-            ]);
-            $n++;
+            ];
         }
 
-        return $n;
+        return $this->simpan(ModulDataEntri::class, $semuaBaris);
     }
 
     private function nilaiDaftar(array $def, string $k, array $f, int $i, $wilayah, array $sebelumnya): mixed
