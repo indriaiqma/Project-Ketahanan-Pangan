@@ -1,4 +1,4 @@
-@extends(auth()->user()->isStaff() ? 'layouts.admin' : 'layouts.public')
+@extends('layouts.admin')
 
 @section('title', 'Profil Saya')
 

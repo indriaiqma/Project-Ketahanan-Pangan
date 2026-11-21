@@ -14,7 +14,7 @@
         <span aria-current="page">{{ $bidang['nama'] }}</span>
     </x-slot:breadcrumb>
     <x-slot:actions>
-        <span class="mode-chip"><i class="bi bi-eye"></i> Mode lihat saja</span>
+        <span class="mode-chip"><i class="bi bi-globe2"></i> Terbuka untuk publik</span>
     </x-slot:actions>
 </x-page-header>
 

@@ -48,12 +48,14 @@ class User extends Authenticatable
      * Daftar role beserta labelnya.
      * - admin   : akses penuh, termasuk hapus data dan kelola pengguna
      * - petugas : tambah, ubah, import & export data (tanpa hapus & kelola pengguna)
-     * - viewer  : hanya melihat data di panel dan export Excel (tanpa mengubah apa pun)
+     *
+     * Tidak ada role "viewer": masyarakat melihat data langsung di situs publik
+     * (landing page & Data Bidang) tanpa login. Akun lama dengan role lain
+     * tidak dapat login sampai Administrator mengubah role-nya.
      */
     public const ROLES = [
         'admin'   => 'Administrator',
         'petugas' => 'Petugas',
-        'viewer'  => 'Viewer',
     ];
 
     public function isAdmin(): bool
@@ -66,14 +68,8 @@ class User extends Authenticatable
         return $this->role === 'petugas';
     }
 
-    public function isViewer(): bool
-    {
-        return $this->role === 'viewer';
-    }
-
     /**
      * Role yang memakai panel pengelola (/admin): Admin & Petugas.
-     * Viewer hanya melihat data melalui halaman publik (landing page).
      */
     public function isStaff(): bool
     {
@@ -111,7 +107,6 @@ class User extends Authenticatable
      * Boleh input/edit data modul di bidang & sub bidang tertentu?
      * - admin   : selalu boleh
      * - petugas : hanya pada sub bidang (atau seluruh bidang) yang ditugaskan
-     * - viewer  : tidak pernah
      */
     public function canEditModul(string $bidang, ?string $subBidang = null): bool
     {

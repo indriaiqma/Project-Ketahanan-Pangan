@@ -32,16 +32,17 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 /*
 |--------------------------------------------------------------------------
-| VIEWER / PUBLIK
+| SITUS PUBLIK
 |--------------------------------------------------------------------------
-| Semua URL tanpa /admin adalah VIEWER.
+| Semua URL tanpa /admin terbuka untuk masyarakat tanpa login (hanya-baca).
+| Login hanya untuk Admin & Petugas yang mengelola data di /admin.
 |--------------------------------------------------------------------------
 */
 
 
 /*
 |--------------------------------------------------------------------------
-| DASHBOARD VIEWER
+| BERANDA (landing page)
 |--------------------------------------------------------------------------
 */
 
@@ -51,7 +52,7 @@ Route::get('/', [DashboardController::class, 'index'])
 
 /*
 |--------------------------------------------------------------------------
-| KAWASAN HUTAN - VIEWER
+| KAWASAN HUTAN - PUBLIK
 |--------------------------------------------------------------------------
 */
 
@@ -69,7 +70,7 @@ Route::get('/kawasan-hutan/{kawasanHutan}', [KawasanHutanController::class, 'sho
 
 /*
 |--------------------------------------------------------------------------
-| LAHAN KRITIS - VIEWER
+| LAHAN KRITIS - PUBLIK
 |--------------------------------------------------------------------------
 */
 
@@ -87,7 +88,7 @@ Route::get('/lahan-kritis/{lahanKriti}', [LahanKritisController::class, 'show'])
 
 /*
 |--------------------------------------------------------------------------
-| LINGKUNGAN HIDUP - VIEWER
+| LINGKUNGAN HIDUP (route lama)
 |--------------------------------------------------------------------------
 */
 
@@ -97,7 +98,7 @@ Route::permanentRedirect('/lingkungan-hidup', '/data/sarana-prasarana/lingkungan
 
 /*
 |--------------------------------------------------------------------------
-| SDM - VIEWER
+| SDM (route lama)
 |--------------------------------------------------------------------------
 */
 
@@ -107,25 +108,26 @@ Route::permanentRedirect('/sdm', '/data/kemasyarakatan')
 
 /*
 |--------------------------------------------------------------------------
-| DATA BIDANG (situs publik, hanya-baca, wajib login)
+| DATA BIDANG (situs publik, hanya-baca, tanpa login)
 |--------------------------------------------------------------------------
-| Halaman utama role Viewer: melihat hasil input Admin & Petugas di seluruh
-| bidang dengan tampilan landing page. Petugas tetap dibatasi penugasannya
-| (bidang:lihat), Admin & Viewer melihat semua bidang.
+| Masyarakat melihat hasil input Admin & Petugas di seluruh bidang.
+| Export Excel & unduh lampiran tetap khusus pengguna yang login.
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->prefix('data')->group(function () {
+Route::prefix('data')->group(function () {
     Route::get('/', [DataBidangController::class, 'index'])
         ->name('data.index');
 
-    Route::middleware('bidang:lihat')->group(function () {
+    Route::middleware('bidang:publik')->group(function () {
         Route::get('/{bidang}', [DataBidangController::class, 'bidang'])
             ->name('data.bidang');
 
         Route::get('/{bidang}/{modul}', [DataBidangController::class, 'modul'])
             ->name('data.modul');
+    });
 
+    Route::middleware(['auth', 'bidang:lihat'])->group(function () {
         Route::get('/{bidang}/{modul}/export', [ModulDataController::class, 'export'])
             ->name('data.export');
 
@@ -138,13 +140,11 @@ Route::middleware('auth')->prefix('data')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| PROFIL (semua role)
-|--------------------------------------------------------------------------
-| Viewer memakai layout landing page, Admin & Petugas layout panel.
+| PROFIL (Admin & Petugas)
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])
         ->name('admin.profile');
 
@@ -162,7 +162,6 @@ Route::middleware('auth')->prefix('admin')->group(function () {
 | ADMIN
 |--------------------------------------------------------------------------
 | Semua URL /admin/... membutuhkan login Admin atau Petugas.
-| - Viewer      : tidak memakai panel; melihat data di /data (landing page)
 | - Petugas     : + tambah, ubah, import   (role:admin,petugas)
 | - Admin       : + hapus & kelola pengguna (role:admin)
 |--------------------------------------------------------------------------

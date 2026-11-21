@@ -27,7 +27,7 @@
                 <x-field label="Password" name="password" type="password" :required="$baru" minlength="6" icon="lock"
                          autocomplete="new-password" :hint="$baru ? 'Minimal 6 karakter.' : 'Biarkan kosong untuk mempertahankan password lama.'" />
                 <x-field label="Hak Akses" name="role" type="select" required data-pilih-role
-                         hint="Viewer: melihat & export seluruh data bidang lewat halaman Data Bidang (tanpa panel pengelola). Petugas: hanya melihat dan mengelola (tambah, ubah, import) sub bidang yang ditugaskan. Administrator: semua akses, termasuk hapus data dan kelola pengguna.">
+                         hint="Petugas: hanya melihat dan mengelola (tambah, ubah, import) sub bidang yang ditugaskan. Administrator: semua akses, termasuk hapus data dan kelola pengguna. Masyarakat melihat data di situs publik tanpa akun.">
                     @foreach (\App\Models\User::ROLES as $nilai => $label)
                         <option value="{{ $nilai }}" @selected(old('role', $user?->role ?? 'petugas') === $nilai)>{{ $label }}</option>
                     @endforeach

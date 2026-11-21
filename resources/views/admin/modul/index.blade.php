@@ -17,6 +17,8 @@
         ? ['bidang' => 'data.bidang', 'modul' => 'data.modul', 'export' => 'data.export', 'lampiran' => 'data.lampiran']
         : ['bidang' => 'admin.bidang.show', 'modul' => 'admin.bidang.modul', 'export' => 'admin.modul.export', 'lampiran' => 'admin.modul.lampiran'];
     $bolehHapus = ! $publik && auth()->user()->isAdmin();
+    // Export & lampiran khusus pengguna login (Admin/Petugas) yang boleh melihat sub bidang ini
+    $bisaUnduh = ! $publik || \App\Support\Bidang::bolehLihatSub(auth()->user(), $bidang['slug'], $modul['sub']);
     $adaAksi = $bisaUbah || $bolehHapus;
     $warnaGrafik = ['#18774d', '#2f80c2', '#f5a524', '#e5484d', '#7cb82f'];
     $syaratBaik = ModulData::syaratBaik($def);
@@ -36,9 +38,13 @@
         <span aria-current="page">{{ $modul['nama'] }}</span>
     </x-slot:breadcrumb>
     <x-slot:actions>
-        <a href="{{ route($rute['export'], $parameter + ['tahun' => $tahun, 'periode' => $periode]) }}" class="btn btn-outline">
-            <i class="bi bi-download"></i> Export Excel
-        </a>
+        @if ($bisaUnduh)
+            <a href="{{ route($rute['export'], $parameter + ['tahun' => $tahun, 'periode' => $periode]) }}" class="btn btn-outline">
+                <i class="bi bi-download"></i> Export Excel
+            </a>
+        @else
+            <span class="mode-chip"><i class="bi bi-globe2"></i> Data publik</span>
+        @endif
         @if ($bisaUbah)
             <a href="{{ route('admin.modul.create', $parameter + ['tahun' => $tahun, 'periode' => $periode]) }}" class="btn btn-primary">
                 <i class="bi bi-plus-lg"></i> Input Data
@@ -161,7 +167,7 @@
                                 @if ($d)
                                     <span class="sub-info">
                                         {{ \Illuminate\Support\Str::limit($d->sumber_data ?: 'Sumber belum diisi', 34) }}
-                                        @if ($d->lampiran)
+                                        @if ($d->lampiran && $bisaUnduh)
                                             · <a href="{{ route($rute['lampiran'], $parameter + ['lampiran' => $d->lampiran->id]) }}" title="Unduh {{ $d->lampiran->nama_file }}">
                                                 <i class="bi bi-paperclip"></i> Lampiran
                                             </a>
@@ -209,7 +215,9 @@
     <div class="card-foot">
         <i class="bi bi-info-circle"></i>
         Persentase dihitung otomatis dari angka yang diinput.
-        <a href="{{ route($rute['export'], $parameter + ['periode' => 'semua']) }}" style="margin-left:6px">Export semua periode</a>
+        @if ($bisaUnduh)
+            <a href="{{ route($rute['export'], $parameter + ['periode' => 'semua']) }}" style="margin-left:6px">Export semua periode</a>
+        @endif
     </div>
 </section>
 

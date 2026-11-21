@@ -36,15 +36,5 @@ class DatabaseSeeder extends Seeder
         if ($petugas->wasRecentlyCreated) {
             $petugas->aksesBidang()->firstOrCreate(['bidang' => 'sarana-prasarana', 'sub_bidang' => 'sarpras-2']);
         }
-
-        // Akun viewer awal (hanya-baca). Dibuat sekali saja; jika sudah ada tidak diubah.
-        User::firstOrCreate(
-            ['email' => 'viewer@bakorwil3.jatimprov.go.id'],
-            [
-                'name'     => 'Viewer',
-                'password' => Hash::make('ViewerBakorwil123'),
-                'role'     => 'viewer',
-            ]
-        );
     }
 }

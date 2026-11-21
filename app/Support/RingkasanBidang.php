@@ -176,11 +176,11 @@ class RingkasanBidang
     }
 
     /**
-     * Ringkasan setiap bidang yang boleh dilihat user (semua bidang untuk tamu).
+     * Ringkasan setiap bidang yang boleh dilihat user (tanpa user: semua bidang, untuk situs publik).
      *
      * @return Collection<int, array>
      */
-    public static function semua(?User $user): Collection
+    public static function semua(?User $user = null): Collection
     {
         $statistik = self::statistikModul();
         $daftar = $user ? Bidang::untuk($user) : Bidang::semua();
@@ -203,7 +203,7 @@ class RingkasanBidang
     }
 
     /** Data landing page: bidang, sorotan indikator, pembaruan terbaru, cakupan wilayah. */
-    public static function landing(?User $user): array
+    public static function landing(?User $user = null): array
     {
         $mentah = self::mentah();
         $bidang = self::semua($user);

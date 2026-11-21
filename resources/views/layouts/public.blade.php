@@ -11,7 +11,7 @@
     <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-@php($navBidang = auth()->check() ? \App\Support\Bidang::untuk(auth()->user()) : \App\Support\Bidang::semua())
+@php($navBidang = \App\Support\Bidang::semua())
 <body @class(['has-hero' => View::hasSection('hero')])>
 
 <header class="site-nav" data-site-nav>
@@ -37,41 +37,15 @@
                     @foreach ($navBidang as $nb)
                         <a href="{{ route('data.bidang', $nb['slug']) }}"><i class="bi bi-{{ $nb['icon'] }}"></i> {{ $nb['nama'] }}</a>
                     @endforeach
-                    @guest
-                        <hr>
-                        <span class="nav-note"><i class="bi bi-lock"></i> Masuk untuk melihat data bidang</span>
-                    @endguest
+                    <hr>
+                    <span class="nav-note"><i class="bi bi-globe2"></i> Terbuka untuk umum, tanpa login</span>
                 </div>
             </div>
 
             @auth
-                @if (auth()->user()->isStaff())
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-sm"><i class="bi bi-speedometer2"></i> Panel Pengelola</a>
-                @else
-                    <div class="dropdown nav-user">
-                        <button type="button" data-dropdown-toggle aria-expanded="false" aria-label="Menu akun">
-                            <span class="avatar sm">{{ strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}</span>
-                            <span class="nav-user-name">{{ \Illuminate\Support\Str::limit(auth()->user()->name, 18) }}</span>
-                            <i class="bi bi-chevron-down chev"></i>
-                        </button>
-                        <div class="dropdown-menu">
-                            <div class="head">
-                                <b>{{ auth()->user()->name }}</b>
-                                <small>{{ auth()->user()->roleLabel() }} · hanya melihat data</small>
-                            </div>
-                            <hr>
-                            <a href="{{ route('data.index') }}"><i class="bi bi-grid-1x2"></i> Data Bidang</a>
-                            <a href="{{ route('admin.profile') }}"><i class="bi bi-person-circle"></i> Profil Saya</a>
-                            <hr>
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="danger"><i class="bi bi-box-arrow-right"></i> Keluar</button>
-                            </form>
-                        </div>
-                    </div>
-                @endif
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-sm"><i class="bi bi-speedometer2"></i> Panel Pengelola</a>
             @else
-                <a href="{{ route('login') }}" class="btn btn-primary btn-sm"><i class="bi bi-box-arrow-in-right"></i> Masuk</a>
+                <a href="{{ route('login') }}" class="btn btn-primary btn-sm" title="Khusus Administrator & Petugas"><i class="bi bi-box-arrow-in-right"></i> Masuk Petugas</a>
             @endauth
         </nav>
     </div>
@@ -105,13 +79,9 @@
             <span>Bakorwil III Malang</span>
             <span>Pemerintah Provinsi Jawa Timur</span>
             @auth
-                @if (auth()->user()->isStaff())
-                    <a href="{{ route('admin.dashboard') }}">Panel Pengelola</a>
-                @else
-                    <a href="{{ route('admin.profile') }}">Profil Saya</a>
-                @endif
+                <a href="{{ route('admin.dashboard') }}">Panel Pengelola</a>
             @else
-                <a href="{{ route('login') }}">Masuk</a>
+                <a href="{{ route('login') }}">Masuk Petugas</a>
             @endauth
         </div>
     </div>

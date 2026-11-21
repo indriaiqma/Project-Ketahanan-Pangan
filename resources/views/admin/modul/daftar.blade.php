@@ -17,6 +17,8 @@
         ? ['bidang' => 'data.bidang', 'modul' => 'data.modul', 'export' => 'data.export', 'lampiran' => 'data.lampiran']
         : ['bidang' => 'admin.bidang.show', 'modul' => 'admin.bidang.modul', 'export' => 'admin.modul.export', 'lampiran' => 'admin.modul.lampiran'];
     $bolehHapus = ! $publik && auth()->user()->isAdmin();
+    // Export & lampiran khusus pengguna login (Admin/Petugas) yang boleh melihat sub bidang ini
+    $bisaUnduh = ! $publik || \App\Support\Bidang::bolehLihatSub(auth()->user(), $bidang['slug'], $modul['sub']);
     $adaAksi = $bisaUbah || $bolehHapus;
     $fFilter = $def['filter'] ? $def['fields'][$def['filter']] : null;
     $difilter = request()->filled('cari') || request()->filled('filter');
@@ -36,7 +38,11 @@
         <span aria-current="page">{{ $modul['nama'] }}</span>
     </x-slot:breadcrumb>
     <x-slot:actions>
-        <a href="{{ route($rute['export'], $parameter) }}" class="btn btn-outline"><i class="bi bi-download"></i> Export Excel</a>
+        @if ($bisaUnduh)
+            <a href="{{ route($rute['export'], $parameter) }}" class="btn btn-outline"><i class="bi bi-download"></i> Export Excel</a>
+        @else
+            <span class="mode-chip"><i class="bi bi-globe2"></i> Data publik</span>
+        @endif
         @if ($bisaUbah)
             <a href="{{ route('admin.modul.create', $parameter) }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Tambah Data</a>
         @endif
@@ -146,7 +152,7 @@
                                     @else
                                         {{ ModulData::tampilDaftar($def, $e, $k, $wilayah) }}
                                     @endif
-                                    @if ($loop->first && $e->lampiran)
+                                    @if ($loop->first && $e->lampiran && $bisaUnduh)
                                         <a href="{{ route($rute['lampiran'], $parameter + ['lampiran' => $e->lampiran->id]) }}" class="sub-info" title="Unduh {{ $e->lampiran->nama_file }}">
                                             <i class="bi bi-paperclip"></i> Lampiran
                                         </a>

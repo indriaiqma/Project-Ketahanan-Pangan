@@ -29,7 +29,8 @@ return [
     |   'hidden'   : petugas hanya melihat bidang/sub bidang yang ditugaskan;
     |                sisanya tidak muncul di menu dan tidak bisa dibuka (404)
     |   'readonly' : semua tampil, tetapi hanya sub bidang tugas yang bisa diubah
-    | Admin dan Viewer selalu melihat semua bidang.
+    | Admin selalu melihat semua bidang. Situs publik (/data) menampilkan
+    | semua bidang untuk siapa pun, termasuk pengunjung tanpa login.
     */
     'akses_luar_penugasan' => 'hidden',
 

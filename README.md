@@ -74,19 +74,21 @@ Mengapa lahan kritis penting untuk ketahanan pangan? Lahan yang rusak atau gundu
 
 ## 3. Role & Hak Akses
 
-| Fitur | Administrator | Petugas | Viewer |
+| Fitur | Administrator | Petugas | Masyarakat (tanpa login) |
 |---|:---:|:---:|:---:|
-| Login ke panel pengelola | ✅ | ✅ | ✅ |
-| Lihat dashboard & semua data | ✅ | ✅ | ✅ |
-| Export data ke Excel | ✅ | ✅ | ✅ |
-| Tambah & ubah data | ✅ | ✅ | ❌ |
-| Import data dari Excel | ✅ | ✅ | ❌ |
+| Lihat landing page & Data Bidang (`/data`) | ✅ | ✅ | ✅ |
+| Login ke panel pengelola | ✅ | ✅ | ❌ |
+| Export data ke Excel & unduh lampiran | ✅ | ✅ (sub bidang tugas) | ❌ |
+| Tambah & ubah data | ✅ | ✅ (sub bidang tugas) | ❌ |
+| Import data dari Excel | ✅ | ✅ (sub bidang tugas) | ❌ |
 | **Hapus** data | ✅ | ❌ | ❌ |
 | **Kelola akun pengguna** | ✅ | ❌ | ❌ |
-| Ubah profil & password sendiri | ✅ | ✅ | ✅ |
+| Ubah profil & password sendiri | ✅ | ✅ | ❌ |
+
+- Tidak ada role Viewer. Siapa pun dapat melihat hasil input seluruh bidang di situs publik tanpa akun. Akun lama dengan role `viewer` tidak bisa login lagi; Administrator dapat mengubah role-nya atau menghapusnya di menu **Pengguna**.
 
 - Pembatasan berlaku di **server**, tidak sekadar menyembunyikan tombol. Akses langsung lewat URL yang tidak diizinkan dijawab dengan halaman **403**.
-- Setiap role punya warna khas di dashboard: Administrator **hijau**, Petugas **biru**, Viewer **amber**.
+- Setiap role punya warna khas di dashboard: Administrator **hijau**, Petugas **biru**.
 - Administrator tidak bisa menurunkan role akunnya sendiri, supaya sistem tidak pernah kehilangan admin.
 - Daftar role ada di `App\Models\User::ROLES`. Pembatasannya dipasang lewat middleware `role:` di [routes/web.php](routes/web.php).
 
@@ -98,12 +100,11 @@ Mengapa lahan kritis penting untuk ketahanan pangan? Lahan yang rusak atau gundu
 PUBLIK (tanpa login)                       PANEL PENGELOLA (login di /login)
 ────────────────────                       ─────────────────────────────────
 Beranda (/)                                Dashboard (/admin)
- ├─ ringkasan angka + grafik                ├─ banner sambutan sesuai role
- ├─ Kawasan Hutan → tabel → detail          ├─ Kawasan Hutan : lihat · tambah · ubah · hapus* · import · export
- ├─ Lahan Kritis  → tabel → detail          ├─ Lahan Kritis  : lihat · tambah · ubah · hapus* · import · export
- ├─ Lingkungan Hidup (segera)               ├─ Lingkungan Hidup / SDM (segera)
- └─ SDM (segera)                            ├─ Pengguna* : kelola akun
-                                            └─ Profil Saya : ubah nama, email, password
+ ├─ sorotan indikator & pembaruan terbaru   ├─ banner sambutan sesuai role
+ └─ Data Bidang (/data)                     ├─ Bidang → Sub Bidang → Modul :
+     └─ Bidang (/data/{bidang})             │    lihat · tambah · ubah · hapus* · import · export
+         └─ Modul: tabel & grafik           ├─ Pengguna* : kelola akun & penugasan
+            (hanya-baca, tanpa login)       └─ Profil Saya : ubah nama, email, password
                                             (* = khusus Administrator)
 ```
 
@@ -216,12 +217,11 @@ Dibuat oleh `php artisan migrate --seed` (lihat [DatabaseSeeder.php](database/se
 |---|---|---|
 | Administrator | `admin@bakorwil3.jatimprov.go.id` | `GantiPasswordIni123` |
 | Petugas | `petugas@bakorwil3.jatimprov.go.id` | `PetugasBakorwil123` |
-| Viewer | `viewer@bakorwil3.jatimprov.go.id` | `ViewerBakorwil123` |
 
 > ⚠️ **Segera ganti password** lewat menu **Profil Saya** setelah login, karena password di atas tertulis di kode.
 >
 > - Menjalankan ulang `php artisan db:seed` akan **me-reset password Administrator** ke bawaan. Ini bisa dipakai saat lupa password.
-> - Akun Petugas dan Viewer **tidak** di-reset jika sudah ada.
+> - Akun Petugas **tidak** di-reset jika sudah ada.
 > - Akun baru dibuat oleh Administrator di menu **Pengguna → Tambah Pengguna**. Aplikasi tidak menyediakan pendaftaran mandiri.
 
 ## 8. Format Import Excel
@@ -286,7 +286,7 @@ resources/
     ├── components/     potongan tampilan bersama: brand (logo), stat, field (input form),
     │                   page-header, alerts, empty, module-placeholder
     ├── partials/       grafik yang dipakai di beberapa halaman
-    ├── dashboard-viewer.blade.php      landing page / beranda publik
+    ├── beranda.blade.php               landing page / beranda publik
     ├── kawasan-hutan/  & lahan-kritis/ halaman publik + partial tabel & ringkasan
     ├── admin/          halaman panel pengelola
     ├── auth/           halaman login
@@ -328,7 +328,7 @@ Ringkasan perubahan dibanding branch `main`:
 
 **Fitur & tampilan**
 - Desain ulang seluruh halaman: satu sistem desain, landing page modern, panel pengelola dengan sidebar, efek animasi halus, logo dan favicon yang konsisten
-- Sistem 3 role: Administrator, Petugas, Viewer
+- Sistem 2 role (Administrator, Petugas); masyarakat melihat data tanpa login
 - Dukungan PostgreSQL (Supabase), halaman lebih cepat (sebelumnya 9–13 detik, sekarang ±2 detik)
 - Pesan validasi Bahasa Indonesia, zona waktu WIB, pembatasan percobaan login
 

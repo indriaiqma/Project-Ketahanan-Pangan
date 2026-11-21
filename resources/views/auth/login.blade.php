@@ -23,11 +23,11 @@
 
         <div>
             <h1>Sistem Informasi Ketahanan Pangan Malang Selatan</h1>
-            <p>Pengelolaan dan penyajian data kawasan hutan, lahan kritis, lingkungan hidup, dan SDM di wilayah Malang Selatan.</p>
+            <p>Pengelolaan dan penyajian data seluruh bidang Bakorwil III Malang di wilayah Malang Selatan.</p>
             <ul>
                 <li><i class="bi bi-shield-fill-check"></i> <span><b>Administrator</b> · akses penuh &amp; kelola pengguna</span></li>
                 <li><i class="bi bi-person-badge-fill"></i> <span><b>Petugas</b> · tambah, ubah, import &amp; export data</span></li>
-                <li><i class="bi bi-eye-fill"></i> <span><b>Viewer</b> · lihat data &amp; export Excel</span></li>
+                <li><i class="bi bi-globe2"></i> <span><b>Masyarakat</b> · lihat data di situs publik tanpa login</span></li>
             </ul>
         </div>
 
@@ -41,7 +41,7 @@
             </div>
 
             <h2>Masuk ke Panel Pengelola</h2>
-            <p class="sub">Khusus pengguna terdaftar Bakorwil III Malang (Administrator, Petugas, Viewer).</p>
+            <p class="sub">Khusus Administrator dan Petugas Bakorwil III Malang. Untuk melihat data, kunjungi <a href="{{ route('data.index') }}">Data Bidang</a> tanpa perlu masuk.</p>
 
             @if ($errors->any())
                 <div class="alert alert-error" role="alert" style="margin-bottom:18px">

@@ -14,7 +14,7 @@ class DashboardController extends Controller
 {
     /**
      * =========================================================
-     * DASHBOARD VIEWER / PUBLIK
+     * BERANDA PUBLIK (landing page)
      * =========================================================
      */
     /**
@@ -25,8 +25,9 @@ class DashboardController extends Controller
 
     public function index()
     {
-        // Landing page: hasil input Admin & Petugas di seluruh bidang
-        return view('dashboard-viewer', RingkasanBidang::landing(auth()->user()));
+        // Landing page publik: hasil input Admin & Petugas di seluruh bidang,
+        // terbuka untuk semua pengunjung tanpa login
+        return view('beranda', RingkasanBidang::landing());
     }
 
     /**
@@ -74,7 +75,7 @@ class DashboardController extends Controller
      * DATA DASHBOARD
      * =========================================================
      *
-     * Data digunakan oleh Viewer dan Admin.
+     * Data digunakan oleh dashboard panel pengelola.
      */
     private function getDashboardData(): array
     {

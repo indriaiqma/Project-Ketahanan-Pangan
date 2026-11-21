@@ -1,7 +1,7 @@
 {{--
     Landing page: portal hasil input Admin & Petugas di seluruh bidang.
-    Data dari App\Support\RingkasanBidang::landing(). Tamu melihat ringkasan jumlah data;
-    nilai indikator & isi data hanya tampil setelah login.
+    Data dari App\Support\RingkasanBidang::landing(). Terbuka untuk semua pengunjung
+    tanpa login; login hanya untuk Admin & Petugas yang mengelola data.
 --}}
 @extends('layouts.public')
 
@@ -34,16 +34,11 @@
             </span>
 
             <h1>Portal Data Pembangunan <span class="grad-text">Malang Selatan</span></h1>
-            <p>Hasil pendataan {{ $total['bidang'] }} bidang Bakorwil III Malang, mulai dari pemerintahan, ekonomi, dan kemasyarakatan hingga sarana prasarana. Data diinput langsung oleh petugas setiap bidang.</p>
+            <p>Hasil pendataan {{ $total['bidang'] }} bidang Bakorwil III Malang, mulai dari pemerintahan, ekonomi, dan kemasyarakatan hingga sarana prasarana. Data diinput langsung oleh petugas setiap bidang dan terbuka untuk umum.</p>
 
             <div class="hero-actions">
-                @auth
-                    <a href="{{ route('data.index') }}" class="btn btn-light btn-lg"><i class="bi bi-grid-1x2"></i> Lihat Data Bidang</a>
-                    <a href="#sorotan" class="btn btn-glass btn-lg">Sorotan Data <i class="bi bi-arrow-down"></i></a>
-                @else
-                    <a href="{{ route('login') }}" class="btn btn-light btn-lg"><i class="bi bi-box-arrow-in-right"></i> Masuk untuk Melihat Data</a>
-                    <a href="#data-bidang" class="btn btn-glass btn-lg">Jelajahi Bidang <i class="bi bi-arrow-down"></i></a>
-                @endauth
+                <a href="{{ route('data.index') }}" class="btn btn-light btn-lg"><i class="bi bi-grid-1x2"></i> Lihat Data Bidang</a>
+                <a href="#sorotan" class="btn btn-glass btn-lg">Sorotan Data <i class="bi bi-arrow-down"></i></a>
             </div>
 
             <div class="hero-trust">
@@ -107,9 +102,7 @@
         <h2>Indikator terbaru dari setiap bidang</h2>
         <p>Angka periode terakhir dari modul yang baru diperbarui, dijumlahkan dari seluruh kecamatan.</p>
     </div>
-    @auth
-        <a href="{{ route('data.index') }}" class="btn btn-outline btn-sm">Semua data <i class="bi bi-arrow-right"></i></a>
-    @endauth
+    <a href="{{ route('data.index') }}" class="btn btn-outline btn-sm">Semua data <i class="bi bi-arrow-right"></i></a>
 </div>
 
 @if ($sorotan->isEmpty())
@@ -117,27 +110,23 @@
         <x-empty icon="clipboard-data" title="Belum ada data yang diinput">Sorotan indikator akan tampil setelah petugas menginput data.</x-empty>
     </section>
 @else
-    <section @class(['grid grid-4 sorotan-grid', 'terkunci' => ! $user])>
+    <section class="grid grid-4 sorotan-grid">
         @foreach ($sorotan as $s)
-            <a href="{{ $user ? $s['href'] : route('login') }}" class="card sorotan">
+            <a href="{{ $s['href'] }}" class="card sorotan">
                 <div class="so-head">
                     <span class="so-ico"><i class="bi bi-{{ $s['icon'] }}"></i></span>
                     <span class="so-modul"><b>{{ $s['nama'] }}</b><small>{{ $s['sub_nama'] }}</small></span>
                 </div>
                 <div class="so-label">
                     <span>{{ $s['label'] }}</span>
-                    @if ($user && $s['status'])
+                    @if ($s['status'])
                         <span @class(['badge', 'green' => $s['status']['baik'], 'amber' => ! $s['status']['baik']]) title="{{ $s['status']['target'] }}">
                             <span class="dot"></span>{{ $s['status']['baik'] ? 'Capai target' : 'Di bawah target' }}
                         </span>
                     @endif
                 </div>
                 <div class="so-nilai">
-                    @if ($user)
-                        {{ $s['nilai'] }}<small>{{ $s['satuan'] }}</small>
-                    @else
-                        <span class="so-kunci"><i class="bi bi-lock-fill"></i> Masuk untuk melihat</span>
-                    @endif
+                    {{ $s['nilai'] }}<small>{{ $s['satuan'] }}</small>
                 </div>
                 <div class="so-foot">
                     <span><i class="bi bi-calendar3"></i> {{ $s['periode'] }}</span>
@@ -154,9 +143,7 @@
         <h2>Hasil pendataan {{ $total['bidang'] }} bidang</h2>
         <p>{{ angka($total['data'], 0) }} data dari {{ $total['modul'] }} modul, diinput langsung oleh Admin dan Petugas setiap bidang.</p>
     </div>
-    @guest
-        <span class="lock-note"><i class="bi bi-lock"></i> Masuk untuk melihat data lengkap</span>
-    @endguest
+    <a href="{{ route('data.index') }}" class="btn btn-outline btn-sm">Semua bidang <i class="bi bi-arrow-right"></i></a>
 </div>
 
 <section class="grid grid-3">
@@ -173,7 +160,7 @@
                     <span><b>{{ $r['modul_terisi'] }}</b> terisi</span>
                 </span>
                 <span class="meter" title="{{ $pct }}% modul berisi data"><i style="--w: {{ $pct }}%"></i></span>
-                <span class="more">@auth Lihat data @else Masuk untuk melihat @endauth <i class="bi bi-arrow-right"></i></span>
+                <span class="more">Lihat data <i class="bi bi-arrow-right"></i></span>
             </span>
         </a>
     @endforeach
@@ -195,9 +182,9 @@
                 @foreach ($pembaruan as $p)
                     <li>
                         <span class="tl-ico"><i class="bi bi-{{ $p['icon'] }}"></i></span>
-                        <a href="{{ $user ? $p['href'] : route('login') }}" class="tl-info">
+                        <a href="{{ $p['href'] }}" class="tl-info">
                             <b>{{ $p['nama'] }}</b>
-                            <small>{{ $p['bidang_nama'] }} · {{ $user ? $p['keterangan'] : 'data baru diinput' }}</small>
+                            <small>{{ $p['bidang_nama'] }} · {{ $p['keterangan'] }}</small>
                         </a>
                         <time datetime="{{ $p['waktu']->toIso8601String() }}" title="{{ $p['waktu']->translatedFormat('d F Y, H:i') }} WIB">{{ $p['waktu']->diffForHumans() }}</time>
                     </li>
@@ -228,13 +215,7 @@
 
 <section class="cta-band">
     <div class="cta-bg" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span></div>
-    @if ($user && ! $user->isStaff())
-        <div class="cta-copy">
-            <h2>Halo, {{ $user->name }}</h2>
-            <p>Akun Anda dapat melihat dan mengunduh seluruh data bidang yang diinput oleh Admin dan Petugas.</p>
-        </div>
-        <a href="{{ route('data.index') }}" class="btn btn-light btn-lg"><i class="bi bi-grid-1x2"></i> Buka Data Bidang</a>
-    @elseif ($user)
+    @if ($user)
         <div class="cta-copy">
             <h2>Kelola data bidang Anda</h2>
             <p>Buka panel pengelola untuk menambah, memperbarui, serta mengimpor dan mengekspor data.</p>
@@ -242,10 +223,10 @@
         <a href="{{ route('admin.dashboard') }}" class="btn btn-light btn-lg"><i class="bi bi-speedometer2"></i> Buka Panel Pengelola</a>
     @else
         <div class="cta-copy">
-            <h2>Akses data lengkap seluruh bidang</h2>
-            <p>Viewer dapat melihat hasil pendataan semua bidang. Admin dan Petugas mengelola data melalui panel pengelola.</p>
+            <h2>Jelajahi data seluruh bidang</h2>
+            <p>Tabel, grafik, dan capaian target setiap modul dapat dilihat langsung tanpa perlu login.</p>
         </div>
-        <a href="{{ route('login') }}" class="btn btn-light btn-lg"><i class="bi bi-box-arrow-in-right"></i> Masuk</a>
+        <a href="{{ route('data.index') }}" class="btn btn-light btn-lg"><i class="bi bi-grid-1x2"></i> Buka Data Bidang</a>
     @endif
 </section>
 

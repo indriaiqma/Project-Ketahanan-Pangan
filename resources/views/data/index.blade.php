@@ -1,6 +1,5 @@
 {{--
-    Data Bidang (situs publik, hanya-baca): seluruh bidang beserta jumlah data per modul.
-    Halaman utama role Viewer setelah login.
+    Data Bidang (situs publik, hanya-baca, tanpa login): seluruh bidang beserta jumlah data per modul.
 --}}
 @extends('layouts.public')
 
@@ -16,7 +15,7 @@
         <span aria-current="page">Data Bidang</span>
     </x-slot:breadcrumb>
     <x-slot:actions>
-        <span class="mode-chip"><i class="bi bi-eye"></i> Mode lihat saja</span>
+        <span class="mode-chip"><i class="bi bi-globe2"></i> Terbuka untuk publik</span>
     </x-slot:actions>
 </x-page-header>
 

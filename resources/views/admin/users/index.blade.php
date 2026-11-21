@@ -16,7 +16,7 @@
             <span class="ico"><i class="bi bi-people-fill"></i></span>
             <div>
                 <h2>Daftar Pengguna</h2>
-                <p>{{ angka($users->count(), 0) }} akun · {{ angka($users->where('role', 'admin')->count(), 0) }} administrator · {{ angka($users->where('role', 'petugas')->count(), 0) }} petugas · {{ angka($users->where('role', 'viewer')->count(), 0) }} viewer</p>
+                <p>{{ angka($users->count(), 0) }} akun · {{ angka($users->where('role', 'admin')->count(), 0) }} administrator · {{ angka($users->where('role', 'petugas')->count(), 0) }} petugas</p>
             </div>
         </div>
     </div>
@@ -58,10 +58,8 @@
                                     <small class="muted" style="display:block;font-size:12px;margin-top:4px">
                                         {{ $user->aksesBidang->map(fn ($a) => \App\Support\Bidang::labelPenugasan($a->bidang, $a->sub_bidang))->implode(', ') ?: 'Belum ditugaskan' }}
                                     </small>
-                                @elseif ($user->isViewer())
-                                    <span class="badge"><i class="bi bi-eye"></i> {{ $user->roleLabel() }}</span>
                                 @else
-                                    <span class="badge amber" title="Role tidak dikenal, akun ini tidak dapat login"><i class="bi bi-question-circle"></i> {{ $user->roleLabel() }}</span>
+                                    <span class="badge amber" title="Role ini sudah tidak dipakai sehingga akun tidak dapat login. Ubah role-nya atau hapus akun."><i class="bi bi-question-circle"></i> {{ $user->roleLabel() }}</span>
                                 @endif
                             </td>
                             <td class="muted">{{ $user->created_at?->translatedFormat('d M Y') ?? '–' }}</td>

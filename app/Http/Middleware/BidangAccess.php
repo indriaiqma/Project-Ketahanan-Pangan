@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
  * Pemeriksaan akses per bidang (penugasan di tabel user_bidang_access).
  *
  * Pemakaian di route:
+ *   bidang:publik                             situs publik: semua bidang terbuka untuk siapa pun
  *   bidang:lihat                              bidang dari parameter route {bidang}
  *   bidang:ubah                               bidang & modul dari parameter route {bidang}/{modul}
  *   bidang:ubah,sarana-prasarana,sarpras-2    bidang & sub bidang ditulis langsung (route lama)
@@ -23,6 +24,15 @@ class BidangAccess
 
         if (! is_string($bidang) || ! Bidang::cari($bidang)) {
             abort(404);
+        }
+
+        // Situs publik: semua bidang terbuka untuk siapa pun (tanpa penugasan),
+        // cukup pastikan modul yang dibuka memang ada di bidang tersebut
+        if ($mode === 'publik') {
+            $slugModul = $request->route('modul');
+            abort_if(is_string($slugModul) && ! Bidang::cariModul($bidang, $slugModul), 404);
+
+            return $next($request);
         }
 
         // Bidang yang disembunyikan (opsi 'hidden') diperlakukan seperti tidak ada

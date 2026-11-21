@@ -32,7 +32,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Admin & Petugas ke panel pengelola, Viewer ke landing page
+            // Admin & Petugas ke panel pengelola
             return redirect()->intended($request->user()->beranda());
         }
 

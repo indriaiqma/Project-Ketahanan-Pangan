@@ -9,15 +9,15 @@ use Illuminate\Http\Request;
 
 /**
  * Halaman "Data Bidang" di situs publik (layout landing page), hanya-baca.
- * Dipakai terutama oleh role Viewer untuk melihat hasil input Admin & Petugas
- * di seluruh bidang. Wajib login; akses per bidang diperiksa middleware bidang:lihat.
+ * Terbuka untuk semua pengunjung tanpa login: menampilkan hasil input Admin &
+ * Petugas di seluruh bidang. Bidang/modul diperiksa middleware bidang:publik.
  */
 class DataBidangController extends Controller
 {
     /** URL: /data - semua bidang beserta jumlah data per modul. */
-    public function index(Request $request)
+    public function index()
     {
-        $ringkasan = RingkasanBidang::semua($request->user());
+        $ringkasan = RingkasanBidang::semua();
 
         return view('data.index', [
             'ringkasan' => $ringkasan,
@@ -34,7 +34,7 @@ class DataBidangController extends Controller
     /** URL: /data/{bidang} - ringkasan satu bidang per sub bidang. */
     public function bidang(Request $request, string $bidang)
     {
-        $b = Bidang::cariUntuk($request->user(), $bidang);
+        $b = Bidang::cari($bidang);
         abort_unless($b, 404);
 
         $kelompok = collect(Bidang::kelompok($b))->map(function ($k) {
@@ -53,7 +53,7 @@ class DataBidangController extends Controller
             'kelompok' => $kelompok,
             'jumlahModul' => $semuaModul->count(),
             'terakhir' => $semuaModul->pluck('ringkasan.terakhir')->filter()->max(),
-            'semuaBidang' => Bidang::untuk($request->user()),
+            'semuaBidang' => Bidang::semua(),
         ]);
     }
 

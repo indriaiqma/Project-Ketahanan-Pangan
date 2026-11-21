@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -17,13 +18,18 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
+        // Akun dengan role yang sudah tidak dipakai (mis. "viewer" lama): keluarkan
+        if (! array_key_exists(auth()->user()->role, User::ROLES)) {
+            auth()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->withErrors([
+                'email' => 'Role akun Anda sudah tidak berlaku. Data dapat dilihat langsung di situs publik tanpa login.',
+            ]);
+        }
+
         if (! in_array(auth()->user()->role, $roles, true)) {
-            // Viewer tidak memakai panel pengelola: arahkan ke halaman Data Bidang
-            if (auth()->user()->isViewer() && $request->isMethod('GET') && $request->is('admin', 'admin/*')) {
-                return redirect()->route('data.index');
-            }
-
-
             abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk halaman ini.');
         }
 

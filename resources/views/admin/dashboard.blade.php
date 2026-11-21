@@ -22,7 +22,6 @@
         'petugas' => ['person-badge-fill', $namaTugas
             ? 'Anda bertugas menginput dan memperbarui data di '.$namaTugas.'.'
             : 'Akun Anda belum ditugaskan ke sub bidang mana pun. Hubungi Administrator.'],
-        'viewer'  => ['eye-fill', 'Akun Anda bersifat hanya-baca: melihat seluruh data dan mengunduh export Excel.'],
     ][$user->role] ?? ['person-fill', 'Selamat datang di panel pengelola.'];
 
     // Matriks hak akses (ditampilkan sesuai role yang sedang login)
@@ -92,7 +91,7 @@
         @endif
         @if ($user->isAdmin())
             <a href="{{ route('admin.users.create') }}" class="quick">
-                <i class="bi bi-person-plus"></i><span><b>Tambah Pengguna</b><small>Admin, petugas, viewer</small></span>
+                <i class="bi bi-person-plus"></i><span><b>Tambah Pengguna</b><small>Administrator & petugas</small></span>
             </a>
         @else
             <a href="{{ route('admin.profile') }}" class="quick">
@@ -164,7 +163,7 @@
         </section>
     @endif
 @else
-    {{-- ===================== DASHBOARD ADMIN & VIEWER ===================== --}}
+    {{-- ===================== DASHBOARD ADMIN ===================== --}}
 
     {{-- ===== Statistik ===== --}}
     <section class="grid grid-4">
@@ -213,7 +212,7 @@
         @if ($user->isAdmin())
             <a href="{{ route('admin.users.index') }}" class="card tile">
                 <span class="ico"><i class="bi bi-person-gear"></i></span>
-                <span><h3>Pengguna</h3><p>Kelola akun admin, petugas, viewer, dan penugasan bidang</p><span class="more">Kelola <i class="bi bi-arrow-right"></i></span></span>
+                <span><h3>Pengguna</h3><p>Kelola akun administrator, petugas, dan penugasan bidang</p><span class="more">Kelola <i class="bi bi-arrow-right"></i></span></span>
             </a>
         @endif
     </section>
