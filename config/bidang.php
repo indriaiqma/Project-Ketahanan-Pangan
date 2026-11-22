@@ -153,17 +153,5 @@ return [
             ],
         ],
 
-        [
-            'slug' => 'jabatan-fungsional',
-            'nama' => 'Kelompok Jabatan Fungsional',
-            'tagline' => 'Dukungan Keahlian Spesifik',
-            'icon' => 'award',
-            'sub_bidang' => [],
-            'modul' => [
-                ['slug' => 'pejabat-fungsional', 'nama' => 'Daftar Pejabat Fungsional', 'status' => 'aktif', 'icon' => 'person-badge', 'data' => 'pejabat-fungsional'],
-                ['slug' => 'kajian-analisis', 'nama' => 'Kajian & Analisis', 'status' => 'aktif', 'icon' => 'journal-text', 'data' => 'kajian-analisis'],
-            ],
-        ],
-
     ],
 ];

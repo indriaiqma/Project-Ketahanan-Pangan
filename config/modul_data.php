@@ -41,7 +41,6 @@
 |   metrik     : [['label', 'agregat' => jumlah|hitung|sum|avg, 'field', 'nilai', 'satuan', 'icon'], ...]
 */
 
-$bidangLabel = ['Pemerintahan', 'Pembangunan Ekonomi', 'Kemasyarakatan', 'Sarana & Prasarana', 'Umum / Lintas Bidang'];
 
 return [
 
@@ -677,58 +676,6 @@ return [
         'tabel' => ['rumah_tangga', 'pju', 'plts_ebt', 'izin_tambang', 'rasio_elektrifikasi'],
         'grafik' => ['pju'],
         'ringkasan' => 'rumah_tangga_berlistrik',
-    ],
-
-    /* =====================================================================
-     | KELOMPOK JABATAN FUNGSIONAL
-     * ===================================================================== */
-
-    'pejabat-fungsional' => [
-        'jenis' => 'daftar',
-        'deskripsi' => 'Daftar pejabat fungsional di lingkungan Bakorwil III Malang beserta jenjang dan bidang penugasannya.',
-        'fields' => [
-            'nama' => ['label' => 'Nama', 'wajib' => true, 'grup' => 'Pegawai'],
-            'jabatan' => ['label' => 'Jabatan Fungsional', 'wajib' => true, 'grup' => 'Pegawai', 'contoh' => 'Analis Kebijakan, Perencana, …'],
-            'jenjang' => ['label' => 'Jenjang', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Pegawai',
-                'opsi' => ['Terampil', 'Mahir', 'Penyelia', 'Ahli Pertama', 'Ahli Muda', 'Ahli Madya', 'Ahli Utama']],
-            'pangkat_golongan' => ['label' => 'Pangkat/Golongan', 'grup' => 'Pegawai', 'contoh' => 'Penata / III-c'],
-            'bidang_penugasan' => ['label' => 'Bidang Penugasan', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Penugasan', 'opsi' => $bidangLabel],
-            'tmt_jabatan' => ['label' => 'TMT Jabatan', 'tipe' => 'tanggal', 'grup' => 'Penugasan'],
-            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Penugasan',
-                'opsi' => ['Aktif', 'Tugas Belajar', 'Purna Tugas']],
-        ],
-        'tabel' => ['nama', 'jabatan', 'jenjang', 'bidang_penugasan', 'status'],
-        'cari' => ['nama', 'jabatan'],
-        'filter' => 'bidang_penugasan',
-        'grafik' => ['jenjang'],
-        'metrik' => [
-            ['label' => 'Total Pejabat Fungsional', 'icon' => 'person-badge', 'satuan' => 'orang'],
-            ['label' => 'Aktif', 'agregat' => 'hitung', 'field' => 'status', 'nilai' => 'Aktif', 'icon' => 'check2-circle', 'satuan' => 'orang'],
-            ['label' => 'Jenjang Ahli Madya', 'agregat' => 'hitung', 'field' => 'jenjang', 'nilai' => 'Ahli Madya', 'icon' => 'award', 'satuan' => 'orang'],
-        ],
-    ],
-
-    'kajian-analisis' => [
-        'jenis' => 'daftar',
-        'deskripsi' => 'Daftar dokumen kajian dan analisis kebijakan beserta bidang terkait, penyusun, dan statusnya.',
-        'fields' => [
-            'judul' => ['label' => 'Judul Kajian', 'wajib' => true, 'lebar' => 'penuh', 'grup' => 'Kajian'],
-            'tahun' => ['label' => 'Tahun', 'tipe' => 'tahun', 'wajib' => true, 'grup' => 'Kajian'],
-            'bidang_terkait' => ['label' => 'Bidang Terkait', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kajian', 'opsi' => $bidangLabel],
-            'penyusun' => ['label' => 'Penyusun', 'grup' => 'Kajian'],
-            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kajian',
-                'opsi' => ['Rencana', 'Proses', 'Selesai']],
-            'ringkasan' => ['label' => 'Ringkasan / Rekomendasi', 'tipe' => 'teks_panjang', 'grup' => 'Isi'],
-        ],
-        'tabel' => ['judul', 'tahun', 'bidang_terkait', 'penyusun', 'status'],
-        'cari' => ['judul', 'penyusun', 'ringkasan'],
-        'filter' => 'bidang_terkait',
-        'grafik' => ['bidang_terkait'],
-        'metrik' => [
-            ['label' => 'Total Kajian', 'icon' => 'journal-text', 'satuan' => 'dokumen'],
-            ['label' => 'Selesai', 'agregat' => 'hitung', 'field' => 'status', 'nilai' => 'Selesai', 'icon' => 'check2-circle', 'satuan' => 'dokumen'],
-            ['label' => 'Dalam Proses', 'agregat' => 'hitung', 'field' => 'status', 'nilai' => 'Proses', 'icon' => 'hourglass-split', 'satuan' => 'dokumen'],
-        ],
     ],
 
 ];

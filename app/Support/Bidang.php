@@ -26,7 +26,7 @@ class Bidang
                 return $s;
             })->all();
 
-            // Bidang tanpa sub bidang (mis. Jabatan Fungsional) punya modul langsung
+            // Bidang tanpa sub bidang punya modul langsung
             $b['modul'] = collect($b['modul'] ?? [])->map(fn ($m) => self::lengkapiModul($m, $b, null))->all();
 
             return $b;
@@ -154,7 +154,7 @@ class Bidang
     /**
      * Boleh melihat sub bidang tertentu? (sub = null: modul langsung di bawah bidang)
      * Petugas yang dibatasi hanya melihat sub bidang yang ditugaskan, atau seluruh
-     * bidang bila ditugaskan per bidang (mis. Kelompok Jabatan Fungsional).
+     * bidang bila ditugaskan per bidang.
      */
     public static function bolehLihatSub(?User $user, string $bidang, ?string $sub): bool
     {
