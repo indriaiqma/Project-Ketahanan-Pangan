@@ -120,6 +120,21 @@ document.addEventListener('click', (e) => {
         eye.textContent = show ? 'Sembunyikan' : 'Lihat';
     }
 
+    // Salin teks (mis. password sementara) ke clipboard
+    const salin = e.target.closest('[data-salin]');
+    if (salin) {
+        const sumber = document.querySelector(salin.dataset.salin);
+        const teks = sumber?.textContent.trim() ?? '';
+        const selesai = () => { const asal = salin.innerHTML; salin.innerHTML = '<i class="bi bi-check2"></i> Tersalin'; setTimeout(() => { salin.innerHTML = asal; }, 1800); };
+        if (navigator.clipboard?.writeText) {
+            navigator.clipboard.writeText(teks).then(selesai).catch(() => {});
+        } else if (sumber) {
+            const r = document.createRange(); r.selectNodeContents(sumber);
+            const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+            document.execCommand('copy'); selesai();
+        }
+    }
+
     // Tutup notifikasi
     if (e.target.closest('.alert .close')) {
         e.target.closest('.alert').remove();

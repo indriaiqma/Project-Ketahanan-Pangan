@@ -44,5 +44,14 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // Penghitung terpisah per fitur, agar percobaan "lupa password" tidak ikut
+        // mengunci halaman login (throttle:x,y biasa memakai satu penghitung per IP).
+        RateLimiter::for('login', fn (Request $request) => Limit::perMinute(5)->by('login|'.$request->ip()));
+        RateLimiter::for('lupa-password', fn (Request $request) => [
+            Limit::perMinute(3)->by('lupa|'.$request->ip()),
+            Limit::perHour(10)->by('lupa-email|'.mb_strtolower((string) $request->input('email'))),
+        ]);
+        RateLimiter::for('reset-password', fn (Request $request) => Limit::perMinute(5)->by('reset|'.$request->ip()));
     }
 }

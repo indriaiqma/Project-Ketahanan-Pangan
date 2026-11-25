@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PermintaanResetPassword;
 use App\Models\User;
 use App\Support\Bidang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -14,8 +16,49 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('aksesBidang')->orderBy('id', 'asc')->get();
+        $permintaan = PermintaanResetPassword::menunggu()->with('user')->latest()->get();
 
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users', 'permintaan'));
+    }
+
+    /**
+     * Buat password sementara untuk pengguna yang lupa password.
+     * Password hanya ditampilkan sekali kepada Administrator; pengguna wajib
+     * menggantinya saat login berikutnya. Permintaan reset yang menunggu ditandai selesai.
+     */
+    public function resetPassword(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'Untuk akun Anda sendiri, ganti password melalui menu Profil Saya.');
+        }
+
+        $sementara = Str::password(10, true, true, false);
+        $user->forceFill([
+            'password' => Hash::make($sementara),
+            'remember_token' => Str::random(60),
+            'wajib_ganti_password' => true,
+        ])->save();
+
+        PermintaanResetPassword::menunggu()->where('user_id', $user->id)->update([
+            'status' => 'selesai',
+            'diproses_oleh' => auth()->id(),
+            'diproses_pada' => now(),
+        ]);
+
+        return redirect()->route('admin.users.index')->with('password_sementara', [
+            'nama' => $user->name,
+            'email' => $user->email,
+            'password' => $sementara,
+        ]);
+    }
+
+    /** Tolak/abaikan permintaan reset (mis. bukan permintaan pemilik akun). */
+    public function tolakPermintaan(PermintaanResetPassword $permintaan)
+    {
+        $permintaan->update(['status' => 'ditolak', 'diproses_oleh' => auth()->id(), 'diproses_pada' => now()]);
+
+        return redirect()->route('admin.users.index')->with('success', 'Permintaan reset password ditolak.');
     }
 
     public function create()

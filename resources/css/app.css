@@ -210,6 +210,7 @@ a.stat:hover { border-color: #bfdccb; box-shadow: var(--shadow); transform: tran
 .alert-success { background: #ecf8f1; border-color: #bfe3cd; color: #155c39; }
 .alert-error   { background: var(--red-50); border-color: #f5c2c3; color: #9d2328; }
 .alert-info    { background: var(--sky-50); border-color: #c4dcf0; color: #1d5a8a; }
+.alert-warning { background: var(--amber-50); border-color: #f3dca6; color: #7a4d06; }
 
 /* ---------- Formulir ---------- */
 .form-grid { display: grid; gap: 18px 20px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1153,3 +1154,36 @@ a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
 @media (max-width: 640px) {
     .modul-tabs { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* =========================================================
+   LUPA PASSWORD & RESET
+   ========================================================= */
+.label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.label-row label { margin-bottom: 6px; }
+.lupa-link { font-size: 13px; font-weight: 600; color: var(--brand-600); }
+.lupa-link:hover { color: var(--brand-700); text-decoration: underline; }
+.auth-form .back.top { margin: 0 0 18px; }
+.atau { display: flex; align-items: center; gap: 12px; margin: 22px 0 14px; color: var(--ink-500); font-size: 12.5px; }
+.atau::before, .atau::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.minta-admin { border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.minta-admin summary { display: flex; align-items: center; gap: 8px; padding: 12px 14px; cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--ink-700); list-style: none; }
+.minta-admin summary::-webkit-details-marker { display: none; }
+.minta-admin summary::after { content: '\F282'; font-family: bootstrap-icons; margin-left: auto; transition: transform .15s; }
+.minta-admin[open] summary::after { transform: rotate(180deg); }
+.minta-admin .form-minta-admin { padding: 4px 14px 14px; }
+.form-minta-admin .field .muted { font-weight: 400; }
+
+.menu-badge { margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #f5a524; color: #3d2805; font-size: 11px; font-weight: 700; display: inline-grid; place-items: center; }
+.wajib-ganti { display: inline-flex !important; align-items: center; gap: 4px; margin-top: 4px; color: #a5680a !important; font-weight: 600; }
+.reset-hasil { border-color: #bfe3cd; }
+.kode-sementara { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.kode-sementara code { font-size: 20px; font-weight: 700; letter-spacing: .08em; padding: 10px 16px; border-radius: var(--radius); background: var(--brand-50); color: var(--brand-800); border: 1px dashed #9ccfb3; user-select: all; }
+.permintaan-list { list-style: none; margin: 0; padding: 0; }
+.permintaan-list li { display: flex; align-items: center; gap: 14px; padding: 14px 20px; border-top: 1px solid var(--line-soft, #eef2ef); }
+.permintaan-list .info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.permintaan-list .info small { color: var(--ink-500); font-size: 12.5px; }
+.permintaan-list .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.permintaan-list .actions form { margin: 0; }
+.card-wajib { border-color: #f3dca6; box-shadow: 0 0 0 3px rgba(245, 165, 36, .12); }
+@media (max-width: 640px) { .permintaan-list li { flex-wrap: wrap; } }
+.form-minta-admin .btn { margin-top: 6px; }

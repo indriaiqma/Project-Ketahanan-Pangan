@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'wajib_ganti_password',
     ];
 
     /**
@@ -42,7 +43,14 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'wajib_ganti_password' => 'boolean',
     ];
+
+    /** Email tautan reset password berbahasa Indonesia. */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token));
+    }
 
     /**
      * Daftar role beserta labelnya.

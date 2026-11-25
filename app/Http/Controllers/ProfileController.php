@@ -47,7 +47,9 @@ class ProfileController extends Controller
     {
         $request->validate([
             'password_lama' => 'required',
-            'password_baru' => 'required|min:6|confirmed',
+            'password_baru' => 'required|min:6|confirmed|different:password_lama',
+        ], [
+            'password_baru.different' => 'Password baru harus berbeda dari password lama/sementara.',
         ]);
 
         $user = auth()->user();
@@ -60,6 +62,7 @@ class ProfileController extends Controller
 
         $user->update([
             'password' => Hash::make($request->password_baru),
+            'wajib_ganti_password' => false,
         ]);
 
         return redirect()->route('admin.profile')

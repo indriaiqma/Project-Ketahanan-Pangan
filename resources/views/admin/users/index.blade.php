@@ -10,6 +10,67 @@
     </x-slot:actions>
 </x-page-header>
 
+{{-- Password sementara: hanya ditampilkan sekali setelah dibuat --}}
+@if ($baru = session('password_sementara'))
+    <section class="card reset-hasil" role="status">
+        <div class="card-head">
+            <div class="card-title">
+                <span class="ico"><i class="bi bi-key-fill"></i></span>
+                <div>
+                    <h2>Password sementara untuk {{ $baru['nama'] }}</h2>
+                    <p>{{ $baru['email'] }} · hanya ditampilkan sekali, sampaikan langsung kepada pemilik akun</p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="kode-sementara">
+                <code id="password-sementara">{{ $baru['password'] }}</code>
+                <button type="button" class="btn btn-outline btn-sm" data-salin="#password-sementara"><i class="bi bi-clipboard"></i> Salin</button>
+            </div>
+            <p class="muted" style="margin:10px 0 0;font-size:13px">
+                Pengguna wajib membuat password baru saat pertama kali masuk dengan password ini. Sampaikan melalui jalur pribadi (bukan grup).
+            </p>
+        </div>
+    </section>
+@endif
+
+{{-- Permintaan reset password dari halaman "Lupa Password" --}}
+@if ($permintaan->isNotEmpty())
+    <section class="card">
+        <div class="card-head">
+            <div class="card-title">
+                <span class="ico"><i class="bi bi-shield-lock-fill"></i></span>
+                <div>
+                    <h2>Permintaan Reset Password</h2>
+                    <p>{{ $permintaan->count() }} permintaan menunggu · pastikan permintaan benar berasal dari pemilik akun sebelum memproses</p>
+                </div>
+            </div>
+        </div>
+        <ul class="permintaan-list">
+            @foreach ($permintaan as $p)
+                <li>
+                    <span class="avatar">{{ strtoupper(mb_substr($p->user->name, 0, 1)) }}</span>
+                    <div class="info">
+                        <b>{{ $p->user->name }}</b> <small>{{ $p->user->email }} · {{ $p->user->roleLabel() }}</small>
+                        <small>Diminta {{ $p->created_at->diffForHumans() }}{{ $p->ip ? ' dari IP '.$p->ip : '' }}{{ $p->catatan ? ' · "'.$p->catatan.'"' : '' }}</small>
+                    </div>
+                    <div class="actions">
+                        <form action="{{ route('admin.users.reset-password', $p->user) }}" method="POST"
+                              data-confirm="Buat password sementara untuk {{ $p->user->name }}? Password lama tidak berlaku lagi.">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-key"></i> Buat Password Sementara</button>
+                        </form>
+                        <form action="{{ route('admin.users.permintaan.tolak', $p) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-outline btn-sm">Tolak</button>
+                        </form>
+                    </div>
+                </li>
+            @endforeach
+        </ul>
+    </section>
+@endif
+
 <section class="card">
     <div class="card-head">
         <div class="card-title">
@@ -47,6 +108,9 @@
                                         <span class="strong">{{ $user->name }}</span>
                                         @if ($diriSendiri)<span class="badge sky" style="margin-left:6px;height:20px">Anda</span>@endif
                                         <small>{{ $user->email }}</small>
+                                        @if ($user->wajib_ganti_password)
+                                            <small class="wajib-ganti"><i class="bi bi-shield-exclamation"></i> Memakai password sementara</small>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
@@ -67,6 +131,11 @@
                                 <div class="actions">
                                     <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-outline btn-icon" title="Ubah" aria-label="Ubah"><i class="bi bi-pencil"></i></a>
                                     @unless ($diriSendiri)
+                                        <form action="{{ route('admin.users.reset-password', $user) }}" method="POST"
+                                              data-confirm="Buat password sementara untuk {{ $user->name }}? Password lama tidak berlaku lagi dan pengguna wajib menggantinya saat login.">
+                                            @csrf
+                                            <button type="submit" class="btn btn-outline btn-icon" title="Reset password" aria-label="Reset password {{ $user->name }}"><i class="bi bi-key"></i></button>
+                                        </form>
                                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST"
                                               data-confirm="Hapus akun {{ $user->name }} ({{ $user->email }})? Tindakan ini tidak dapat dibatalkan.">
                                             @csrf

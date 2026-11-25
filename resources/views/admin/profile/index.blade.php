@@ -41,9 +41,15 @@
             </div>
         </form>
 
-        <form action="{{ route('admin.profile.password') }}" method="POST" class="card" autocomplete="off">
+        <form action="{{ route('admin.profile.password') }}" method="POST" @class(['card', 'card-wajib' => auth()->user()->wajib_ganti_password]) id="ganti-password" autocomplete="off">
             @csrf
             @method('PUT')
+            @if (auth()->user()->wajib_ganti_password)
+                <div class="alert alert-warning" role="alert" style="margin:16px 20px 0">
+                    <i class="bi bi-shield-exclamation"></i>
+                    <div><b>Anda sedang memakai password sementara.</b> Isi "Password Lama" dengan password sementara dari Administrator, lalu buat password baru. Menu lain dapat diakses setelah password diganti.</div>
+                </div>
+            @endif
             <div class="card-head">
                 <div class="card-title">
                     <span class="ico"><i class="bi bi-key-fill"></i></span>

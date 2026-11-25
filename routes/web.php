@@ -8,6 +8,7 @@ use App\Http\Controllers\DataBidangController;
 use App\Http\Controllers\ModulDataController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KawasanHutanController;
+use App\Http\Controllers\LupaPasswordController;
 use App\Http\Controllers\LahanKritisController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
@@ -24,7 +25,34 @@ Route::get('/login', [AuthController::class, 'showLogin'])
     ->name('login');
 
 Route::post('/login', [AuthController::class, 'login'])
-    ->middleware('throttle:5,1');
+    ->middleware('throttle:login');
+
+/*
+|--------------------------------------------------------------------------
+| LUPA PASSWORD (Admin & Petugas)
+|--------------------------------------------------------------------------
+| 1) tautan reset ke email  2) cadangan: permintaan reset ke Administrator
+*/
+
+Route::middleware('guest')->group(function () {
+    Route::get('/lupa-password', [LupaPasswordController::class, 'form'])
+        ->name('password.request');
+
+    Route::post('/lupa-password/email', [LupaPasswordController::class, 'kirimEmail'])
+        ->middleware('throttle:lupa-password')
+        ->name('password.email');
+
+    Route::post('/lupa-password/admin', [LupaPasswordController::class, 'mintaAdmin'])
+        ->middleware('throttle:lupa-password')
+        ->name('password.admin');
+
+    Route::get('/reset-password/{token}', [LupaPasswordController::class, 'formReset'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [LupaPasswordController::class, 'reset'])
+        ->middleware('throttle:reset-password')
+        ->name('password.update');
+});
 
 Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
@@ -173,7 +201,7 @@ Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(functi
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin,petugas', 'wajib.ganti'])->prefix('admin')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
@@ -276,6 +304,15 @@ Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(functi
     Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->whereNumber('user')
         ->name('admin.users.destroy');
+
+    // Reset password: buat password sementara (pengguna wajib menggantinya saat login)
+    Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])
+        ->whereNumber('user')
+        ->name('admin.users.reset-password');
+
+    Route::post('/users/permintaan-reset/{permintaan}/tolak', [UserController::class, 'tolakPermintaan'])
+        ->whereNumber('permintaan')
+        ->name('admin.users.permintaan.tolak');
 
     });
 

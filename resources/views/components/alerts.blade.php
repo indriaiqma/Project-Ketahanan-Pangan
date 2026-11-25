@@ -7,6 +7,14 @@
     </div>
 @endif
 
+@if (session('warning'))
+    <div class="alert alert-warning" role="alert">
+        <i class="bi bi-shield-exclamation"></i>
+        <div>{{ session('warning') }}</div>
+        <button type="button" class="close" aria-label="Tutup"><i class="bi bi-x-lg"></i></button>
+    </div>
+@endif
+
 @if (session('error'))
     <div class="alert alert-error" role="alert">
         <i class="bi bi-exclamation-octagon-fill"></i>

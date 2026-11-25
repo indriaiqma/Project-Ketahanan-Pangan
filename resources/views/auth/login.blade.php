@@ -1,79 +1,47 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk · Sistem Informasi Ketahanan Pangan Malang Selatan</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32.png') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body>
+@extends('layouts.auth')
 
-<div class="auth">
-    <aside class="auth-aside">
-        <div class="hero-bg" aria-hidden="true">
-            <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>
-            <span class="hero-grid"></span>
+@section('title', 'Masuk')
+
+@section('content')
+    <h2>Masuk ke Panel Pengelola</h2>
+    <p class="sub">Khusus Administrator dan Petugas Bakorwil III Malang. Untuk melihat data, kunjungi <a href="{{ route('data.index') }}">Data Bidang</a> tanpa perlu masuk.</p>
+
+    @if (session('status'))
+        <div class="alert alert-success" role="status" style="margin-bottom:18px">
+            <i class="bi bi-check-circle-fill"></i>
+            <div>{{ session('status') }}</div>
         </div>
+    @endif
 
-        <div>
-            <a href="{{ route('dashboard') }}" aria-label="Ke beranda"><x-brand variant="dark" size="lg" sub="Pemerintah Provinsi Jawa Timur" /></a>
+    @if ($errors->any())
+        <div class="alert alert-error" role="alert" style="margin-bottom:18px">
+            <i class="bi bi-exclamation-octagon-fill"></i>
+            <div>{{ $errors->first() }}</div>
         </div>
+    @endif
 
-        <div>
-            <h1>Sistem Informasi Ketahanan Pangan Malang Selatan</h1>
-            <p>Pengelolaan dan penyajian data seluruh bidang Bakorwil III Malang di wilayah Malang Selatan.</p>
-            <ul>
-                <li><i class="bi bi-shield-fill-check"></i> <span><b>Administrator</b> · akses penuh &amp; kelola pengguna</span></li>
-                <li><i class="bi bi-person-badge-fill"></i> <span><b>Petugas</b> · tambah, ubah, hapus, import &amp; export data</span></li>
-                <li><i class="bi bi-globe2"></i> <span><b>Masyarakat</b> · lihat data di situs publik tanpa login</span></li>
-            </ul>
-        </div>
-
-        <small>Bakorwil III Malang · Pemerintah Provinsi Jawa Timur</small>
-    </aside>
-
-    <main class="auth-form">
-        <div class="box">
-            <div class="auth-mobile-logo">
-                <x-brand />
+    <form method="POST" action="{{ route('login') }}">
+        @csrf
+        <div class="field">
+            <label for="email">Email</label>
+            <div class="input-group">
+                <i class="bi bi-envelope lead"></i>
+                <input id="email" type="email" name="email" value="{{ old('email') }}" class="input" placeholder="nama@instansi.go.id" required autofocus autocomplete="username">
             </div>
-
-            <h2>Masuk ke Panel Pengelola</h2>
-            <p class="sub">Khusus Administrator dan Petugas Bakorwil III Malang. Untuk melihat data, kunjungi <a href="{{ route('data.index') }}">Data Bidang</a> tanpa perlu masuk.</p>
-
-            @if ($errors->any())
-                <div class="alert alert-error" role="alert" style="margin-bottom:18px">
-                    <i class="bi bi-exclamation-octagon-fill"></i>
-                    <div>{{ $errors->first() }}</div>
-                </div>
-            @endif
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-                <div class="field">
-                    <label for="email">Email</label>
-                    <div class="input-group">
-                        <i class="bi bi-envelope lead"></i>
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" class="input" placeholder="nama@instansi.go.id" required autofocus autocomplete="username">
-                    </div>
-                </div>
-                <div class="field">
-                    <label for="password">Password</label>
-                    <div class="input-group">
-                        <i class="bi bi-lock lead"></i>
-                        <input id="password" type="password" name="password" class="input has-trail" placeholder="Masukkan password" required autocomplete="current-password">
-                        <button type="button" class="trail" data-toggle-password>Lihat</button>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block" data-loading="Memeriksa…"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>
-            </form>
-
-            <a href="{{ route('dashboard') }}" class="back"><i class="bi bi-arrow-left"></i> Kembali ke beranda</a>
         </div>
-    </main>
-</div>
+        <div class="field">
+            <div class="label-row">
+                <label for="password">Password</label>
+                <a href="{{ route('password.request') }}" class="lupa-link">Lupa password?</a>
+            </div>
+            <div class="input-group">
+                <i class="bi bi-lock lead"></i>
+                <input id="password" type="password" name="password" class="input has-trail" placeholder="Masukkan password" required autocomplete="current-password">
+                <button type="button" class="trail" data-toggle-password>Lihat</button>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" data-loading="Memeriksa…"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>
+    </form>
 
-</body>
-</html>
+    <a href="{{ route('dashboard') }}" class="back"><i class="bi bi-arrow-left"></i> Kembali ke beranda</a>
+@endsection
