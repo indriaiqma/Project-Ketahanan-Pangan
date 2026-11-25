@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\DB;
  *
  *   php artisan data:dummy          isi data contoh (data contoh lama diganti)
  *   php artisan data:dummy --hapus  hapus semua data contoh
+ *   php artisan data:dummy --kosong hanya isi modul yang masih kosong (data contoh lama tetap)
  *
  * Semua baris contoh ditandai sumber_data = "Data contoh (dummy)", sehingga
  * mudah dihapus dan TIDAK pernah menimpa data asli (slot wilayah x periode
@@ -26,7 +27,7 @@ class DataDummy extends Command
 {
     public const PENANDA = 'Data contoh (dummy)';
 
-    protected $signature = 'data:dummy {--hapus : Hapus semua data contoh} {--force : Jalankan tanpa konfirmasi}';
+    protected $signature = 'data:dummy {--hapus : Hapus semua data contoh} {--kosong : Hanya isi modul yang belum punya data sama sekali} {--force : Jalankan tanpa konfirmasi}';
 
     protected $description = 'Isi atau hapus data contoh (dummy) untuk seluruh modul data bidang';
 
@@ -38,8 +39,10 @@ class DataDummy extends Command
             return self::FAILURE;
         }
 
-        $terhapus = $this->hapus();
-        $this->info("Data contoh lama dihapus: $terhapus baris.");
+        if (! $this->option('kosong')) {
+            $terhapus = $this->hapus();
+            $this->info("Data contoh lama dihapus: $terhapus baris.");
+        }
 
         if (! $this->option('hapus')) {
             mt_srand(2026);
@@ -78,9 +81,14 @@ class DataDummy extends Command
         $n = 0;
 
         foreach ($this->modulData() as $def) {
-            $n += ModulData::isDaftar($def)
+            if ($this->option('kosong') && ModulData::query($def)->exists()) {
+                continue;
+            }
+            $n += ! empty($def['induk'])
+                ? $this->isiRincian($def, $wilayah, $admin)
+                : (ModulData::isDaftar($def)
                 ? $this->isiDaftar($def, $wilayah, $admin)
-                : $this->isiRekap($def, $wilayah, $admin);
+                : $this->isiRekap($def, $wilayah, $admin));
         }
 
         return $n;
@@ -279,6 +287,104 @@ class DataDummy extends Command
     }
 
     /* ------------------------------------------------------------------ */
+
+    /** Contoh desa per kecamatan Malang Selatan (untuk nama & lokasi data rincian). */
+    private const DESA = [
+        'Ampelgading' => ['Tamansatriyan', 'Tirtomarto', 'Sidorenggo', 'Lebakharjo', 'Tamanasri'],
+        'Bantur' => ['Bantur', 'Srigonco', 'Sumberbening', 'Wonorejo', 'Rejosari'],
+        'Dampit' => ['Dampit', 'Pamotan', 'Sumbersuko', 'Majangtengah', 'Srimulyo'],
+        'Donomulyo' => ['Donomulyo', 'Tulungrejo', 'Kedungsalam', 'Purwodadi', 'Banjarejo'],
+        'Gedangan' => ['Gedangan', 'Sindurejo', 'Sidodadi', 'Tumpakrejo', 'Segaran'],
+        'Kalipare' => ['Kalipare', 'Arjowilangun', 'Sumberpetung', 'Kaliasri', 'Putukrejo'],
+        'Pagak' => ['Pagak', 'Sumberejo', 'Gampingan', 'Sempol', 'Tlogorejo'],
+        'Sumbermanjing Wetan' => ['Sitiarjo', 'Tambakrejo', 'Sumberagung', 'Druju', 'Kedungbanteng'],
+        'Tirtoyudo' => ['Tirtoyudo', 'Gadungsari', 'Sukorejo', 'Purwodadi', 'Tlogosari'],
+    ];
+
+    /** Rincian (mis. Daftar Sekolah): 2-4 entri per kecamatan dengan nama & desa yang wajar. */
+    private function isiRincian(array $def, $wilayah, ?int $admin): int
+    {
+        $fw = ModulData::fieldWilayah($def);
+        $semuaBaris = [];
+        $nomorPola = [];
+
+        foreach ($wilayah as $w) {
+            $desa = self::DESA[$w->nama] ?? ["Desa {$w->nama}"];
+            shuffle($desa);
+            $jumlah = mt_rand(2, 4);
+
+            for ($i = 0; $i < $jumlah; $i++) {
+                $ganti = [
+                    '{kec}' => $w->nama,
+                    '{desa}' => $desa[$i % count($desa)],
+                    '{desa2}' => $desa[($i + 1) % count($desa)],
+                    '{nomor}' => (string) mt_rand(20500000, 20599999),
+                ];
+
+                // Tahap 1: field bukan teks (pilihan, angka, ...), lalu field yang mengikuti field lain
+                $nilai = [];
+                foreach ($def['fields'] as $k => $f) {
+                    $tipe = $f['tipe'] ?? 'teks';
+                    if ($k === $fw) {
+                        $nilai[$k] = $w->id;
+                    } elseif (! in_array($tipe, ['teks', 'teks_panjang'], true) && empty($f['ikut'])) {
+                        $nilai[$k] = isset($f['rentang']) && in_array($tipe, ['angka', 'desimal', 'tahun'], true)
+                            ? $this->dalamRentang($f['rentang'], $tipe)
+                            : $this->nilaiDaftar($def, $k, $f, $i + 1, $wilayah, $nilai);
+                    }
+                }
+                foreach ($def['fields'] as $k => $f) {
+                    if (! empty($f['ikut'])) {
+                        [$acuan, $peta] = $f['ikut'];
+                        $pilih = $peta[$nilai[$acuan] ?? ''] ?? $peta['*'] ?? $f['opsi'];
+                        $nilai[$k] = is_array($pilih) ? $pilih[array_rand($pilih)] : $pilih;
+                    }
+                }
+
+                // Tahap 2: field teks dari pola
+                foreach ($def['fields'] as $k => $f) {
+                    if (array_key_exists($k, $nilai)) {
+                        continue;
+                    }
+                    $pola = $f['pola'] ?? null;
+                    if (! empty($f['pola_ikut'])) {
+                        [$acuan, $peta] = $f['pola_ikut'];
+                        $pola = $peta[$nilai[$acuan] ?? ''] ?? null;
+                    }
+                    if ($pola) {
+                        $p = $pola[array_rand($pola)];
+                        $kunciNomor = $w->id.'|'.$p;
+                        $nomorPola[$kunciNomor] = ($nomorPola[$kunciNomor] ?? 0) + 1;
+                        $nilai[$k] = strtr($p, $ganti + ['{n}' => (string) ($nomorPola[$kunciNomor] + ($w->id % 3))]);
+                    } else {
+                        $nilai[$k] = $this->nilaiDaftar($def, $k, $f, $i + 1, $wilayah, $nilai);
+                    }
+                }
+
+                // Urutkan sesuai definisi field
+                $nilai = array_replace(array_fill_keys(array_keys($def['fields']), null), $nilai);
+
+                $waktu = now()->subDays(mt_rand(0, 45))->subMinutes(mt_rand(0, 900));
+                $semuaBaris[] = [
+                    'modul' => $def['kunci'],
+                    'nilai' => json_encode($nilai),
+                    'sumber_data' => self::PENANDA,
+                    'created_by' => $admin,
+                    'created_at' => $waktu,
+                    'updated_at' => $waktu,
+                ];
+            }
+        }
+
+        return $this->simpan(ModulDataEntri::class, $semuaBaris);
+    }
+
+    private function dalamRentang(array $rentang, string $tipe): float|int
+    {
+        $v = mt_rand((int) ($rentang[0] * 100), (int) ($rentang[1] * 100)) / 100;
+
+        return $tipe === 'desimal' ? round($v, 2) : (int) round($v);
+    }
 
     private function isiDaftar(array $def, $wilayah, ?int $admin): int
     {

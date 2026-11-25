@@ -5,7 +5,7 @@
 --}}
 @php
     $posisi = \App\Support\Bidang::posisiSaatIni();
-    $daftar = \App\Support\Bidang::untuk(auth()->user());
+    $daftar = \App\Support\Bidang::reguler(\App\Support\Bidang::untuk(auth()->user()));
     $kecil = fn ($teks) => mb_strtolower((string) $teks);
 @endphp
 

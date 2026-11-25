@@ -1127,3 +1127,27 @@ a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
     .wilayah-list li { grid-template-columns: 130px minmax(0, 1fr) 36px; }
     .gc-bars.wide li { grid-template-columns: 110px minmax(0, 1fr) 36px; }
 }
+
+/* =========================================================
+   TAB REKAP | RINCIAN MODUL & MENU KHUSUS
+   ========================================================= */
+.modul-tabs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); }
+.modul-tabs a { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: var(--radius); color: var(--ink-700); transition: background .15s, color .15s; }
+.modul-tabs a > i { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: 10px; background: var(--brand-50); color: var(--brand-600); font-size: 17px; }
+.modul-tabs a span { display: flex; flex-direction: column; min-width: 0; }
+.modul-tabs a b { font-size: 14px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.modul-tabs a small { font-size: 12px; color: var(--ink-500); }
+.modul-tabs a:hover { background: var(--brand-50); color: var(--brand-700); }
+.modul-tabs a.active { background: var(--brand-600); color: #fff; }
+.modul-tabs a.active > i { background: rgba(255, 255, 255, .16); color: #fff; }
+.modul-tabs a.active small { color: rgba(255, 255, 255, .78); }
+
+.rincian-link { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; background: var(--brand-50); color: var(--brand-700); font-size: 12.5px; font-weight: 600; }
+.rincian-link i { font-size: 10px; }
+.rincian-link:hover { background: var(--brand-100); color: var(--brand-800); }
+
+.side-khusus a .tag-baru { margin-left: auto; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: rgba(255, 255, 255, .12); }
+
+@media (max-width: 640px) {
+    .modul-tabs { grid-template-columns: minmax(0, 1fr); }
+}

@@ -166,6 +166,37 @@
     @endforeach
 </section>
 
+{{-- ===== Menu khusus (di luar struktur bidang) ===== --}}
+@foreach ($khusus as $k)
+    <div class="section-title" id="{{ $k['bidang']['slug'] }}">
+        <div>
+            <span class="kicker">Menu Khusus</span>
+            <h2>{{ $k['bidang']['nama'] }}</h2>
+            <p>{{ $k['bidang']['tagline'] }}. {{ angka($k['jumlah_data'], 0) }} data dari {{ $k['jumlah_modul'] }} modul.</p>
+        </div>
+        <a href="{{ route('data.bidang', $k['bidang']['slug']) }}" class="btn btn-outline btn-sm">Ringkasan <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    <section class="grid grid-2">
+        @foreach ($k['modul'] as $m)
+            @php($st = $m['statistik'])
+            <a href="{{ $m['href_publik'] }}" class="card tile bidang-tile">
+                <span class="ico"><i class="bi bi-{{ $m['icon'] ?? 'grid' }}"></i></span>
+                <span style="flex:1;min-width:0">
+                    <h3>{{ $m['nama'] }}</h3>
+                    <p>{{ \App\Support\ModulData::def($m['data'])['deskripsi'] }}</p>
+                    <span class="stats">
+                        <span><b>{{ angka($st['jumlah'], 0) }}</b> data</span>
+                        @if (! empty($m['rincian']))<span><i class="bi bi-list-ul"></i> {{ $m['rincian']['nama'] }}</span>@endif
+                        @if ($st['terakhir'])<span>diperbarui {{ $st['terakhir']->diffForHumans() }}</span>@endif
+                    </span>
+                    <span class="more">Lihat data <i class="bi bi-arrow-right"></i></span>
+                </span>
+            </a>
+        @endforeach
+    </section>
+@endforeach
+
 {{-- ===== Pembaruan & cakupan wilayah ===== --}}
 <section class="grid grid-main">
     <section class="card">

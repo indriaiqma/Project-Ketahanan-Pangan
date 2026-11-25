@@ -115,6 +115,12 @@ Route::permanentRedirect('/sdm', '/data/kemasyarakatan')
 |--------------------------------------------------------------------------
 */
 
+// Pertanian & Perkebunan dan Peternakan pindah ke menu khusus (dulu di Sub Bidang Pembangunan Ekonomi II)
+foreach (['pertanian-perkebunan', 'peternakan'] as $pindah) {
+    Route::permanentRedirect("/data/pembangunan-ekonomi/$pindah", "/data/pertanian-peternakan/$pindah");
+    Route::permanentRedirect("/admin/bidang/pembangunan-ekonomi/$pindah", "/admin/bidang/pertanian-peternakan/$pindah");
+}
+
 Route::prefix('data')->group(function () {
     Route::get('/', [DataBidangController::class, 'index'])
         ->name('data.index');

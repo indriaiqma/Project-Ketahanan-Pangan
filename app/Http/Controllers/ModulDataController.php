@@ -20,7 +20,10 @@ use Maatwebsite\Excel\Facades\Excel;
  * Akses sudah diperiksa di route:
  *   - lihat & export  : bidang:lihat
  *   - tambah & ubah   : role:admin,petugas + bidang:ubah (penugasan sub bidang)
- *   - hapus           : role:admin
+ *   - hapus           : role:admin,petugas + bidang:ubah
+ *
+ * Modul rekap dapat punya modul rincian (daftar per entitas, mis. Daftar Sekolah)
+ * yang tampil sebagai tab di halaman modul induknya.
  */
 class ModulDataController extends Controller
 {
@@ -34,6 +37,10 @@ class ModulDataController extends Controller
         // Halaman publik (/data/...) selalu hanya-baca
         $publik = $request->routeIs('data.*');
         $bisaUbah = ! $publik && Bidang::bolehUbah($request->user(), $b['slug'], $m['sub']);
+
+        // Tab "Rekap per kecamatan" | "Rincian" untuk modul yang punya rincian
+        $induk = ! empty($m['induk']) ? Bidang::cariModul($b['slug'], $m['induk']) : $m;
+        view()->share('tabModul', ! empty($induk['rincian']) ? [$induk, $induk['rincian']] : []);
 
         return ModulData::isDaftar($def)
             ? $this->indexDaftar($request, $b, $m, $def, $bisaUbah)
@@ -79,6 +86,18 @@ class ModulDataController extends Controller
             'nilai' => $data->isEmpty() ? null : ModulData::nilai($def, $jumlah, $k),
         ])->all();
 
+        // Jumlah entri rincian per kecamatan (mis. jumlah sekolah) untuk tautan di tabel
+        $rincian = null;
+        if (! empty($m['rincian'])) {
+            $rDef = ModulData::def($m['rincian']['data']);
+            $fw = ModulData::fieldWilayah($rDef);
+            $rincian = [
+                'modul' => $m['rincian'],
+                'jumlah' => $fw ? ModulData::query($rDef)->get()->countBy(fn ($e) => (int) $e->{$fw})->all() : [],
+                'satuan' => $rDef['metrik'][0]['satuan'] ?? 'data',
+            ];
+        }
+
         $daftarTahun = ModulData::query($def)->distinct()->pluck('tahun')
             ->push($tahunIni, $tahun)->map(fn ($t) => (int) $t)->unique()->sortDesc()->values();
 
@@ -105,6 +124,7 @@ class ModulDataController extends Controller
             ],
             'bisaUbah' => $bisaUbah,
             'publik' => $request->routeIs('data.*'),
+            'rincian' => $rincian,
         ]);
     }
 
@@ -120,6 +140,11 @@ class ModulDataController extends Controller
         }
         if ($def['filter'] && $request->filled('filter')) {
             $entri = $entri->where($def['filter'], $request->input('filter'));
+        }
+        // Filter kecamatan (field bertipe wilayah), mis. dari tautan di tabel rekap
+        $fWilayah = ModulData::fieldWilayah($def);
+        if ($fWilayah && $request->filled('kecamatan')) {
+            $entri = $entri->filter(fn ($e) => (int) $e->{$fWilayah} === $request->integer('kecamatan'));
         }
         $entri = $entri->values();
 
@@ -141,6 +166,7 @@ class ModulDataController extends Controller
             'modul' => $m,
             'def' => $def,
             'entri' => $entri,
+            'fWilayah' => $fWilayah,
             'jumlahSemua' => $semua->count(),
             'wilayah' => $wilayah,
             'metrik' => collect($def['metrik'])->map(fn ($mt) => $mt + ['hasil' => ModulData::metrikDaftar($mt, $semua)])->all(),

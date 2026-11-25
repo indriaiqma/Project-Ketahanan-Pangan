@@ -118,9 +118,21 @@ class User extends Authenticatable
             return false;
         }
 
-        return $this->aksesBidang->contains(
-            fn ($akses) => $akses->bidang === $bidang
-                && ($akses->sub_bidang === null || $akses->sub_bidang === $subBidang)
+        $ditugaskan = fn (string $b, ?string $s) => $this->aksesBidang->contains(
+            fn ($akses) => $akses->bidang === $b && ($akses->sub_bidang === null || $akses->sub_bidang === $s)
         );
+
+        if ($ditugaskan($bidang, $subBidang)) {
+            return true;
+        }
+
+        // Menu khusus (mis. Pertanian & Peternakan) juga dikelola petugas sub bidang asalnya
+        foreach (\App\Support\Bidang::cari($bidang)['akses_dari'] ?? [] as $asal) {
+            if ($ditugaskan($asal[0], $asal[1] ?? null)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

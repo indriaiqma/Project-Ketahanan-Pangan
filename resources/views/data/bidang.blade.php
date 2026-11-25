@@ -9,7 +9,7 @@
     <x-slot:breadcrumb>
         <a href="{{ route('dashboard') }}">Beranda</a>
         <i class="bi bi-chevron-right"></i>
-        <a href="{{ route('data.index') }}">Data Bidang</a>
+        <a href="{{ route('data.index') }}{{ empty($bidang['khusus']) ? '' : '#menu-khusus' }}">{{ empty($bidang['khusus']) ? 'Data Bidang' : 'Menu Khusus' }}</a>
         <i class="bi bi-chevron-right"></i>
         <span aria-current="page">{{ $bidang['nama'] }}</span>
     </x-slot:breadcrumb>
@@ -19,7 +19,7 @@
 </x-page-header>
 
 {{-- Pindah cepat antar bidang --}}
-@if ($semuaBidang->count() > 1)
+@if ($semuaBidang->count() > 1 && empty($bidang['khusus']))
     <nav class="bidang-tabs" aria-label="Pilih bidang">
         @foreach ($semuaBidang as $sb)
             <a href="{{ route('data.bidang', $sb['slug']) }}" @class(['active' => $sb['slug'] === $bidang['slug']])>

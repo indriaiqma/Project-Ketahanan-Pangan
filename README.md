@@ -58,23 +58,40 @@ Data yang diinput petugas langsung tampil di situs publik, sehingga informasi ya
 
 ## 2. Struktur Bidang & Modul
 
-Data disusun berjenjang: **Bidang → Sub Bidang → Modul**. Saat ini terdapat **4 bidang, 8 sub bidang, dan 31 modul data**.
+Data disusun berjenjang: **Bidang → Sub Bidang → Modul**. Saat ini terdapat **4 bidang, 8 sub bidang, dan 29 modul data**, ditambah **menu khusus Pertanian & Peternakan** (2 modul) yang berdiri di luar struktur bidang.
 
 | Bidang | Sub Bidang | Modul |
 |---|---|---|
 | **Pemerintahan** | Pemerintahan I | Rekap Kependudukan, Data Desa/Kelurahan, Statistik & Kominfo, Perpustakaan & Kearsipan |
 | | Pemerintahan II | Trantibumlinmas, Kesbangpol, Kerja Sama Daerah, Batas Wilayah |
 | **Pembangunan Ekonomi** | Pembangunan Ekonomi I | UMKM & Koperasi, Investasi, Perdagangan & Industri |
-| | Pembangunan Ekonomi II | Pertanian & Perkebunan, Peternakan, Perikanan, Ketahanan Pangan |
+| | Pembangunan Ekonomi II | Perikanan, Ketahanan Pangan |
 | **Kemasyarakatan** | Kemasyarakatan I | Pendidikan, Kesehatan, Sosial, Tenaga Kerja & Transmigrasi |
 | | Kemasyarakatan II | PPPA, KB, Kepemudaan & Olahraga, Budaya & Pariwisata |
 | **Sarana & Prasarana** | Sarpras I | Proyek Infrastruktur (PUPR), Perumahan & Permukiman, Pertanahan, Perhubungan |
 | | Sarpras II | Kawasan Hutan, Lahan Kritis, Lingkungan Hidup, ESDM |
+| **Menu khusus: Pertanian & Peternakan** | – | Pertanian & Perkebunan, Peternakan |
+
+**Menu khusus** tampil sebagai menu tersendiri di sidebar panel dan navbar situs publik. Yang dapat mengelolanya: Administrator, petugas yang ditugaskan langsung ke menu ini, dan petugas Sub Bidang Pembangunan Ekonomi II (diatur lewat `'akses_dari'` di [config/bidang.php](config/bidang.php)).
 
 Ada dua jenis modul:
 
 - **Rekap**: satu baris data untuk setiap kecamatan per periode (bulan, semester, atau tahun). Contoh: jumlah sekolah dan siswa per kecamatan tahun 2026. Persentase dan status capaian target dihitung otomatis.
 - **Daftar**: kumpulan entri bebas, misalnya daftar proyek infrastruktur atau perjanjian kerja sama, lengkap dengan pencarian dan filter.
+- **Rincian**: sebagian besar modul rekap dilengkapi daftar rinci per lokasi, misalnya Pendidikan → **Daftar Sekolah** (NPSN, jenjang, status, jumlah siswa, guru, akreditasi), Kesehatan → **Daftar Fasilitas Kesehatan**, Peternakan → **Daftar Kelompok Peternak**. Rincian tampil sebagai tab di halaman modul, dan di tabel rekap setiap kecamatan memiliki tautan ke rinciannya (contoh: "4 sekolah →").
+
+| Modul rekap | Rincian |
+|---|---|
+| Data Desa/Kelurahan · Statistik & Kominfo · Perpustakaan & Kearsipan | Daftar Desa/Kelurahan · Daftar Infrastruktur TIK · Daftar Perpustakaan |
+| Trantibumlinmas · Kesbangpol | Daftar Kejadian · Daftar Ormas |
+| UMKM & Koperasi · Investasi · Perdagangan & Industri | Daftar Koperasi & UMKM Binaan · Daftar Proyek Investasi · Daftar Pasar & IKM |
+| Perikanan · Ketahanan Pangan | Daftar Kelompok Nelayan & Pembudidaya · Daftar Lumbung Pangan |
+| Pertanian & Perkebunan · Peternakan | Daftar Kelompok Tani · Daftar Kelompok Peternak |
+| Pendidikan · Kesehatan · Tenaga Kerja & Transmigrasi | Daftar Sekolah · Daftar Fasilitas Kesehatan · Daftar Perusahaan & Serapan Tenaga Kerja |
+| KB · Kepemudaan & Olahraga · Budaya & Pariwisata | Daftar Kampung KB · Daftar Sarana Olahraga · Daftar Destinasi Wisata & Budaya |
+| Perumahan & Permukiman · Perhubungan · Lingkungan Hidup · ESDM | Daftar Lokasi Kawasan Kumuh · Daftar Ruas Jalan Kabupaten · Daftar Bank Sampah & TPS3R · Daftar Instalasi Energi & Air |
+
+Modul yang menyangkut data pribadi (Rekap Kependudukan, Sosial, PPPA) dan Pertanahan sengaja tidak diberi rincian per orang/kasus.
 
 Struktur bidang diatur di [config/bidang.php](config/bidang.php), sedangkan isi setiap modul diatur di [config/modul_data.php](config/modul_data.php).
 
@@ -263,7 +280,8 @@ Dibuat oleh `php artisan migrate --seed` ([DatabaseSeeder.php](database/seeders/
 |---|---|
 | `php artisan data:dummy` | Mengisi data contoh yang realistis ke seluruh modul. Data asli tidak ditimpa: periode yang sudah berisi data dilewati. |
 | `php artisan data:dummy --hapus` | Menghapus **hanya** data contoh (ditandai sumber data "Data contoh (dummy)"). Data asli tidak terhapus. |
-| `--force` | Tambahkan pada kedua perintah di atas untuk melewati konfirmasi. |
+| `php artisan data:dummy --kosong` | Hanya mengisi modul yang **belum punya data sama sekali** (misalnya modul rincian baru). Data contoh yang sudah ada tidak diubah. |
+| `--force` | Tambahkan pada perintah di atas untuk melewati konfirmasi. |
 
 Jalankan `php artisan data:dummy --hapus` setelah data asli mulai diinput agar data contoh tidak tercampur dengan data resmi.
 
@@ -275,6 +293,8 @@ Sebagian besar modul disimpan di tabel bersama `modul_data` (kolom JSON), sehing
 2. Daftarkan modul di [config/bidang.php](config/bidang.php) pada sub bidang yang sesuai, dengan `'status' => 'aktif'` dan `'data' => '<kunci modul>'`.
 
 Halaman daftar, form input, validasi, kartu metrik, grafik, status target, situs publik, dan export Excel akan terbentuk otomatis.
+
+**Menambah rincian** untuk modul rekap: buat definisi jenis `daftar` dengan `'induk' => '<kunci modul rekap>'` dan satu field bertipe `wilayah` (kecamatan). Tab rincian, tautan per kecamatan, dan hak akses mengikuti modul induknya secara otomatis.
 
 ## 11. Format Import Excel
 

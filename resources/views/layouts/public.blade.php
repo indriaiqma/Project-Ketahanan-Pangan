@@ -11,7 +11,8 @@
     <link rel="apple-touch-icon" href="{{ asset('images/apple-touch-icon.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-@php($navBidang = \App\Support\Bidang::semua())
+@php($navBidang = \App\Support\Bidang::reguler())
+@php($navKhusus = \App\Support\Bidang::khusus())
 <body @class(['has-hero' => View::hasSection('hero')])>
 
 <header class="site-nav" data-site-nav>
@@ -42,6 +43,21 @@
                 </div>
             </div>
 
+            @foreach ($navKhusus as $nk)
+                <div @class(['dropdown', 'active' => request()->is('data/'.$nk['slug'], 'data/'.$nk['slug'].'/*')])>
+                    <button type="button" data-dropdown-toggle aria-expanded="false">
+                        {{ $nk['nama'] }} <i class="bi bi-chevron-down chev"></i>
+                    </button>
+                    <div class="dropdown-menu left">
+                        <a href="{{ route('data.bidang', $nk['slug']) }}"><i class="bi bi-grid-1x2"></i> Ringkasan</a>
+                        <hr>
+                        @foreach (\App\Support\Bidang::modulBidang($nk) as $m)
+                            <a href="{{ route('data.modul', ['bidang' => $nk['slug'], 'modul' => $m['slug']]) }}"><i class="bi bi-{{ $m['icon'] ?? 'grid' }}"></i> {{ $m['nama'] }}</a>
+                        @endforeach
+                    </div>
+                </div>
+            @endforeach
+
             @auth
                 <a href="{{ route('admin.dashboard') }}" class="btn btn-primary btn-sm"><i class="bi bi-speedometer2"></i> Panel Pengelola</a>
             @else
@@ -70,6 +86,9 @@
             <h4>Data Bidang</h4>
             @foreach ($navBidang as $nb)
                 <a href="{{ route('data.bidang', $nb['slug']) }}">{{ $nb['nama'] }}</a>
+            @endforeach
+            @foreach ($navKhusus as $nk)
+                <a href="{{ route('data.bidang', $nk['slug']) }}">{{ $nk['nama'] }}</a>
             @endforeach
             <a href="{{ route('kawasan-hutan.index') }}">Kawasan Hutan</a>
             <a href="{{ route('lahan-kritis.index') }}">Lahan Kritis</a>

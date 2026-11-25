@@ -48,6 +48,9 @@ class ModulData
             'ringkasan' => null,
             'filter' => null,
             'cari' => [],
+            'nama' => null,
+            'icon' => null,
+            'induk' => null,
         ];
 
         $def['penyimpanan'] = empty($def['model']) ? 'json' : 'tabel';
@@ -380,6 +383,12 @@ class ModulData
             'wilayah' => $wilayah?->get((int) $v)?->nama ?? '–',
             default => (string) $v,
         };
+    }
+
+    /** Kunci field bertipe wilayah (kecamatan) pada modul daftar, bila ada. */
+    public static function fieldWilayah(array $def): ?string
+    {
+        return collect($def['fields'])->search(fn ($f) => ($f['tipe'] ?? null) === 'wilayah') ?: null;
     }
 
     /** Nilai metrik daftar: jumlah entri, hitung per nilai, jumlah, atau rata-rata field. */

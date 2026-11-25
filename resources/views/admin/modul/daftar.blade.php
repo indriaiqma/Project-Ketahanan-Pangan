@@ -21,7 +21,9 @@
     $bisaUnduh = ! $publik || \App\Support\Bidang::bolehLihatSub(auth()->user(), $bidang['slug'], $modul['sub']);
     $adaAksi = $bisaUbah || $bolehHapus;
     $fFilter = $def['filter'] ? $def['fields'][$def['filter']] : null;
-    $difilter = request()->filled('cari') || request()->filled('filter');
+    $difilter = request()->filled('cari') || request()->filled('filter') || request()->filled('kecamatan');
+    $judulDaftar = str_starts_with($modul['nama'], 'Daftar') ? $modul['nama'] : 'Daftar '.$modul['nama'];
+    $kecamatanDipilih = $fWilayah && request()->filled('kecamatan') ? $wilayah->get(request()->integer('kecamatan')) : null;
 @endphp
 
 @section('content')
@@ -34,6 +36,10 @@
             <i class="bi bi-chevron-right"></i>
             <span>{{ $modul['sub_nama'] }}</span>
         @endif
+        @if (! empty($modul['induk']))
+            <i class="bi bi-chevron-right"></i>
+            <a href="{{ route($rute['modul'], ['bidang' => $bidang['slug'], 'modul' => $modul['induk']]) }}">{{ $modul['induk_nama'] }}</a>
+        @endif
         <i class="bi bi-chevron-right"></i>
         <span aria-current="page">{{ $modul['nama'] }}</span>
     </x-slot:breadcrumb>
@@ -44,10 +50,12 @@
             <span class="mode-chip"><i class="bi bi-globe2"></i> Data publik</span>
         @endif
         @if ($bisaUbah)
-            <a href="{{ route('admin.modul.create', $parameter) }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Tambah Data</a>
+            <a href="{{ route('admin.modul.create', $parameter + array_filter(['kecamatan' => request('kecamatan')])) }}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Tambah Data</a>
         @endif
     </x-slot:actions>
 </x-page-header>
+
+@include('admin.modul._tab')
 
 {{-- ===== Kartu metrik ===== --}}
 @if (count($metrik))
@@ -81,7 +89,7 @@
         <div class="card-title">
             <span class="ico"><i class="bi bi-table"></i></span>
             <div>
-                <h2>Daftar {{ $modul['nama'] }}</h2>
+                <h2>{{ $judulDaftar }}{{ $kecamatanDipilih ? ' · Kec. '.$kecamatanDipilih->nama : '' }}</h2>
                 <p>{{ $difilter ? 'Hasil filter: '.angka($entri->count(), 0).' dari '.angka($jumlahSemua, 0) : angka($jumlahSemua, 0) }} data</p>
             </div>
         </div>
@@ -93,6 +101,14 @@
                 <i class="bi bi-search lead"></i>
                 <input type="search" name="cari" value="{{ request('cari') }}" class="input" placeholder="Cari {{ collect($def['cari'])->map(fn ($f) => mb_strtolower($def['fields'][$f]['label']))->implode(', ') }}…" aria-label="Cari data">
             </div>
+        @endif
+        @if ($fWilayah)
+            <select name="kecamatan" class="select" aria-label="Filter kecamatan">
+                <option value="">Semua kecamatan</option>
+                @foreach ($wilayah as $w)
+                    <option value="{{ $w->id }}" @selected(request()->integer('kecamatan') === $w->id)>{{ $w->nama }}</option>
+                @endforeach
+            </select>
         @endif
         @if ($fFilter)
             <select name="filter" class="select" aria-label="Filter {{ mb_strtolower($fFilter['label']) }}">

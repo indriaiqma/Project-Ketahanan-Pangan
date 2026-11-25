@@ -20,9 +20,10 @@ class DataBidangController extends Controller
         $ringkasan = RingkasanBidang::semua();
 
         return view('data.index', [
-            'ringkasan' => $ringkasan,
+            'ringkasan' => $ringkasan->where('khusus', false)->values(),
+            'khusus' => $ringkasan->where('khusus', true)->values(),
             'total' => [
-                'bidang' => $ringkasan->count(),
+                'bidang' => $ringkasan->where('khusus', false)->count(),
                 'modul' => $ringkasan->sum('jumlah_modul'),
                 'terisi' => $ringkasan->sum('modul_terisi'),
                 'data' => $ringkasan->sum('jumlah_data'),
@@ -53,7 +54,7 @@ class DataBidangController extends Controller
             'kelompok' => $kelompok,
             'jumlahModul' => $semuaModul->count(),
             'terakhir' => $semuaModul->pluck('ringkasan.terakhir')->filter()->max(),
-            'semuaBidang' => Bidang::semua(),
+            'semuaBidang' => Bidang::reguler(),
         ]);
     }
 

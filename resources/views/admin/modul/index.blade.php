@@ -53,6 +53,8 @@
     </x-slot:actions>
 </x-page-header>
 
+@include('admin.modul._tab')
+
 {{-- ===== Filter periode ===== --}}
 <form method="GET" action="{{ route($rute['modul'], $parameter) }}" class="card toolbar periode-form" role="search" aria-label="Filter periode">
     <label class="sr-only" for="f-tahun">Tahun</label>
@@ -153,6 +155,7 @@
                         @foreach ($def['tabel'] as $k)
                             <th class="r">{{ ModulData::info($def, $k)['label'] }}</th>
                         @endforeach
+                        @if ($rincian ?? null)<th class="r">{{ $rincian['modul']['nama'] }}</th>@endif
                         <th>Status</th>
                         @if ($adaAksi)<th class="r">Aksi</th>@endif
                     </tr>
@@ -178,6 +181,15 @@
                             @foreach ($def['tabel'] as $k)
                                 <td class="r">{{ $d ? ModulData::format($def, $k, ModulData::nilai($def, $d, $k)) : '–' }}</td>
                             @endforeach
+                            @if ($rincian ?? null)
+                                @php($nRincian = $rincian['jumlah'][$r['wilayah']->id] ?? 0)
+                                <td class="r nowrap">
+                                    <a href="{{ route($rute['modul'], ['bidang' => $bidang['slug'], 'modul' => $rincian['modul']['slug'], 'kecamatan' => $r['wilayah']->id]) }}"
+                                       class="rincian-link" title="Lihat {{ mb_strtolower($rincian['modul']['nama']) }} di {{ $r['wilayah']->nama }}">
+                                        {{ angka($nRincian, 0) }} {{ $rincian['satuan'] }} <i class="bi bi-chevron-right"></i>
+                                    </a>
+                                </td>
+                            @endif
                             <td>
                                 <span @class(['status-pill', $r['status']])><span class="dot"></span>{{ ModulData::labelStatus($def, $r['status']) }}</span>
                             </td>

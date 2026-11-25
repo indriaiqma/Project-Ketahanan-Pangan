@@ -70,7 +70,7 @@ class RingkasanBidang
                 continue;
             }
 
-            if ($s = self::sorotanModul($m, $def, $baris)) {
+            if (empty($m['induk']) && $s = self::sorotanModul($m, $def, $baris)) {
                 $sorotan[] = $s;
             }
 
@@ -186,10 +186,18 @@ class RingkasanBidang
         $daftar = $user ? Bidang::untuk($user) : Bidang::semua();
 
         return $daftar->map(function ($b) use ($statistik) {
-            $modul = Bidang::modulBidang($b)->map(fn ($m) => $m + [
-                'statistik' => $statistik[$m['slug']] ?? self::isi(0, null),
-                'href_publik' => self::href($m),
-            ]);
+            $modul = Bidang::modulBidang($b)->map(function ($m) use ($statistik) {
+                // Statistik modul termasuk data rinciannya (mis. Daftar Sekolah)
+                $st = $statistik[$m['slug']] ?? self::isi(0, null);
+                if (! empty($m['rincian']) && ($r = $statistik[$m['rincian']['slug']] ?? null)) {
+                    $st = [
+                        'jumlah' => $st['jumlah'] + $r['jumlah'],
+                        'terakhir' => collect([$st['terakhir'], $r['terakhir']])->filter()->max(),
+                    ];
+                }
+
+                return $m + ['statistik' => $st, 'href_publik' => self::href($m)];
+            });
 
             return [
                 'bidang' => $b,
@@ -197,6 +205,7 @@ class RingkasanBidang
                 'jumlah_modul' => $modul->count(),
                 'modul_terisi' => $modul->filter(fn ($m) => $m['statistik']['jumlah'] > 0)->count(),
                 'jumlah_data' => $modul->sum('statistik.jumlah'),
+                'khusus' => ! empty($b['khusus']),
                 'terakhir' => $modul->pluck('statistik.terakhir')->filter()->max(),
             ];
         })->values();
@@ -209,19 +218,23 @@ class RingkasanBidang
         $bidang = self::semua($user);
 
         // Hanya modul yang boleh dilihat user (petugas: sub bidang tugasnya)
-        $boleh = $bidang->flatMap(fn ($r) => $r['modul']->map(fn ($m) => $m['bidang'].'/'.$m['slug']))->flip();
+        $boleh = $bidang->flatMap(fn ($r) => $r['modul']->flatMap(fn ($m) => array_filter([
+            $m['bidang'].'/'.$m['slug'],
+            ! empty($m['rincian']) ? $m['bidang'].'/'.$m['rincian']['slug'] : null,
+        ])))->flip();
         $saring = fn ($daftar) => collect($daftar)
             ->filter(fn ($s) => isset($boleh[$s['bidang'].'/'.$s['modul']]))
             ->map(fn ($s) => $s + ['href' => route('data.modul', ['bidang' => $s['bidang'], 'modul' => $s['modul']])])
             ->values();
 
         return [
-            'bidang' => $bidang,
+            'bidang' => $bidang->where('khusus', false)->values(),
+            'khusus' => $bidang->where('khusus', true)->values(),
             'sorotan' => $saring($mentah['sorotan'])->take(8),
             'pembaruan' => $saring($mentah['pembaruan'])->take(6),
             'wilayah' => collect($mentah['wilayah']),
             'total' => [
-                'bidang' => $bidang->count(),
+                'bidang' => $bidang->where('khusus', false)->count(),
                 'modul' => $bidang->sum('jumlah_modul'),
                 'terisi' => $bidang->sum('modul_terisi'),
                 'data' => $bidang->sum('jumlah_data'),

@@ -42,6 +42,11 @@
 */
 
 
+// Field bersama untuk modul rincian
+$kecamatan = ['label' => 'Kecamatan', 'tipe' => 'wilayah', 'wajib' => true, 'grup' => 'Lokasi'];
+$desa = ['label' => 'Desa/Kelurahan', 'grup' => 'Lokasi', 'pola' => ['{desa}']];
+$tahunData = ['label' => 'Tahun Data', 'tipe' => 'tahun', 'wajib' => true, 'grup' => 'Keterangan', 'rentang' => [2025, 2026]];
+
 return [
 
     /* =====================================================================
@@ -676,6 +681,520 @@ return [
         'tabel' => ['rumah_tangga', 'pju', 'plts_ebt', 'izin_tambang', 'rasio_elektrifikasi'],
         'grafik' => ['pju'],
         'ringkasan' => 'rumah_tangga_berlistrik',
+    ],
+
+    /* =====================================================================
+     | RINCIAN MODUL (jenis daftar, 'induk' => kunci modul rekap)
+     | Tampil sebagai tab rincian di halaman modul induknya, mis. Pendidikan
+     | -> Daftar Sekolah. Angka rekap per kecamatan tetap diinput di modul induk.
+     | Opsi khusus data contoh (php artisan data:dummy):
+     |   pola / pola_ikut : pola nama ({kec}, {desa}, {desa2}, {n}, {nomor})
+     |   rentang          : [min, maks] angka contoh
+     |   ikut             : nilai pilihan mengikuti field lain
+     * ===================================================================== */
+
+    'daftar-desa' => [
+        'induk' => 'data-desa-kelurahan', 'jenis' => 'daftar', 'nama' => 'Daftar Desa/Kelurahan', 'icon' => 'houses',
+        'deskripsi' => 'Rincian setiap desa/kelurahan: status Indeks Desa Membangun (IDM), jumlah penduduk, dan luas wilayah.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Desa/Kelurahan', 'wajib' => true, 'grup' => 'Identitas', 'pola' => ['{desa}']],
+            'kecamatan' => $kecamatan,
+            'jenis_pemerintahan' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Desa', 'Kelurahan'], 'ikut' => ['nama', ['*' => 'Desa']]],
+            'status_idm' => ['label' => 'Status IDM', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Status', 'opsi' => ['Mandiri', 'Maju', 'Berkembang', 'Tertinggal', 'Sangat Tertinggal']],
+            'jumlah_penduduk' => ['label' => 'Jumlah Penduduk', 'tipe' => 'angka', 'satuan' => 'jiwa', 'grup' => 'Status', 'rentang' => [2500, 12000]],
+            'jumlah_dusun' => ['label' => 'Jumlah Dusun', 'tipe' => 'angka', 'satuan' => 'dusun', 'grup' => 'Status', 'rentang' => [3, 8]],
+            'luas_wilayah' => ['label' => 'Luas Wilayah', 'tipe' => 'desimal', 'satuan' => 'km²', 'grup' => 'Status', 'rentang' => [5, 60]],
+            'tahun_data' => $tahunData,
+        ],
+        'tabel' => ['nama', 'kecamatan', 'jenis_pemerintahan', 'status_idm', 'jumlah_penduduk', 'luas_wilayah'],
+        'cari' => ['nama'], 'filter' => 'status_idm', 'grafik' => ['status_idm'],
+        'metrik' => [
+            ['label' => 'Total Desa/Kelurahan', 'icon' => 'houses', 'satuan' => 'desa/kelurahan'],
+            ['label' => 'Desa Mandiri', 'agregat' => 'hitung', 'field' => 'status_idm', 'nilai' => 'Mandiri', 'icon' => 'award', 'satuan' => 'desa'],
+            ['label' => 'Total Penduduk', 'agregat' => 'sum', 'field' => 'jumlah_penduduk', 'icon' => 'people', 'satuan' => 'jiwa'],
+        ],
+    ],
+
+    'infrastruktur-tik' => [
+        'induk' => 'statistik-kominfo', 'jenis' => 'daftar', 'nama' => 'Daftar Infrastruktur TIK', 'icon' => 'broadcast-pin',
+        'deskripsi' => 'Lokasi menara BTS, titik Wi-Fi publik, dan wilayah blank spot beserta status layanannya.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Lokasi', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Menara BTS' => ['Menara BTS {desa}'], 'Wi-Fi Publik' => ['Wi-Fi Publik Balai Desa {desa}'], 'Wilayah Blank Spot' => ['Dusun Krajan, {desa}', 'Dusun Sumber, {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Menara BTS', 'Wi-Fi Publik', 'Wilayah Blank Spot']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Status', 'opsi' => ['Beroperasi', 'Dalam Pembangunan', 'Belum Terlayani'],
+                'ikut' => ['jenis', ['Wilayah Blank Spot' => 'Belum Terlayani', '*' => ['Beroperasi', 'Beroperasi', 'Dalam Pembangunan']]]],
+            'tahun_data' => $tahunData,
+        ],
+        'tabel' => ['nama', 'jenis', 'kecamatan', 'desa', 'status'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['jenis'],
+        'metrik' => [
+            ['label' => 'Total Titik', 'icon' => 'broadcast-pin', 'satuan' => 'lokasi'],
+            ['label' => 'Menara BTS', 'agregat' => 'hitung', 'field' => 'jenis', 'nilai' => 'Menara BTS', 'icon' => 'reception-4', 'satuan' => 'menara'],
+            ['label' => 'Wilayah Blank Spot', 'agregat' => 'hitung', 'field' => 'jenis', 'nilai' => 'Wilayah Blank Spot', 'icon' => 'wifi-off', 'satuan' => 'lokasi'],
+        ],
+    ],
+
+    'daftar-perpustakaan' => [
+        'induk' => 'perpustakaan-kearsipan', 'jenis' => 'daftar', 'nama' => 'Daftar Perpustakaan', 'icon' => 'book',
+        'deskripsi' => 'Perpustakaan desa, taman bacaan masyarakat, dan pojok baca beserta koleksi dan jumlah pengunjungnya.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Perpustakaan', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Perpustakaan Desa' => ['Perpustakaan Desa {desa}'], 'Taman Bacaan Masyarakat' => ['TBM {desa} Cerdas', 'TBM Pelangi {desa}'], 'Pojok Baca' => ['Pojok Baca Balai Desa {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Perpustakaan Desa', 'Taman Bacaan Masyarakat', 'Pojok Baca']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'koleksi' => ['label' => 'Koleksi Buku', 'tipe' => 'angka', 'satuan' => 'eksemplar', 'grup' => 'Layanan', 'rentang' => [300, 4500]],
+            'pengunjung' => ['label' => 'Pengunjung per Tahun', 'tipe' => 'angka', 'satuan' => 'orang', 'grup' => 'Layanan', 'rentang' => [200, 6000]],
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Layanan', 'opsi' => ['Aktif', 'Kurang Aktif', 'Tidak Aktif']],
+            'tahun_data' => $tahunData,
+        ],
+        'tabel' => ['nama', 'jenis', 'kecamatan', 'koleksi', 'pengunjung', 'status'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['kecamatan'],
+        'metrik' => [
+            ['label' => 'Total Perpustakaan', 'icon' => 'book', 'satuan' => 'unit'],
+            ['label' => 'Total Koleksi', 'agregat' => 'sum', 'field' => 'koleksi', 'icon' => 'journals', 'satuan' => 'eksemplar'],
+            ['label' => 'Aktif', 'agregat' => 'hitung', 'field' => 'status', 'nilai' => 'Aktif', 'icon' => 'check2-circle', 'satuan' => 'unit'],
+        ],
+    ],
+
+    'daftar-kejadian' => [
+        'induk' => 'trantibumlinmas', 'jenis' => 'daftar', 'nama' => 'Daftar Kejadian', 'icon' => 'exclamation-diamond',
+        'deskripsi' => 'Catatan setiap kejadian bencana dan gangguan ketenteraman/ketertiban beserta status penanganannya.',
+        'fields' => [
+            'uraian' => ['label' => 'Uraian Singkat', 'wajib' => true, 'lebar' => 'penuh', 'grup' => 'Kejadian', 'pola_ikut' => ['jenis', [
+                'Banjir' => ['Banjir luapan sungai di {desa}'], 'Tanah Longsor' => ['Longsor tebing jalan desa {desa}'],
+                'Angin Kencang' => ['Pohon tumbang akibat angin kencang di {desa}'], 'Kebakaran' => ['Kebakaran rumah warga di {desa}'],
+                'Gangguan Keamanan' => ['Pencurian ternak di {desa}'], 'Gangguan Ketertiban' => ['Keributan saat acara hiburan di {desa}']]]],
+            'tanggal' => ['label' => 'Tanggal Kejadian', 'tipe' => 'tanggal', 'wajib' => true, 'grup' => 'Kejadian'],
+            'jenis' => ['label' => 'Jenis Kejadian', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kejadian',
+                'opsi' => ['Banjir', 'Tanah Longsor', 'Angin Kencang', 'Kebakaran', 'Gangguan Keamanan', 'Gangguan Ketertiban']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'terdampak' => ['label' => 'Warga Terdampak', 'tipe' => 'angka', 'satuan' => 'jiwa', 'grup' => 'Penanganan', 'rentang' => [0, 40]],
+            'status' => ['label' => 'Status Penanganan', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Penanganan', 'opsi' => ['Tertangani', 'Dalam Penanganan']],
+        ],
+        'tabel' => ['uraian', 'tanggal', 'jenis', 'kecamatan', 'terdampak', 'status'],
+        'cari' => ['uraian', 'desa'], 'filter' => 'jenis', 'grafik' => ['jenis'],
+        'metrik' => [
+            ['label' => 'Total Kejadian', 'icon' => 'exclamation-diamond', 'satuan' => 'kejadian'],
+            ['label' => 'Tertangani', 'agregat' => 'hitung', 'field' => 'status', 'nilai' => 'Tertangani', 'icon' => 'check2-circle', 'satuan' => 'kejadian'],
+            ['label' => 'Warga Terdampak', 'agregat' => 'sum', 'field' => 'terdampak', 'icon' => 'people', 'satuan' => 'jiwa'],
+        ],
+    ],
+
+    'daftar-ormas' => [
+        'induk' => 'kesbangpol', 'jenis' => 'daftar', 'nama' => 'Daftar Ormas', 'icon' => 'people',
+        'deskripsi' => 'Organisasi kemasyarakatan yang terdaftar, bidang kegiatan, dan status keaktifannya.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Organisasi', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['bidang_kegiatan', [
+                'Sosial' => ['Yayasan Peduli Sesama {kec}'], 'Keagamaan' => ['Ikatan Remaja Masjid {desa}', 'Majelis Taklim Nurul Iman {desa}'],
+                'Kepemudaan' => ['Forum Pemuda {kec}'], 'Ekonomi' => ['Paguyuban Pedagang {kec}'],
+                'Pendidikan' => ['Yayasan Pendidikan Bina Insani {kec}'], 'Lingkungan' => ['Komunitas Peduli Lingkungan {kec}']]]],
+            'bidang_kegiatan' => ['label' => 'Bidang Kegiatan', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas',
+                'opsi' => ['Sosial', 'Keagamaan', 'Kepemudaan', 'Ekonomi', 'Pendidikan', 'Lingkungan']],
+            'kecamatan' => $kecamatan,
+            'nomor_skt' => ['label' => 'Nomor SKT/Badan Hukum', 'grup' => 'Legalitas'],
+            'tahun_berdiri' => ['label' => 'Tahun Berdiri', 'tipe' => 'tahun', 'grup' => 'Legalitas', 'rentang' => [1998, 2022]],
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Legalitas', 'opsi' => ['Aktif', 'Tidak Aktif']],
+        ],
+        'tabel' => ['nama', 'bidang_kegiatan', 'kecamatan', 'tahun_berdiri', 'status'],
+        'cari' => ['nama', 'nomor_skt'], 'filter' => 'bidang_kegiatan', 'grafik' => ['bidang_kegiatan'],
+        'metrik' => [
+            ['label' => 'Total Ormas', 'icon' => 'people', 'satuan' => 'organisasi'],
+            ['label' => 'Aktif', 'agregat' => 'hitung', 'field' => 'status', 'nilai' => 'Aktif', 'icon' => 'check2-circle', 'satuan' => 'organisasi'],
+        ],
+    ],
+
+    'daftar-koperasi-umkm' => [
+        'induk' => 'umkm-koperasi', 'jenis' => 'daftar', 'nama' => 'Daftar Koperasi & UMKM Binaan', 'icon' => 'shop-window',
+        'deskripsi' => 'Rincian koperasi dan UMKM binaan: sektor usaha, tenaga kerja/anggota, omzet, dan status.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Usaha/Koperasi', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Koperasi' => ['Koperasi Serba Usaha {desa}', 'KUD {kec} Makmur', 'Koperasi Wanita {desa} Sejahtera'],
+                'UMKM Binaan' => ['Keripik Pisang {desa}', 'Kopi Bubuk {kec}', 'Batik Tulis {desa}', 'Gula Kelapa {desa}', 'Kerajinan Bambu {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Koperasi', 'UMKM Binaan']],
+            'sektor' => ['label' => 'Sektor Usaha', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Pertanian', 'Pengolahan Makanan', 'Kerajinan', 'Perdagangan', 'Jasa']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'tenaga_kerja' => ['label' => 'Tenaga Kerja/Anggota', 'tipe' => 'angka', 'satuan' => 'orang', 'grup' => 'Usaha', 'rentang' => [3, 60]],
+            'omzet' => ['label' => 'Omzet per Tahun', 'tipe' => 'desimal', 'satuan' => 'juta Rp', 'grup' => 'Usaha', 'rentang' => [50, 2500]],
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Usaha', 'opsi' => ['Aktif', 'Tidak Aktif']],
+        ],
+        'tabel' => ['nama', 'jenis', 'sektor', 'kecamatan', 'tenaga_kerja', 'omzet', 'status'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['sektor'],
+        'metrik' => [
+            ['label' => 'Total Usaha', 'icon' => 'shop-window', 'satuan' => 'unit'],
+            ['label' => 'Koperasi', 'agregat' => 'hitung', 'field' => 'jenis', 'nilai' => 'Koperasi', 'icon' => 'bank', 'satuan' => 'koperasi'],
+            ['label' => 'Tenaga Kerja', 'agregat' => 'sum', 'field' => 'tenaga_kerja', 'icon' => 'people', 'satuan' => 'orang'],
+        ],
+    ],
+
+    'daftar-proyek-investasi' => [
+        'induk' => 'investasi', 'jenis' => 'daftar', 'nama' => 'Daftar Proyek Investasi', 'icon' => 'briefcase',
+        'deskripsi' => 'Rincian proyek investasi per perusahaan: sektor, jenis modal, nilai investasi, dan tenaga kerja.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Perusahaan/Proyek', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['sektor', [
+                'Pertanian & Perkebunan' => ['PT Agro {kec} Lestari'], 'Industri Pengolahan' => ['CV Olahan Kopi {kec} Mandiri'],
+                'Pariwisata' => ['PT Wisata Pantai {kec}'], 'Energi' => ['PT Energi Hijau {kec}'], 'Perdagangan & Jasa' => ['CV Niaga {desa} Jaya']]]],
+            'sektor' => ['label' => 'Sektor', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas',
+                'opsi' => ['Pertanian & Perkebunan', 'Industri Pengolahan', 'Pariwisata', 'Energi', 'Perdagangan & Jasa']],
+            'jenis_modal' => ['label' => 'Jenis Modal', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['PMDN', 'PMA']],
+            'kecamatan' => $kecamatan,
+            'nilai' => ['label' => 'Nilai Investasi', 'tipe' => 'desimal', 'satuan' => 'juta Rp', 'grup' => 'Realisasi', 'rentang' => [500, 85000]],
+            'tenaga_kerja' => ['label' => 'Tenaga Kerja', 'tipe' => 'angka', 'satuan' => 'orang', 'grup' => 'Realisasi', 'rentang' => [5, 400]],
+            'tahun_data' => $tahunData,
+        ],
+        'tabel' => ['nama', 'sektor', 'jenis_modal', 'kecamatan', 'nilai', 'tenaga_kerja'],
+        'cari' => ['nama'], 'filter' => 'sektor', 'grafik' => ['sektor'],
+        'metrik' => [
+            ['label' => 'Total Proyek', 'icon' => 'briefcase', 'satuan' => 'proyek'],
+            ['label' => 'Nilai Investasi', 'agregat' => 'sum', 'field' => 'nilai', 'icon' => 'cash-coin', 'satuan' => 'juta Rp'],
+            ['label' => 'Tenaga Kerja', 'agregat' => 'sum', 'field' => 'tenaga_kerja', 'icon' => 'people', 'satuan' => 'orang'],
+        ],
+    ],
+
+    'daftar-pasar-ikm' => [
+        'induk' => 'perdagangan-industri', 'jenis' => 'daftar', 'nama' => 'Daftar Pasar & IKM', 'icon' => 'shop',
+        'deskripsi' => 'Rincian pasar rakyat, toko modern, dan industri kecil menengah beserta kondisinya.',
+        'fields' => [
+            'nama' => ['label' => 'Nama', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Pasar Rakyat' => ['Pasar {desa}', 'Pasar Desa {desa}'], 'Toko Modern' => ['Minimarket {desa}'],
+                'Industri Kecil Menengah' => ['IKM Keripik Singkong {desa}', 'IKM Anyaman Bambu {desa}', 'IKM Tahu Tempe {desa}', 'IKM Gula Merah {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Pasar Rakyat', 'Toko Modern', 'Industri Kecil Menengah']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'pelaku' => ['label' => 'Pedagang/Tenaga Kerja', 'tipe' => 'angka', 'satuan' => 'orang', 'grup' => 'Kondisi', 'rentang' => [5, 250]],
+            'kondisi' => ['label' => 'Kondisi', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kondisi', 'opsi' => ['Baik', 'Sedang', 'Perlu Revitalisasi']],
+        ],
+        'tabel' => ['nama', 'jenis', 'kecamatan', 'desa', 'pelaku', 'kondisi'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['jenis'],
+        'metrik' => [
+            ['label' => 'Total', 'icon' => 'shop', 'satuan' => 'unit'],
+            ['label' => 'Pasar Rakyat', 'agregat' => 'hitung', 'field' => 'jenis', 'nilai' => 'Pasar Rakyat', 'icon' => 'basket', 'satuan' => 'pasar'],
+            ['label' => 'Industri Kecil Menengah', 'agregat' => 'hitung', 'field' => 'jenis', 'nilai' => 'Industri Kecil Menengah', 'icon' => 'building-gear', 'satuan' => 'IKM'],
+        ],
+    ],
+
+    'daftar-kelompok-tani' => [
+        'induk' => 'pertanian-perkebunan', 'jenis' => 'daftar', 'nama' => 'Daftar Kelompok Tani', 'icon' => 'people-fill',
+        'deskripsi' => 'Kelompok tani per desa: komoditas utama, jumlah anggota, luas lahan garapan, dan kelas kelompok.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Kelompok Tani', 'wajib' => true, 'grup' => 'Identitas',
+                'pola' => ['Poktan Sri Rejeki {desa}', 'Poktan Tani Makmur {desa}', 'Poktan Sumber Rejeki {desa}', 'Gapoktan {desa} Sejahtera', 'Poktan Ngudi Mulyo {desa}']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'komoditas' => ['label' => 'Komoditas Utama', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Usaha Tani',
+                'opsi' => ['Padi', 'Jagung', 'Kopi', 'Tebu', 'Kakao', 'Cengkeh', 'Hortikultura']],
+            'anggota' => ['label' => 'Jumlah Anggota', 'tipe' => 'angka', 'satuan' => 'petani', 'grup' => 'Usaha Tani', 'rentang' => [15, 80]],
+            'luas_lahan' => ['label' => 'Luas Lahan', 'tipe' => 'desimal', 'satuan' => 'ha', 'grup' => 'Usaha Tani', 'rentang' => [8, 150]],
+            'kelas' => ['label' => 'Kelas Kelompok', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Usaha Tani', 'opsi' => ['Pemula', 'Lanjut', 'Madya', 'Utama']],
+        ],
+        'tabel' => ['nama', 'komoditas', 'kecamatan', 'desa', 'anggota', 'luas_lahan', 'kelas'],
+        'cari' => ['nama', 'desa'], 'filter' => 'komoditas', 'grafik' => ['komoditas'],
+        'metrik' => [
+            ['label' => 'Kelompok Tani', 'icon' => 'people-fill', 'satuan' => 'kelompok'],
+            ['label' => 'Total Anggota', 'agregat' => 'sum', 'field' => 'anggota', 'icon' => 'person', 'satuan' => 'petani'],
+            ['label' => 'Luas Lahan', 'agregat' => 'sum', 'field' => 'luas_lahan', 'icon' => 'map', 'satuan' => 'ha'],
+        ],
+    ],
+
+    'daftar-kelompok-ternak' => [
+        'induk' => 'peternakan', 'jenis' => 'daftar', 'nama' => 'Daftar Kelompok Peternak', 'icon' => 'people-fill',
+        'deskripsi' => 'Kelompok peternak per desa: jenis ternak, populasi, jumlah anggota, dan status.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Kelompok', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis_ternak', [
+                'Sapi Potong' => ['Kelompok Ternak Sapi {desa} Makmur'], 'Sapi Perah' => ['Kelompok Peternak Sapi Perah {desa}'],
+                'Kambing/Domba' => ['Kelompok Ternak Kambing Lestari {desa}'], 'Unggas' => ['Kelompok Ternak Ayam {desa} Jaya']]]],
+            'jenis_ternak' => ['label' => 'Jenis Ternak', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Sapi Potong', 'Sapi Perah', 'Kambing/Domba', 'Unggas']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'populasi' => ['label' => 'Populasi Ternak', 'tipe' => 'angka', 'satuan' => 'ekor', 'grup' => 'Usaha Ternak', 'rentang' => [40, 1500]],
+            'anggota' => ['label' => 'Jumlah Anggota', 'tipe' => 'angka', 'satuan' => 'peternak', 'grup' => 'Usaha Ternak', 'rentang' => [10, 45]],
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Usaha Ternak', 'opsi' => ['Aktif', 'Tidak Aktif']],
+        ],
+        'tabel' => ['nama', 'jenis_ternak', 'kecamatan', 'desa', 'populasi', 'anggota', 'status'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis_ternak', 'grafik' => ['jenis_ternak'],
+        'metrik' => [
+            ['label' => 'Kelompok Peternak', 'icon' => 'people-fill', 'satuan' => 'kelompok'],
+            ['label' => 'Total Populasi', 'agregat' => 'sum', 'field' => 'populasi', 'icon' => 'egg-fried', 'satuan' => 'ekor'],
+            ['label' => 'Total Anggota', 'agregat' => 'sum', 'field' => 'anggota', 'icon' => 'person', 'satuan' => 'peternak'],
+        ],
+    ],
+
+    'daftar-kelompok-perikanan' => [
+        'induk' => 'perikanan', 'jenis' => 'daftar', 'nama' => 'Daftar Kelompok Nelayan & Pembudidaya', 'icon' => 'people-fill',
+        'deskripsi' => 'Kelompok usaha bersama nelayan dan kelompok pembudidaya ikan beserta komoditas dan produksinya.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Kelompok', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Nelayan Tangkap' => ['KUB Nelayan {desa} Bahari', 'Kelompok Nelayan Pantai {desa}'],
+                'Pembudidaya Ikan' => ['Pokdakan Mina {desa}', 'Pokdakan Lele {desa} Makmur']]]],
+            'jenis' => ['label' => 'Jenis Kelompok', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Nelayan Tangkap', 'Pembudidaya Ikan']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'komoditas' => ['label' => 'Komoditas Utama', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Usaha',
+                'opsi' => ['Tuna & Tongkol', 'Lobster', 'Ikan Lele', 'Ikan Nila', 'Udang'],
+                'ikut' => ['jenis', ['Nelayan Tangkap' => ['Tuna & Tongkol', 'Lobster'], 'Pembudidaya Ikan' => ['Ikan Lele', 'Ikan Nila', 'Udang']]]],
+            'anggota' => ['label' => 'Jumlah Anggota', 'tipe' => 'angka', 'satuan' => 'orang', 'grup' => 'Usaha', 'rentang' => [8, 60]],
+            'produksi' => ['label' => 'Produksi per Tahun', 'tipe' => 'desimal', 'satuan' => 'ton', 'grup' => 'Usaha', 'rentang' => [2, 450]],
+        ],
+        'tabel' => ['nama', 'jenis', 'komoditas', 'kecamatan', 'anggota', 'produksi'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['komoditas'],
+        'metrik' => [
+            ['label' => 'Total Kelompok', 'icon' => 'people-fill', 'satuan' => 'kelompok'],
+            ['label' => 'Total Anggota', 'agregat' => 'sum', 'field' => 'anggota', 'icon' => 'person', 'satuan' => 'orang'],
+            ['label' => 'Total Produksi', 'agregat' => 'sum', 'field' => 'produksi', 'icon' => 'water', 'satuan' => 'ton'],
+        ],
+    ],
+
+    'daftar-lumbung-pangan' => [
+        'induk' => 'ketahanan-pangan', 'jenis' => 'daftar', 'nama' => 'Daftar Lumbung Pangan', 'icon' => 'house-door',
+        'deskripsi' => 'Lumbung pangan masyarakat per desa: kapasitas, stok cadangan pangan, dan kondisi bangunan.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Lumbung', 'wajib' => true, 'grup' => 'Identitas', 'pola' => ['Lumbung Pangan {desa}', 'LPM Sido Makmur {desa}', 'Lumbung Desa {desa} Sejahtera']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'kapasitas' => ['label' => 'Kapasitas', 'tipe' => 'desimal', 'satuan' => 'ton', 'grup' => 'Cadangan', 'rentang' => [30, 60]],
+            'stok' => ['label' => 'Stok Saat Ini', 'tipe' => 'desimal', 'satuan' => 'ton', 'grup' => 'Cadangan', 'rentang' => [2, 28]],
+            'kondisi' => ['label' => 'Kondisi Bangunan', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Cadangan', 'opsi' => ['Baik', 'Rusak Ringan', 'Rusak Berat']],
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Cadangan', 'opsi' => ['Aktif', 'Tidak Aktif']],
+        ],
+        'tabel' => ['nama', 'kecamatan', 'desa', 'kapasitas', 'stok', 'kondisi', 'status'],
+        'cari' => ['nama', 'desa'], 'filter' => 'kondisi', 'grafik' => ['kecamatan'],
+        'metrik' => [
+            ['label' => 'Total Lumbung', 'icon' => 'house-door', 'satuan' => 'lumbung'],
+            ['label' => 'Total Kapasitas', 'agregat' => 'sum', 'field' => 'kapasitas', 'icon' => 'box-seam', 'satuan' => 'ton'],
+            ['label' => 'Total Stok', 'agregat' => 'sum', 'field' => 'stok', 'icon' => 'basket', 'satuan' => 'ton'],
+        ],
+    ],
+
+    'daftar-sekolah' => [
+        'induk' => 'pendidikan', 'jenis' => 'daftar', 'nama' => 'Daftar Sekolah', 'icon' => 'building',
+        'deskripsi' => 'Rincian setiap sekolah: NPSN, jenjang, status, jumlah siswa, guru, rombongan belajar, dan akreditasi.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Sekolah', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenjang', [
+                'SD' => ['SD Negeri {n} {desa}'], 'MI' => ['MI Al-Hidayah {desa}', 'MI Miftahul Huda {desa}'],
+                'SMP' => ['SMP Negeri {n} {kec}'], 'MTs' => ['MTs Nurul Huda {desa}', 'MTs Al-Ikhlas {desa}']]]],
+            'npsn' => ['label' => 'NPSN', 'grup' => 'Identitas', 'pola' => ['{nomor}']],
+            'jenjang' => ['label' => 'Jenjang', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['SD', 'MI', 'SMP', 'MTs']],
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Negeri', 'Swasta'],
+                'ikut' => ['jenjang', ['SD' => 'Negeri', 'MI' => 'Swasta', 'SMP' => 'Negeri', 'MTs' => 'Swasta']]],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'siswa' => ['label' => 'Jumlah Siswa', 'tipe' => 'angka', 'satuan' => 'siswa', 'grup' => 'Data Sekolah', 'rentang' => [60, 750]],
+            'guru' => ['label' => 'Jumlah Guru', 'tipe' => 'angka', 'satuan' => 'guru', 'grup' => 'Data Sekolah', 'rentang' => [6, 45]],
+            'rombel' => ['label' => 'Rombongan Belajar', 'tipe' => 'angka', 'satuan' => 'rombel', 'grup' => 'Data Sekolah', 'rentang' => [6, 24]],
+            'akreditasi' => ['label' => 'Akreditasi', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Data Sekolah', 'opsi' => ['A', 'B', 'C', 'Belum Terakreditasi']],
+            'tahun_data' => $tahunData,
+        ],
+        'tabel' => ['nama', 'jenjang', 'status', 'kecamatan', 'siswa', 'guru', 'akreditasi'],
+        'cari' => ['nama', 'npsn', 'desa'], 'filter' => 'jenjang', 'grafik' => ['kecamatan'],
+        'metrik' => [
+            ['label' => 'Total Sekolah', 'icon' => 'building', 'satuan' => 'sekolah'],
+            ['label' => 'Total Siswa', 'agregat' => 'sum', 'field' => 'siswa', 'icon' => 'people', 'satuan' => 'siswa'],
+            ['label' => 'Total Guru', 'agregat' => 'sum', 'field' => 'guru', 'icon' => 'person-workspace', 'satuan' => 'guru'],
+            ['label' => 'Akreditasi A', 'agregat' => 'hitung', 'field' => 'akreditasi', 'nilai' => 'A', 'icon' => 'award', 'satuan' => 'sekolah'],
+        ],
+    ],
+
+    'daftar-faskes' => [
+        'induk' => 'kesehatan', 'jenis' => 'daftar', 'nama' => 'Daftar Fasilitas Kesehatan', 'icon' => 'hospital',
+        'deskripsi' => 'Rincian puskesmas, puskesmas pembantu, poskesdes, dan klinik: tenaga kesehatan, rawat inap, dan akreditasi.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Fasilitas', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Puskesmas' => ['Puskesmas {kec}'], 'Puskesmas Pembantu' => ['Pustu {desa}'],
+                'Poskesdes/Polindes' => ['Poskesdes {desa}'], 'Klinik Pratama' => ['Klinik Pratama Sehat {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Puskesmas', 'Puskesmas Pembantu', 'Poskesdes/Polindes', 'Klinik Pratama']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'tenaga_kesehatan' => ['label' => 'Tenaga Kesehatan', 'tipe' => 'angka', 'satuan' => 'orang', 'grup' => 'Layanan', 'rentang' => [2, 60]],
+            'rawat_inap' => ['label' => 'Rawat Inap', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Layanan', 'opsi' => ['Ya', 'Tidak'],
+                'ikut' => ['jenis', ['Puskesmas Pembantu' => 'Tidak', 'Poskesdes/Polindes' => 'Tidak']]],
+            'akreditasi' => ['label' => 'Akreditasi', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Layanan', 'opsi' => ['Paripurna', 'Utama', 'Madya', 'Dasar', 'Belum Terakreditasi']],
+        ],
+        'tabel' => ['nama', 'jenis', 'kecamatan', 'tenaga_kesehatan', 'rawat_inap', 'akreditasi'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['jenis'],
+        'metrik' => [
+            ['label' => 'Total Fasilitas', 'icon' => 'hospital', 'satuan' => 'unit'],
+            ['label' => 'Puskesmas', 'agregat' => 'hitung', 'field' => 'jenis', 'nilai' => 'Puskesmas', 'icon' => 'building-add', 'satuan' => 'unit'],
+            ['label' => 'Tenaga Kesehatan', 'agregat' => 'sum', 'field' => 'tenaga_kesehatan', 'icon' => 'person-badge', 'satuan' => 'orang'],
+        ],
+    ],
+
+    'daftar-perusahaan' => [
+        'induk' => 'tenaga-kerja-transmigrasi', 'jenis' => 'daftar', 'nama' => 'Daftar Perusahaan & Serapan Tenaga Kerja', 'icon' => 'buildings',
+        'deskripsi' => 'Perusahaan yang beroperasi di wilayah Malang Selatan beserta jumlah tenaga kerja lokal dan dari luar daerah.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Perusahaan', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['sektor', [
+                'Pertanian & Perkebunan' => ['PT Sumber Agro {kec}'], 'Industri Pengolahan' => ['CV Mebel Jati {desa}', 'UD Kerupuk {desa}'],
+                'Perdagangan' => ['UD Makmur Jaya {desa}'], 'Jasa & Pariwisata' => ['CV Wisata Bahari {kec}'], 'Perikanan' => ['PT Tambak Udang {kec} Lestari']]]],
+            'sektor' => ['label' => 'Sektor', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas',
+                'opsi' => ['Pertanian & Perkebunan', 'Industri Pengolahan', 'Perdagangan', 'Jasa & Pariwisata', 'Perikanan']],
+            'kecamatan' => $kecamatan,
+            'tk_lokal' => ['label' => 'Tenaga Kerja Lokal', 'tipe' => 'angka', 'satuan' => 'orang', 'grup' => 'Tenaga Kerja', 'rentang' => [5, 450]],
+            'tk_luar' => ['label' => 'Tenaga Kerja Luar Daerah', 'tipe' => 'angka', 'satuan' => 'orang', 'grup' => 'Tenaga Kerja', 'rentang' => [0, 80]],
+            'tahun_data' => $tahunData,
+        ],
+        'tabel' => ['nama', 'sektor', 'kecamatan', 'tk_lokal', 'tk_luar'],
+        'cari' => ['nama'], 'filter' => 'sektor', 'grafik' => ['sektor'],
+        'metrik' => [
+            ['label' => 'Total Perusahaan', 'icon' => 'buildings', 'satuan' => 'perusahaan'],
+            ['label' => 'Tenaga Kerja Lokal', 'agregat' => 'sum', 'field' => 'tk_lokal', 'icon' => 'people', 'satuan' => 'orang'],
+            ['label' => 'Tenaga Kerja Luar Daerah', 'agregat' => 'sum', 'field' => 'tk_luar', 'icon' => 'person-walking', 'satuan' => 'orang'],
+        ],
+    ],
+
+    'daftar-kampung-kb' => [
+        'induk' => 'keluarga-berencana', 'jenis' => 'daftar', 'nama' => 'Daftar Kampung KB', 'icon' => 'house-heart',
+        'deskripsi' => 'Kampung KB per desa: tahun pencanangan, klasifikasi, dan jumlah peserta KB aktif.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Kampung KB', 'wajib' => true, 'grup' => 'Identitas', 'pola' => ['Kampung KB {desa}']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'tahun_pencanangan' => ['label' => 'Tahun Pencanangan', 'tipe' => 'tahun', 'grup' => 'Program', 'rentang' => [2016, 2024]],
+            'klasifikasi' => ['label' => 'Klasifikasi', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Program', 'opsi' => ['Dasar', 'Berkembang', 'Mandiri', 'Berkelanjutan']],
+            'peserta_kb' => ['label' => 'Peserta KB Aktif', 'tipe' => 'angka', 'satuan' => 'pasangan', 'grup' => 'Program', 'rentang' => [80, 900]],
+        ],
+        'tabel' => ['nama', 'kecamatan', 'tahun_pencanangan', 'klasifikasi', 'peserta_kb'],
+        'cari' => ['nama', 'desa'], 'filter' => 'klasifikasi', 'grafik' => ['klasifikasi'],
+        'metrik' => [
+            ['label' => 'Total Kampung KB', 'icon' => 'house-heart', 'satuan' => 'kampung'],
+            ['label' => 'Peserta KB Aktif', 'agregat' => 'sum', 'field' => 'peserta_kb', 'icon' => 'people', 'satuan' => 'pasangan'],
+        ],
+    ],
+
+    'daftar-sarana-olahraga' => [
+        'induk' => 'kepemudaan-olahraga', 'jenis' => 'daftar', 'nama' => 'Daftar Sarana Olahraga', 'icon' => 'dribbble',
+        'deskripsi' => 'Rincian lapangan dan gedung olahraga: lokasi, kondisi, dan pengelola.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Sarana', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Lapangan Sepak Bola' => ['Lapangan Desa {desa}'], 'Gedung Olahraga' => ['GOR {kec}'],
+                'Lapangan Bola Voli' => ['Lapangan Voli {desa}'], 'Lapangan Bulu Tangkis' => ['Lapangan Bulu Tangkis {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas',
+                'opsi' => ['Lapangan Sepak Bola', 'Gedung Olahraga', 'Lapangan Bola Voli', 'Lapangan Bulu Tangkis']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'kondisi' => ['label' => 'Kondisi', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Pengelolaan', 'opsi' => ['Baik', 'Rusak Ringan', 'Rusak Berat']],
+            'pengelola' => ['label' => 'Pengelola', 'tipe' => 'pilihan', 'grup' => 'Pengelolaan', 'opsi' => ['Pemerintah Desa', 'Pemerintah Kabupaten', 'Karang Taruna', 'Swasta']],
+        ],
+        'tabel' => ['nama', 'jenis', 'kecamatan', 'desa', 'kondisi', 'pengelola'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['jenis'],
+        'metrik' => [
+            ['label' => 'Total Sarana', 'icon' => 'dribbble', 'satuan' => 'unit'],
+            ['label' => 'Kondisi Baik', 'agregat' => 'hitung', 'field' => 'kondisi', 'nilai' => 'Baik', 'icon' => 'check2-circle', 'satuan' => 'unit'],
+            ['label' => 'Rusak Berat', 'agregat' => 'hitung', 'field' => 'kondisi', 'nilai' => 'Rusak Berat', 'icon' => 'exclamation-triangle', 'satuan' => 'unit'],
+        ],
+    ],
+
+    'daftar-destinasi' => [
+        'induk' => 'budaya-pariwisata', 'jenis' => 'daftar', 'nama' => 'Daftar Destinasi Wisata & Budaya', 'icon' => 'geo-alt',
+        'deskripsi' => 'Rincian destinasi wisata, desa wisata, cagar budaya, dan sanggar seni beserta pengelola dan jumlah kunjungan.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Destinasi', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Wisata Alam' => ['Pantai {desa}', 'Air Terjun Coban {desa}', 'Bukit Pandang {desa}'], 'Wisata Buatan' => ['Agrowisata Kopi {desa}', 'Taman Rekreasi {kec}'],
+                'Desa Wisata' => ['Desa Wisata {desa}'], 'Cagar Budaya' => ['Situs Sejarah {desa}'], 'Sanggar Seni' => ['Sanggar Tari Topeng {desa}', 'Sanggar Karawitan {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas',
+                'opsi' => ['Wisata Alam', 'Wisata Buatan', 'Desa Wisata', 'Cagar Budaya', 'Sanggar Seni']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'pengelola' => ['label' => 'Pengelola', 'tipe' => 'pilihan', 'grup' => 'Pengelolaan', 'opsi' => ['Pemerintah Desa', 'Pokdarwis', 'Perhutani', 'Pemerintah Kabupaten', 'Swasta']],
+            'kunjungan' => ['label' => 'Kunjungan per Tahun', 'tipe' => 'angka', 'satuan' => 'kunjungan', 'grup' => 'Pengelolaan', 'rentang' => [500, 85000]],
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Pengelolaan', 'opsi' => ['Aktif', 'Dalam Pengembangan', 'Tutup Sementara']],
+        ],
+        'tabel' => ['nama', 'jenis', 'kecamatan', 'pengelola', 'kunjungan', 'status'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['jenis'],
+        'metrik' => [
+            ['label' => 'Total Destinasi', 'icon' => 'geo-alt', 'satuan' => 'lokasi'],
+            ['label' => 'Total Kunjungan', 'agregat' => 'sum', 'field' => 'kunjungan', 'icon' => 'people', 'satuan' => 'kunjungan'],
+            ['label' => 'Aktif', 'agregat' => 'hitung', 'field' => 'status', 'nilai' => 'Aktif', 'icon' => 'check2-circle', 'satuan' => 'lokasi'],
+        ],
+    ],
+
+    'daftar-kawasan-kumuh' => [
+        'induk' => 'perumahan-permukiman', 'jenis' => 'daftar', 'nama' => 'Daftar Lokasi Kawasan Kumuh', 'icon' => 'house-exclamation',
+        'deskripsi' => 'Lokasi kawasan permukiman kumuh: luas, tingkat kekumuhan, jumlah KK, dan status penanganan.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Lokasi', 'wajib' => true, 'grup' => 'Identitas', 'pola' => ['Kawasan Permukiman {desa}', 'Dusun Krajan, {desa}', 'Kawasan Pesisir {desa}']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'luas' => ['label' => 'Luas Kawasan', 'tipe' => 'desimal', 'satuan' => 'ha', 'grup' => 'Kondisi', 'rentang' => [0.5, 15]],
+            'tingkat' => ['label' => 'Tingkat Kekumuhan', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kondisi', 'opsi' => ['Ringan', 'Sedang', 'Berat']],
+            'jumlah_kk' => ['label' => 'Jumlah KK', 'tipe' => 'angka', 'satuan' => 'KK', 'grup' => 'Kondisi', 'rentang' => [20, 300]],
+            'status' => ['label' => 'Status Penanganan', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kondisi', 'opsi' => ['Belum Ditangani', 'Dalam Penanganan', 'Selesai']],
+        ],
+        'tabel' => ['nama', 'kecamatan', 'luas', 'tingkat', 'jumlah_kk', 'status'],
+        'cari' => ['nama', 'desa'], 'filter' => 'status', 'grafik' => ['tingkat'],
+        'metrik' => [
+            ['label' => 'Total Lokasi', 'icon' => 'house-exclamation', 'satuan' => 'lokasi'],
+            ['label' => 'Total Luas', 'agregat' => 'sum', 'field' => 'luas', 'icon' => 'bounding-box', 'satuan' => 'ha'],
+            ['label' => 'Selesai Ditangani', 'agregat' => 'hitung', 'field' => 'status', 'nilai' => 'Selesai', 'icon' => 'check2-circle', 'satuan' => 'lokasi'],
+        ],
+    ],
+
+    'daftar-ruas-jalan' => [
+        'induk' => 'perhubungan', 'jenis' => 'daftar', 'nama' => 'Daftar Ruas Jalan Kabupaten', 'icon' => 'signpost-split',
+        'deskripsi' => 'Rincian ruas jalan kabupaten: panjang, jenis permukaan, dan kondisi.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Ruas', 'wajib' => true, 'grup' => 'Identitas', 'pola' => ['Ruas {desa} – {desa2}']],
+            'kecamatan' => $kecamatan,
+            'panjang' => ['label' => 'Panjang', 'tipe' => 'desimal', 'satuan' => 'km', 'grup' => 'Kondisi', 'rentang' => [1.2, 18]],
+            'permukaan' => ['label' => 'Jenis Permukaan', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kondisi', 'opsi' => ['Aspal', 'Beton', 'Makadam', 'Tanah']],
+            'kondisi' => ['label' => 'Kondisi', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kondisi', 'opsi' => ['Baik', 'Sedang', 'Rusak Ringan', 'Rusak Berat']],
+            'tahun_data' => $tahunData,
+        ],
+        'tabel' => ['nama', 'kecamatan', 'panjang', 'permukaan', 'kondisi'],
+        'cari' => ['nama'], 'filter' => 'kondisi', 'grafik' => ['kondisi'],
+        'metrik' => [
+            ['label' => 'Total Ruas', 'icon' => 'signpost-split', 'satuan' => 'ruas'],
+            ['label' => 'Total Panjang', 'agregat' => 'sum', 'field' => 'panjang', 'icon' => 'rulers', 'satuan' => 'km'],
+            ['label' => 'Rusak Berat', 'agregat' => 'hitung', 'field' => 'kondisi', 'nilai' => 'Rusak Berat', 'icon' => 'exclamation-triangle', 'satuan' => 'ruas'],
+        ],
+    ],
+
+    'daftar-bank-sampah' => [
+        'induk' => 'lingkungan-hidup', 'jenis' => 'daftar', 'nama' => 'Daftar Bank Sampah & TPS3R', 'icon' => 'recycle',
+        'deskripsi' => 'Rincian bank sampah, TPS3R, dan TPS: jumlah nasabah/KK terlayani dan sampah yang dikelola.',
+        'fields' => [
+            'nama' => ['label' => 'Nama', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'Bank Sampah' => ['Bank Sampah {desa} Bersih', 'Bank Sampah Berkah {desa}'], 'TPS3R' => ['TPS3R {desa}'], 'TPS' => ['TPS {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['Bank Sampah', 'TPS3R', 'TPS']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'terlayani' => ['label' => 'Nasabah/KK Terlayani', 'tipe' => 'angka', 'satuan' => 'KK', 'grup' => 'Pengelolaan', 'rentang' => [20, 400]],
+            'sampah' => ['label' => 'Sampah Terkelola per Bulan', 'tipe' => 'desimal', 'satuan' => 'ton', 'grup' => 'Pengelolaan', 'rentang' => [0.5, 25]],
+            'status' => ['label' => 'Status', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Pengelolaan', 'opsi' => ['Aktif', 'Tidak Aktif']],
+        ],
+        'tabel' => ['nama', 'jenis', 'kecamatan', 'terlayani', 'sampah', 'status'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['jenis'],
+        'metrik' => [
+            ['label' => 'Total Unit', 'icon' => 'recycle', 'satuan' => 'unit'],
+            ['label' => 'KK Terlayani', 'agregat' => 'sum', 'field' => 'terlayani', 'icon' => 'people', 'satuan' => 'KK'],
+            ['label' => 'Sampah Terkelola', 'agregat' => 'sum', 'field' => 'sampah', 'icon' => 'trash', 'satuan' => 'ton/bulan'],
+        ],
+    ],
+
+    'daftar-instalasi-energi' => [
+        'induk' => 'esdm', 'jenis' => 'daftar', 'nama' => 'Daftar Instalasi Energi & Air', 'icon' => 'lightning-charge',
+        'deskripsi' => 'Rincian PLTS, mikrohidro, biogas, dan sumur bor: penerima manfaat dan kondisi.',
+        'fields' => [
+            'nama' => ['label' => 'Nama Instalasi', 'wajib' => true, 'grup' => 'Identitas', 'pola_ikut' => ['jenis', [
+                'PLTS' => ['PLTS Komunal {desa}'], 'Mikrohidro' => ['PLTMH {desa}'], 'Biogas' => ['Instalasi Biogas {desa}'], 'Sumur Bor' => ['Sumur Bor {desa}']]]],
+            'jenis' => ['label' => 'Jenis', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Identitas', 'opsi' => ['PLTS', 'Mikrohidro', 'Biogas', 'Sumur Bor']],
+            'kecamatan' => $kecamatan,
+            'desa' => $desa,
+            'penerima' => ['label' => 'Penerima Manfaat', 'tipe' => 'angka', 'satuan' => 'KK', 'grup' => 'Kondisi', 'rentang' => [15, 400]],
+            'tahun_bangun' => ['label' => 'Tahun Dibangun', 'tipe' => 'tahun', 'grup' => 'Kondisi', 'rentang' => [2014, 2025]],
+            'kondisi' => ['label' => 'Kondisi', 'tipe' => 'pilihan', 'wajib' => true, 'grup' => 'Kondisi', 'opsi' => ['Berfungsi', 'Rusak', 'Tidak Berfungsi']],
+        ],
+        'tabel' => ['nama', 'jenis', 'kecamatan', 'penerima', 'tahun_bangun', 'kondisi'],
+        'cari' => ['nama', 'desa'], 'filter' => 'jenis', 'grafik' => ['jenis'],
+        'metrik' => [
+            ['label' => 'Total Instalasi', 'icon' => 'lightning-charge', 'satuan' => 'unit'],
+            ['label' => 'Penerima Manfaat', 'agregat' => 'sum', 'field' => 'penerima', 'icon' => 'people', 'satuan' => 'KK'],
+            ['label' => 'Berfungsi', 'agregat' => 'hitung', 'field' => 'kondisi', 'nilai' => 'Berfungsi', 'icon' => 'check2-circle', 'satuan' => 'unit'],
+        ],
     ],
 
 ];

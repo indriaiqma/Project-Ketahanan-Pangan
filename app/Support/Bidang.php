@@ -11,10 +11,18 @@ use Illuminate\Support\Facades\Route;
  *
  * Setiap modul yang dikembalikan sudah dilengkapi:
  *   bidang, bidang_nama, sub, sub_nama, href, aktif (bool)
+ *   rincian : modul daftar rincian (mis. Daftar Sekolah untuk Pendidikan) atau null.
+ *             Modul rincian punya 'induk' = slug modul rekapnya dan tidak tampil
+ *             sebagai menu sendiri, melainkan sebagai tab di halaman modul induknya.
+ *
+ * Bidang dengan 'khusus' => true tampil sebagai menu tersendiri di luar daftar bidang.
  */
 class Bidang
 {
     private static ?Collection $cache = null;
+
+    /** Peta kunci data modul induk => kunci data modul rincian (dari 'induk' di config/modul_data.php). */
+    private static ?array $petaRincian = null;
 
     /** Semua bidang, sudah dinormalisasi. */
     public static function semua(): Collection
@@ -37,6 +45,19 @@ class Bidang
     public static function reset(): void
     {
         self::$cache = null;
+        self::$petaRincian = null;
+    }
+
+    /** Bidang biasa (tanpa menu khusus). */
+    public static function reguler(?Collection $daftar = null): Collection
+    {
+        return ($daftar ?? self::semua())->reject(fn ($b) => ! empty($b['khusus']))->values();
+    }
+
+    /** Menu khusus di luar struktur bidang (mis. Pertanian & Peternakan). */
+    public static function khusus(?Collection $daftar = null): Collection
+    {
+        return ($daftar ?? self::semua())->filter(fn ($b) => ! empty($b['khusus']))->values();
     }
 
     public static function cari(string $slug): ?array
@@ -65,17 +86,32 @@ class Bidang
         return collect(self::kelompok($bidang))->flatMap(fn ($k) => $k['modul']);
     }
 
-    /** Semua modul di seluruh bidang (datar). */
+    /** Semua modul di seluruh bidang (datar), termasuk modul rincian. */
     public static function semuaModul(): Collection
     {
-        return self::semua()->flatMap(fn ($b) => self::modulBidang($b));
+        return self::semua()->flatMap(fn ($b) => self::modulBidang($b))
+            ->flatMap(fn ($m) => array_filter([$m, $m['rincian'] ?? null]))
+            ->values();
     }
 
+    /** Modul (atau modul rincian) dalam satu bidang. */
     public static function cariModul(string $bidang, string $modul): ?array
     {
         $b = self::cari($bidang);
+        if (! $b) {
+            return null;
+        }
 
-        return $b ? self::modulBidang($b)->firstWhere('slug', $modul) : null;
+        foreach (self::modulBidang($b) as $m) {
+            if ($m['slug'] === $modul) {
+                return $m;
+            }
+            if (($m['rincian']['slug'] ?? null) === $modul) {
+                return $m['rincian'];
+            }
+        }
+
+        return null;
     }
 
     /** Cari modul berdasarkan kunci definisi data generiknya. */
@@ -103,11 +139,16 @@ class Bidang
         }
 
         $bidang = $route->parameter('bidang');
+        $bidang = is_string($bidang) && self::cari($bidang) ? $bidang : null;
+        $modul = $route->parameter('modul');
+        $modul = is_string($modul) ? $modul : null;
 
-        return [
-            'bidang' => is_string($bidang) && self::cari($bidang) ? $bidang : null,
-            'modul' => is_string($route->parameter('modul')) ? $route->parameter('modul') : null,
-        ];
+        // Halaman rincian menyorot modul induknya di menu
+        if ($bidang && $modul && ($m = self::cariModul($bidang, $modul)) && ! empty($m['induk'])) {
+            $modul = $m['induk'];
+        }
+
+        return ['bidang' => $bidang, 'modul' => $modul];
     }
 
     /**
@@ -148,7 +189,8 @@ class Bidang
             return true;
         }
 
-        return $user->aksesBidang->contains('bidang', $bidang);
+        return $user->aksesBidang->contains('bidang', $bidang)
+            || collect(self::cari($bidang)['akses_dari'] ?? [])->contains(fn ($a) => $user->canEditModul($a[0], $a[1] ?? null));
     }
 
     /**
@@ -224,6 +266,29 @@ class Bidang
             ? route($m['route'])
             : route('admin.bidang.modul', ['bidang' => $b['slug'], 'modul' => $m['slug']]);
 
+        // Modul rincian (daftar per entitas) untuk modul rekap ini
+        $m['rincian'] = null;
+        if (empty($m['induk']) && ! empty($m['data']) && ($kunci = self::petaRincian()[$m['data']] ?? null)) {
+            $def = config("modul_data.$kunci");
+            $m['rincian'] = self::lengkapiModul([
+                'slug' => $kunci,
+                'nama' => $def['nama'] ?? 'Rincian '.$m['nama'],
+                'status' => $m['status'] ?? 'segera',
+                'icon' => $def['icon'] ?? 'list-ul',
+                'data' => $kunci,
+                'induk' => $m['slug'],
+                'induk_nama' => $m['nama'],
+            ], $b, $s);
+        }
+
         return $m;
+    }
+
+    private static function petaRincian(): array
+    {
+        return self::$petaRincian ??= collect(config('modul_data', []))
+            ->filter(fn ($d) => is_array($d) && ! empty($d['induk']))
+            ->mapWithKeys(fn ($d, $kunci) => [$d['induk'] => $kunci])
+            ->all();
     }
 }

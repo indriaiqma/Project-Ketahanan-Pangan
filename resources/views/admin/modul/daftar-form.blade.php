@@ -13,15 +13,21 @@
         ? route('admin.modul.store', $parameter)
         : route('admin.modul.update', $parameter + ['id' => $baris->id]);
     $kembali = route('admin.bidang.modul', $parameter);
+    // "Daftar Sekolah" -> "Sekolah" agar judul form tidak janggal ("Tambah Data Sekolah")
+    $namaData = preg_replace('/^Daftar /', '', $modul['nama']);
 @endphp
 
-@section('title', ($baru ? 'Tambah ' : 'Ubah ').$modul['nama'])
+@section('title', ($baru ? 'Tambah ' : 'Ubah ').$namaData)
 
 @section('content')
 
-<x-page-header compact :title="($baru ? 'Tambah Data ' : 'Ubah Data ').$modul['nama']" description="Kolom bertanda * wajib diisi.">
+<x-page-header compact :title="($baru ? 'Tambah Data ' : 'Ubah Data ').$namaData" description="Kolom bertanda * wajib diisi.">
     <x-slot:breadcrumb>
         <a href="{{ route('admin.bidang.show', $bidang['slug']) }}">{{ $bidang['nama'] }}</a>
+        @if (! empty($modul['induk']))
+            <i class="bi bi-chevron-right"></i>
+            <a href="{{ route('admin.bidang.modul', ['bidang' => $bidang['slug'], 'modul' => $modul['induk']]) }}">{{ $modul['induk_nama'] }}</a>
+        @endif
         <i class="bi bi-chevron-right"></i>
         <a href="{{ $kembali }}">{{ $modul['nama'] }}</a>
         <i class="bi bi-chevron-right"></i>
@@ -56,7 +62,7 @@
                                 <x-field :label="$f['label']" :name="$kunci" type="select" :required="$wajib" :hint="$f['hint'] ?? null" :class="$kelas">
                                     <option value="">Pilih kecamatan…</option>
                                     @foreach ($wilayah as $w)
-                                        <option value="{{ $w->id }}" @selected((int) old($kunci, $baris?->{$kunci}) === $w->id)>{{ $w->nama }}</option>
+                                        <option value="{{ $w->id }}" @selected((int) old($kunci, $baris?->{$kunci} ?? request('kecamatan')) === $w->id)>{{ $w->nama }}</option>
                                     @endforeach
                                 </x-field>
                                 @break

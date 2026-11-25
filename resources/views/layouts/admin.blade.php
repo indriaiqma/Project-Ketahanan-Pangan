@@ -40,6 +40,18 @@
                 </a>
             @endforeach
 
+            {{-- Menu khusus di luar struktur bidang (mis. Pertanian & Peternakan) --}}
+            @php($posisiMenu = \App\Support\Bidang::posisiSaatIni())
+            @foreach (\App\Support\Bidang::khusus(\App\Support\Bidang::untuk($user)) as $mk)
+                <div class="group">{{ $mk['nama'] }}</div>
+                @foreach (\App\Support\Bidang::modulBidang($mk) as $m)
+                    @php($aktifMenu = $posisiMenu['bidang'] === $mk['slug'] && $posisiMenu['modul'] === $m['slug'])
+                    <a href="{{ $m['href'] }}" @class(['active' => $aktifMenu]) @if ($aktifMenu) aria-current="page" @endif>
+                        <i class="bi bi-{{ $m['icon'] ?? 'grid' }}"></i> {{ $m['nama'] }}
+                    </a>
+                @endforeach
+            @endforeach
+
             <div class="group">Bidang</div>
             <x-sidebar-bidang />
 
