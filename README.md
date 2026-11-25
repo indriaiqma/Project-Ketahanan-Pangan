@@ -213,8 +213,8 @@ php artisan key:generate
 # 5. Buat tabel dan akun bawaan
 php artisan migrate --seed
 
-# 6. (Opsional) isi data contoh agar tampilan tidak kosong
-php artisan data:dummy
+# 6. Impor data resmi BPS 9 kecamatan Malang Selatan
+php artisan data:bps
 
 # 7. Build aset tampilan
 npm run build
@@ -278,6 +278,7 @@ Dibuat oleh `php artisan migrate --seed` ([DatabaseSeeder.php](database/seeders/
 
 | Perintah | Fungsi |
 |---|---|
+| `php artisan data:bps` | Mengimpor **data resmi BPS** (Kabupaten/Kecamatan Dalam Angka 2026, data tahun 2025) untuk 9 kecamatan ke 18 modul dan rincian 98 desa/kelurahan. Aman dijalankan ulang: data hasil impor BPS diperbarui, data input petugas tidak ditimpa. Sumber, cara ekstraksi, dan verifikasinya ada di [database/data/bps/README.md](database/data/bps/README.md). |
 | `php artisan data:dummy` | Mengisi data contoh yang realistis ke seluruh modul. Data asli tidak ditimpa: periode yang sudah berisi data dilewati. |
 | `php artisan data:dummy --hapus` | Menghapus **hanya** data contoh (ditandai sumber data "Data contoh (dummy)"). Data asli tidak terhapus. |
 | `php artisan data:dummy --kosong` | Hanya mengisi modul yang **belum punya data sama sekali** (misalnya modul rincian baru). Data contoh yang sudah ada tidak diubah. |
