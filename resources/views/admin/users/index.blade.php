@@ -34,6 +34,77 @@
     </section>
 @endif
 
+{{-- Pendaftaran akun yang menunggu persetujuan --}}
+@if ($pendaftar->isNotEmpty())
+    <section class="card">
+        <div class="card-head">
+            <div class="card-title">
+                <span class="ico"><i class="bi bi-person-plus-fill"></i></span>
+                <div>
+                    <h2>Pendaftaran Menunggu Persetujuan</h2>
+                    <p>{{ $pendaftar->count() }} pendaftar · pastikan identitas pendaftar benar sebelum menyetujui</p>
+                </div>
+            </div>
+        </div>
+        <ul class="pendaftar-list">
+            @foreach ($pendaftar as $d)
+                @php($diajukan = collect($d->pengajuan_penugasan ?? []))
+                <li>
+                    <div class="pd-head">
+                        <span class="avatar">{{ strtoupper(mb_substr($d->name, 0, 1)) }}</span>
+                        <div class="info">
+                            <b>{{ $d->name }}</b>
+                            <small>{{ $d->email }} · {{ $d->no_hp ?: '–' }} · {{ $d->jabatan ?: '–' }}</small>
+                            <small>Mendaftar {{ $d->created_at->diffForHumans() }} ({{ $d->created_at->translatedFormat('d M Y, H:i') }})</small>
+                        </div>
+                    </div>
+                    <div class="pd-body">
+                        <div class="pd-diajukan">
+                            <span class="muted">Mengajukan:</span>
+                            @foreach ($diajukan as $n)
+                                @php([$b, $s] = explode('|', $n, 2) + [1 => ''])
+                                <span class="badge sky">{{ \App\Support\Bidang::labelPenugasan($b, $s !== '' ? $s : null) }}</span>
+                            @endforeach
+                        </div>
+                        @if ($d->catatan_pendaftaran)
+                            <p class="pd-catatan"><i class="bi bi-chat-left-text"></i> {{ $d->catatan_pendaftaran }}</p>
+                        @endif
+
+                        <div class="pd-aksi">
+                            <form action="{{ route('admin.users.setujui', $d) }}" method="POST" class="pd-setujui">
+                                @csrf
+                                <details>
+                                    <summary>Atur penugasan sebelum menyetujui</summary>
+                                    <div class="pilih-sub-grid">
+                                        @foreach (\App\Support\Bidang::opsiPenugasan() as $grup)
+                                            <div class="pilih-sub-grup">
+                                                <b><i class="bi bi-{{ $grup['icon'] }}"></i> {{ $grup['nama'] }}</b>
+                                                @foreach ($grup['opsi'] as $o)
+                                                    <label class="check">
+                                                        <input type="checkbox" name="penugasan[]" value="{{ $o['nilai'] }}" @checked($diajukan->contains($o['nilai']))>
+                                                        {{ $o['label'] }}
+                                                    </label>
+                                                @endforeach
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </details>
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-check2-circle"></i> Setujui sebagai Petugas</button>
+                            </form>
+                            <form action="{{ route('admin.users.tolak', $d) }}" method="POST" class="pd-tolak"
+                                  data-confirm="Tolak pendaftaran {{ $d->name }}?">
+                                @csrf
+                                <input type="text" name="alasan" class="input input-sm" maxlength="255" placeholder="Alasan penolakan (opsional)">
+                                <button type="submit" class="btn btn-outline btn-sm danger"><i class="bi bi-x-circle"></i> Tolak</button>
+                            </form>
+                        </div>
+                    </div>
+                </li>
+            @endforeach
+        </ul>
+    </section>
+@endif
+
 {{-- Permintaan reset password dari halaman "Lupa Password" --}}
 @if ($permintaan->isNotEmpty())
     <section class="card">
@@ -108,6 +179,9 @@
                                         <span class="strong">{{ $user->name }}</span>
                                         @if ($diriSendiri)<span class="badge sky" style="margin-left:6px;height:20px">Anda</span>@endif
                                         <small>{{ $user->email }}</small>
+                                        @if ($user->status_akun === 'ditolak')
+                                            <small class="wajib-ganti ditolak"><i class="bi bi-x-octagon"></i> Pendaftaran ditolak{{ $user->alasan_ditolak ? ': '.$user->alasan_ditolak : '' }}</small>
+                                        @endif
                                         @if ($user->wajib_ganti_password)
                                             <small class="wajib-ganti"><i class="bi bi-shield-exclamation"></i> Memakai password sementara</small>
                                         @endif

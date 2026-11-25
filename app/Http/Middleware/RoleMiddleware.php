@@ -19,13 +19,13 @@ class RoleMiddleware
         }
 
         // Akun dengan role yang sudah tidak dipakai (mis. "viewer" lama): keluarkan
-        if (! array_key_exists(auth()->user()->role, User::ROLES)) {
+        if (! array_key_exists(auth()->user()->role, User::ROLES) || ! auth()->user()->isAktif()) {
             auth()->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
             return redirect()->route('login')->withErrors([
-                'email' => 'Role akun Anda sudah tidak berlaku. Data dapat dilihat langsung di situs publik tanpa login.',
+                'email' => 'Akun Anda tidak aktif atau belum disetujui Administrator. Data tetap dapat dilihat di situs publik tanpa login.',
             ]);
         }
 

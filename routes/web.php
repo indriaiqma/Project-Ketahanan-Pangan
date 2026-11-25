@@ -9,6 +9,7 @@ use App\Http\Controllers\ModulDataController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KawasanHutanController;
 use App\Http\Controllers\LupaPasswordController;
+use App\Http\Controllers\PendaftaranController;
 use App\Http\Controllers\LahanKritisController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
@@ -35,6 +36,14 @@ Route::post('/login', [AuthController::class, 'login'])
 */
 
 Route::middleware('guest')->group(function () {
+    // Pendaftaran akun Petugas (aktif setelah disetujui Administrator)
+    Route::get('/daftar', [PendaftaranController::class, 'form'])
+        ->name('daftar');
+
+    Route::post('/daftar', [PendaftaranController::class, 'simpan'])
+        ->middleware('throttle:daftar')
+        ->name('daftar.simpan');
+
     Route::get('/lupa-password', [LupaPasswordController::class, 'form'])
         ->name('password.request');
 
@@ -304,6 +313,15 @@ Route::middleware(['auth', 'role:admin,petugas', 'wajib.ganti'])->prefix('admin'
     Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->whereNumber('user')
         ->name('admin.users.destroy');
+
+    // Persetujuan pendaftaran akun
+    Route::post('/users/{user}/setujui', [UserController::class, 'setujui'])
+        ->whereNumber('user')
+        ->name('admin.users.setujui');
+
+    Route::post('/users/{user}/tolak', [UserController::class, 'tolak'])
+        ->whereNumber('user')
+        ->name('admin.users.tolak');
 
     // Reset password: buat password sementara (pengguna wajib menggantinya saat login)
     Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])

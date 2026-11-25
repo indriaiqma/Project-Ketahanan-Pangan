@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\PermintaanResetPassword;
 use App\Models\User;
+use App\Notifications\PendaftaranAkunNotification;
 use App\Support\Bidang;
+use App\Support\Surel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -15,10 +18,73 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('aksesBidang')->orderBy('id', 'asc')->get();
+        // Pendaftar yang menunggu ditampilkan terpisah di panel persetujuan
+        $users = User::with('aksesBidang')->where('status_akun', '!=', 'menunggu')->orderBy('id', 'asc')->get();
+        $pendaftar = User::menungguPersetujuan()->oldest()->get();
         $permintaan = PermintaanResetPassword::menunggu()->with('user')->latest()->get();
 
-        return view('admin.users.index', compact('users', 'permintaan'));
+        return view('admin.users.index', compact('users', 'pendaftar', 'permintaan'));
+    }
+
+    /**
+     * Setujui pendaftaran akun Petugas. Penugasan memakai pilihan Administrator
+     * (bawaan: sub bidang yang diajukan pendaftar).
+     */
+    public function setujui(Request $request, User $user)
+    {
+        abort_unless($user->status_akun === 'menunggu', 404);
+
+        $request->merge(['role' => 'petugas']);
+        $request->validate($this->aturanPenugasan($request), [
+            'penugasan.required' => 'Pilih minimal satu sub bidang untuk petugas ini.',
+        ]);
+
+        DB::transaction(function () use ($request, $user) {
+            $user->forceFill([
+                'status_akun' => 'aktif',
+                'role' => 'petugas',
+                'alasan_ditolak' => null,
+                'diverifikasi_oleh' => auth()->id(),
+                'diverifikasi_pada' => now(),
+            ])->save();
+            $this->simpanPenugasan($user, $request);
+        });
+
+        $this->kabari($user, 'disetujui');
+
+        return redirect()->route('admin.users.index')
+            ->with('success', "Akun {$user->name} disetujui dan sudah dapat digunakan untuk masuk.");
+    }
+
+    /** Tolak pendaftaran akun (alasan opsional, disampaikan ke pendaftar saat mencoba masuk). */
+    public function tolak(Request $request, User $user)
+    {
+        abort_unless($user->status_akun === 'menunggu', 404);
+        $request->validate(['alasan' => 'nullable|string|max:255'], [], ['alasan' => 'alasan']);
+
+        $user->forceFill([
+            'status_akun' => 'ditolak',
+            'alasan_ditolak' => $request->alasan,
+            'diverifikasi_oleh' => auth()->id(),
+            'diverifikasi_pada' => now(),
+        ])->save();
+
+        $this->kabari($user, 'ditolak');
+
+        return redirect()->route('admin.users.index')->with('success', "Pendaftaran {$user->name} ditolak.");
+    }
+
+    /** Kirim email hasil verifikasi bila pengiriman email sudah aktif. */
+    private function kabari(User $user, string $jenis): void
+    {
+        if (! Surel::siap()) {
+            return;
+        }
+        try {
+            $user->notify(new PendaftaranAkunNotification($jenis, $user));
+        } catch (\Throwable $e) {
+            Log::warning('Email hasil verifikasi pendaftaran gagal: '.$e->getMessage());
+        }
     }
 
     /**

@@ -24,6 +24,14 @@ class User extends Authenticatable
         'password',
         'role',
         'wajib_ganti_password',
+        'status_akun',
+        'no_hp',
+        'jabatan',
+        'pengajuan_penugasan',
+        'catatan_pendaftaran',
+        'alasan_ditolak',
+        'diverifikasi_oleh',
+        'diverifikasi_pada',
     ];
 
     /**
@@ -44,7 +52,26 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'wajib_ganti_password' => 'boolean',
+        'pengajuan_penugasan' => 'array',
+        'diverifikasi_pada' => 'datetime',
     ];
+
+    /** Status akun: aktif (bisa login), menunggu (persetujuan Admin), ditolak. */
+    public const STATUS_AKUN = [
+        'aktif' => 'Aktif',
+        'menunggu' => 'Menunggu persetujuan',
+        'ditolak' => 'Ditolak',
+    ];
+
+    public function isAktif(): bool
+    {
+        return ($this->status_akun ?? 'aktif') === 'aktif';
+    }
+
+    public function scopeMenungguPersetujuan($query)
+    {
+        return $query->where('status_akun', 'menunggu');
+    }
 
     /** Email tautan reset password berbahasa Indonesia. */
     public function sendPasswordResetNotification($token): void

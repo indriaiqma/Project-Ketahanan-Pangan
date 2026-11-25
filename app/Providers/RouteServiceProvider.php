@@ -52,6 +52,7 @@ class RouteServiceProvider extends ServiceProvider
             Limit::perMinute(3)->by('lupa|'.$request->ip()),
             Limit::perHour(10)->by('lupa-email|'.mb_strtolower((string) $request->input('email'))),
         ]);
+        RateLimiter::for('daftar', fn (Request $request) => [Limit::perMinute(5)->by('daftar|'.$request->ip()), Limit::perHour(20)->by('daftar-jam|'.$request->ip())]);
         RateLimiter::for('reset-password', fn (Request $request) => Limit::perMinute(5)->by('reset|'.$request->ip()));
     }
 }

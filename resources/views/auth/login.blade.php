@@ -43,5 +43,7 @@
         <button type="submit" class="btn btn-primary btn-block" data-loading="Memeriksa…"><i class="bi bi-box-arrow-in-right"></i> Masuk</button>
     </form>
 
+    <p class="auth-alt">Belum punya akun? <a href="{{ route('daftar') }}">Daftar sebagai Petugas</a></p>
+
     <a href="{{ route('dashboard') }}" class="back"><i class="bi bi-arrow-left"></i> Kembali ke beranda</a>
 @endsection

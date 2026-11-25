@@ -1187,3 +1187,51 @@ a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
 .card-wajib { border-color: #f3dca6; box-shadow: 0 0 0 3px rgba(245, 165, 36, .12); }
 @media (max-width: 640px) { .permintaan-list li { flex-wrap: wrap; } }
 .form-minta-admin .btn { margin-top: 6px; }
+
+/* =========================================================
+   PENDAFTARAN AKUN
+   ========================================================= */
+.auth-alt { margin: 18px 0 0; text-align: center; font-size: 13.5px; color: var(--ink-500); }
+.auth-alt a { font-weight: 600; color: var(--brand-600); }
+.form-daftar .field-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+.form-daftar .req { color: var(--red); }
+.hp-field { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.pilih-sub { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
+.pilih-sub legend { font-size: 13px; font-weight: 600; color: var(--ink-700); margin-bottom: 4px; padding: 0; }
+.pilih-sub .hint { margin: 0 0 8px; font-size: 12.5px; color: var(--ink-500); }
+.pilih-sub-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.pilih-sub-grup { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; }
+.pilih-sub-grup > b { font-size: 12.5px; color: var(--ink-700); display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.pilih-sub-grup .check { font-size: 13px; }
+.pernyataan { align-items: flex-start; font-size: 12.5px; color: var(--ink-700); margin: 4px 0 16px; line-height: 1.5; }
+.pernyataan input { margin-top: 3px; }
+.wajib-ganti.ditolak { color: #9d2328 !important; }
+
+.pendaftar-list { list-style: none; margin: 0; padding: 0; }
+.pendaftar-list > li { padding: 16px 20px; border-top: 1px solid var(--line-soft, #eef2ef); }
+.pd-head { display: flex; align-items: center; gap: 14px; }
+.pd-head .info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pd-head .info small { color: var(--ink-500); font-size: 12.5px; }
+.pd-body { margin: 10px 0 0 54px; display: flex; flex-direction: column; gap: 10px; }
+.pd-diajukan { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12.5px; }
+.pd-catatan { margin: 0; font-size: 13px; color: var(--ink-700); display: flex; gap: 6px; }
+.pd-aksi { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+.pd-setujui { display: flex; flex-direction: column; gap: 8px; }
+.pd-setujui details summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--brand-600); }
+.pd-setujui details .pilih-sub-grid { margin-top: 8px; max-width: 640px; }
+.pd-setujui .btn { align-self: flex-start; }
+.pd-tolak { display: flex; gap: 8px; align-items: center; margin: 0; }
+.input-sm { height: 34px; font-size: 13px; min-width: 230px; }
+@media (max-width: 640px) {
+    .form-daftar .field-2, .pilih-sub-grid { grid-template-columns: minmax(0, 1fr); }
+    .pd-body { margin-left: 0; }
+    .pd-tolak { flex-wrap: wrap; }
+}
+
+.form-daftar .field-2 > .field { margin-top: 0; }
+.form-daftar .field-2 { align-items: start; }
+.form-daftar .pilih-sub-grid { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.form-daftar .pilih-sub-grup { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px 12px; padding: 10px 12px; }
+.form-daftar .pilih-sub-grup > b { grid-column: 1 / -1; }
+.form-daftar .pilih-sub-grup .check { margin: 0; }
+.form-daftar .field-2, .form-daftar .field-2 + .field { margin-top: 16px; }

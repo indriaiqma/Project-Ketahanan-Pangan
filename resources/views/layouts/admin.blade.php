@@ -25,7 +25,9 @@
         ['admin.profile', 'admin.profile', 'person-circle', 'Profil Saya'],
     ]));
     // Jumlah permintaan reset password yang menunggu (ditampilkan di menu Pengguna)
-    $permintaanReset = $user->isAdmin() ? \App\Models\PermintaanResetPassword::menunggu()->count() : 0;
+    $permintaanReset = $user->isAdmin()
+        ? \App\Models\PermintaanResetPassword::menunggu()->count() + \App\Models\User::menungguPersetujuan()->count()
+        : 0;
 @endphp
 
 <div class="admin">
@@ -62,7 +64,7 @@
                 <a href="{{ route($route) }}" @class(['active' => request()->routeIs($pola)])>
                     <i class="bi bi-{{ $ikon }}"></i> {{ $label }}
                     @if ($route === 'admin.users.index' && $permintaanReset)
-                        <span class="menu-badge" title="{{ $permintaanReset }} permintaan reset password menunggu">{{ $permintaanReset }}</span>
+                        <span class="menu-badge" title="{{ $permintaanReset }} pendaftaran/permintaan reset password menunggu">{{ $permintaanReset }}</span>
                     @endif
                 </a>
             @endforeach

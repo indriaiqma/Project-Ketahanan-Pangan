@@ -115,6 +115,6 @@ class LupaPasswordController extends Controller
     /** Akun Admin/Petugas dengan email tersebut (null bila tidak ada). */
     private function akun(string $email): ?User
     {
-        return User::where('email', $email)->whereIn('role', array_keys(User::ROLES))->first();
+        return User::where('email', $email)->whereIn('role', array_keys(User::ROLES))->where('status_akun', 'aktif')->first();
     }
 }
