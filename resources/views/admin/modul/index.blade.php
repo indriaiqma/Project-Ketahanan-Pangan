@@ -16,7 +16,7 @@
     $rute = $publik
         ? ['bidang' => 'data.bidang', 'modul' => 'data.modul', 'export' => 'data.export', 'lampiran' => 'data.lampiran']
         : ['bidang' => 'admin.bidang.show', 'modul' => 'admin.bidang.modul', 'export' => 'admin.modul.export', 'lampiran' => 'admin.modul.lampiran'];
-    $bolehHapus = ! $publik && auth()->user()->isAdmin();
+    $bolehHapus = ! $publik && $bisaUbah; // Admin & petugas di sub bidang tugasnya
     // Export & lampiran khusus pengguna login (Admin/Petugas) yang boleh melihat sub bidang ini
     $bisaUnduh = ! $publik || \App\Support\Bidang::bolehLihatSub(auth()->user(), $bidang['slug'], $modul['sub']);
     $adaAksi = $bisaUbah || $bolehHapus;

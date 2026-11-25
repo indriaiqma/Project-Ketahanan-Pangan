@@ -81,7 +81,7 @@ Mengapa lahan kritis penting untuk ketahanan pangan? Lahan yang rusak atau gundu
 | Export data ke Excel & unduh lampiran | ✅ | ✅ (sub bidang tugas) | ❌ |
 | Tambah & ubah data | ✅ | ✅ (sub bidang tugas) | ❌ |
 | Import data dari Excel | ✅ | ✅ (sub bidang tugas) | ❌ |
-| **Hapus** data | ✅ | ❌ | ❌ |
+| **Hapus** data | ✅ | ✅ (sub bidang tugas) | ❌ |
 | **Kelola akun pengguna** | ✅ | ❌ | ❌ |
 | Ubah profil & password sendiri | ✅ | ✅ | ❌ |
 
@@ -102,7 +102,7 @@ PUBLIK (tanpa login)                       PANEL PENGELOLA (login di /login)
 Beranda (/)                                Dashboard (/admin)
  ├─ sorotan indikator & pembaruan terbaru   ├─ banner sambutan sesuai role
  └─ Data Bidang (/data)                     ├─ Bidang → Sub Bidang → Modul :
-     └─ Bidang (/data/{bidang})             │    lihat · tambah · ubah · hapus* · import · export
+     └─ Bidang (/data/{bidang})             │    lihat · tambah · ubah · hapus · import · export
          └─ Modul: tabel & grafik           ├─ Pengguna* : kelola akun & penugasan
             (hanya-baca, tanpa login)       └─ Profil Saya : ubah nama, email, password
                                             (* = khusus Administrator)

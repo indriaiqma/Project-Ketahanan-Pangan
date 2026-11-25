@@ -114,7 +114,7 @@
                                     <a href="{{ route('lahan-kritis.show', $data) }}" class="btn btn-outline btn-icon" title="Lihat detail" aria-label="Lihat detail"><i class="bi bi-eye"></i></a>
                                     @if ($bisaUbah)
                                         <a href="{{ route('admin.lahan-kritis.edit', $data) }}" class="btn btn-outline btn-icon" title="Ubah" aria-label="Ubah"><i class="bi bi-pencil"></i></a>
-                                        @if (auth()->user()->isAdmin())
+                                        @if ($bisaUbah)
                                             <form action="{{ route('admin.lahan-kritis.destroy', $data) }}" method="POST"
                                                   data-confirm="Hapus data lahan kritis Kecamatan {{ $data->kecamatan }}? Tindakan ini tidak dapat dibatalkan.">
                                                 @csrf

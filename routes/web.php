@@ -162,8 +162,8 @@ Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(functi
 | ADMIN
 |--------------------------------------------------------------------------
 | Semua URL /admin/... membutuhkan login Admin atau Petugas.
-| - Petugas     : + tambah, ubah, import   (role:admin,petugas)
-| - Admin       : + hapus & kelola pengguna (role:admin)
+| - Petugas     : + tambah, ubah, hapus, import di sub bidang tugasnya
+| - Admin       : + kelola pengguna (role:admin)
 |--------------------------------------------------------------------------
 */
 
@@ -236,7 +236,7 @@ Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(functi
 
     Route::delete('/bidang/{bidang}/{modul}/{id}', [ModulDataController::class, 'destroy'])
         ->whereNumber('id')
-        ->middleware(['role:admin', 'bidang:lihat'])
+        ->middleware('bidang:ubah')
         ->name('admin.modul.destroy');
 
 
@@ -312,7 +312,7 @@ Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(functi
 
     Route::delete('/kawasan-hutan/{kawasanHutan}', [KawasanHutanController::class, 'destroy'])
         ->whereNumber('kawasanHutan')
-        ->middleware('role:admin')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.kawasan-hutan.destroy');
 
 
@@ -354,7 +354,7 @@ Route::middleware(['auth', 'role:admin,petugas'])->prefix('admin')->group(functi
 
     Route::delete('/lahan-kritis/{lahanKriti}', [LahanKritisController::class, 'destroy'])
         ->whereNumber('lahanKriti')
-        ->middleware('role:admin')
+        ->middleware(['role:admin,petugas', 'bidang:ubah,sarana-prasarana,sarpras-2'])
         ->name('admin.lahan-kritis.destroy');
 
 });

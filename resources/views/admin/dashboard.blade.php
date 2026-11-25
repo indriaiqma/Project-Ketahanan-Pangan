@@ -28,10 +28,9 @@
     $hakAkses = $user->isPetugas()
         ? [
             ['Melihat data sub bidang tugas', true],
-            ['Tambah & ubah data sub bidang tugas', true],
+            ['Tambah, ubah & hapus data sub bidang tugas', true],
             ['Import & export data Excel', true],
             ['Melihat sub bidang lain', ! $dibatasi],
-            ['Hapus data', false],
             ['Kelola akun pengguna', false],
         ]
         : [

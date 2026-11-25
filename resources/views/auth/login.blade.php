@@ -26,7 +26,7 @@
             <p>Pengelolaan dan penyajian data seluruh bidang Bakorwil III Malang di wilayah Malang Selatan.</p>
             <ul>
                 <li><i class="bi bi-shield-fill-check"></i> <span><b>Administrator</b> · akses penuh &amp; kelola pengguna</span></li>
-                <li><i class="bi bi-person-badge-fill"></i> <span><b>Petugas</b> · tambah, ubah, import &amp; export data</span></li>
+                <li><i class="bi bi-person-badge-fill"></i> <span><b>Petugas</b> · tambah, ubah, hapus, import &amp; export data</span></li>
                 <li><i class="bi bi-globe2"></i> <span><b>Masyarakat</b> · lihat data di situs publik tanpa login</span></li>
             </ul>
         </div>

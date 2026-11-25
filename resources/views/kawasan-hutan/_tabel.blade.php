@@ -105,7 +105,7 @@
                                     <a href="{{ route('kawasan-hutan.show', $kawasan) }}" class="btn btn-outline btn-icon" title="Lihat detail" aria-label="Lihat detail"><i class="bi bi-eye"></i></a>
                                     @if ($bisaUbah)
                                         <a href="{{ route('admin.kawasan-hutan.edit', $kawasan) }}" class="btn btn-outline btn-icon" title="Ubah" aria-label="Ubah"><i class="bi bi-pencil"></i></a>
-                                        @if (auth()->user()->isAdmin())
+                                        @if ($bisaUbah)
                                             <form action="{{ route('admin.kawasan-hutan.destroy', $kawasan) }}" method="POST"
                                                   data-confirm="Hapus data kawasan &quot;{{ $kawasan->nama_kawasan }}&quot;? Tindakan ini tidak dapat dibatalkan.">
                                                 @csrf
