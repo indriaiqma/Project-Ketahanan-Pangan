@@ -38,7 +38,15 @@
   ],
   "kesehatan": [
    "Tabel 4.2.2",
-   "Tabel 4.2.3"
+   "Tabel 4.2.3",
+   "Kecamatan Ampelgading Dalam Angka 2026 (Tabel 4.2.2)",
+   "Kecamatan Bantur Dalam Angka 2026 (Tabel 4.2.2)",
+   "Kecamatan Dampit Dalam Angka 2026 (Tabel 4.2.2)",
+   "Kecamatan Donomulyo Dalam Angka 2026 (Tabel 4.2.2)",
+   "Kecamatan Gedangan Dalam Angka 2026 (Tabel 4.2.2)",
+   "Kecamatan Kalipare Dalam Angka 2026 (Tabel 4.2.2)",
+   "Kecamatan Pagak Dalam Angka 2026 (Tabel 4.2.2)",
+   "Kecamatan Sumbermanjing Wetan Dalam Angka 2026 (Tabel 4.2.2)"
   ],
   "keluarga-berencana": [
    "Tabel 4.2.19",
@@ -54,7 +62,8 @@
    "Tabel 4.3.15"
   ],
   "tenaga-kerja-transmigrasi": [
-   "Tabel 3.2.8"
+   "Tabel 3.2.8",
+   "Tabel 3.2.11"
   ],
   "pertanian-perkebunan": [
    "Tabel 5.2.2",
@@ -107,6 +116,17 @@
    "Kecamatan Sumbermanjing Wetan Dalam Angka 2026 (Tabel 3.1)",
    "Kecamatan Tirtoyudo Dalam Angka 2025 (Tabel 3.1)",
    "Tabel 3.1.1"
+  ],
+  "perdagangan-industri": [
+   "Kecamatan Ampelgading Dalam Angka 2026 (Tabel 7.6)",
+   "Kecamatan Bantur Dalam Angka 2026 (Tabel 7.6)",
+   "Kecamatan Dampit Dalam Angka 2026 (Tabel 7.6)",
+   "Kecamatan Donomulyo Dalam Angka 2026 (Tabel 7.6)",
+   "Kecamatan Gedangan Dalam Angka 2026 (Tabel 7.6)",
+   "Kecamatan Kalipare Dalam Angka 2026 (Tabel 7.6)",
+   "Kecamatan Pagak Dalam Angka 2026 (Tabel 7.6)",
+   "Kecamatan Sumbermanjing Wetan Dalam Angka 2026 (Tabel 7.6)",
+   "Kecamatan Tirtoyudo Dalam Angka 2025 (Tabel 7.6)"
   ]
  },
  "kecamatan": {
@@ -152,7 +172,8 @@
     "tenaga_kesling": 1.0,
     "tenaga_gizi": 3.0,
     "puskesmas_rawat_inap": 1.0,
-    "puskesmas_non_rawat_inap": 0.0
+    "puskesmas_non_rawat_inap": 0.0,
+    "pustu": 4.0
    },
    "keluarga-berencana": {
     "pus": 9843.0,
@@ -190,7 +211,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 94.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 2721.33,
@@ -268,6 +290,14 @@
     "laki_laki": 35396.0,
     "perempuan": 35111.0,
     "total_penduduk": 70507.0
+   },
+   "perdagangan-industri": {
+    "kelompok_pertokoan": 0.0,
+    "pasar_permanen": 5.0,
+    "pasar_semi_permanen": 2.0,
+    "pasar_tanpa_bangunan": 2.0,
+    "minimarket": 21.0,
+    "restoran": 4.0
    }
   },
   "Kalipare": {
@@ -312,7 +342,8 @@
     "tenaga_kesling": 1.0,
     "tenaga_gizi": 2.0,
     "puskesmas_rawat_inap": 1.0,
-    "puskesmas_non_rawat_inap": 0.0
+    "puskesmas_non_rawat_inap": 0.0,
+    "pustu": 3.0
    },
    "keluarga-berencana": {
     "pus": 8796.0,
@@ -350,7 +381,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 94.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 896.08,
@@ -428,6 +460,14 @@
     "laki_laki": 35624.0,
     "perempuan": 35728.0,
     "total_penduduk": 71352.0
+   },
+   "perdagangan-industri": {
+    "kelompok_pertokoan": 1.0,
+    "pasar_permanen": 7.0,
+    "pasar_semi_permanen": 2.0,
+    "pasar_tanpa_bangunan": 1.0,
+    "minimarket": 30.0,
+    "restoran": 0.0
    }
   },
   "Pagak": {
@@ -472,7 +512,8 @@
     "tenaga_kesling": 2.0,
     "tenaga_gizi": 5.0,
     "puskesmas_rawat_inap": 2.0,
-    "puskesmas_non_rawat_inap": 0.0
+    "puskesmas_non_rawat_inap": 0.0,
+    "pustu": 3.0
    },
    "keluarga-berencana": {
     "pus": 8496.0,
@@ -510,7 +551,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 33.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 803.44,
@@ -588,6 +630,14 @@
     "laki_laki": 26995.0,
     "perempuan": 26867.0,
     "total_penduduk": 53862.0
+   },
+   "perdagangan-industri": {
+    "kelompok_pertokoan": 3.0,
+    "pasar_permanen": 3.0,
+    "pasar_semi_permanen": 1.0,
+    "pasar_tanpa_bangunan": 1.0,
+    "minimarket": 18.0,
+    "restoran": 1.0
    }
   },
   "Bantur": {
@@ -632,7 +682,8 @@
     "tenaga_kesling": 2.0,
     "tenaga_gizi": 2.0,
     "puskesmas_rawat_inap": 2.0,
-    "puskesmas_non_rawat_inap": 0.0
+    "puskesmas_non_rawat_inap": 0.0,
+    "pustu": 4.0
    },
    "keluarga-berencana": {
     "pus": 10999.0,
@@ -670,7 +721,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 76.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 1718.21,
@@ -748,6 +800,14 @@
     "laki_laki": 40241.0,
     "perempuan": 39992.0,
     "total_penduduk": 80233.0
+   },
+   "perdagangan-industri": {
+    "kelompok_pertokoan": 3.0,
+    "pasar_permanen": 4.0,
+    "pasar_semi_permanen": 2.0,
+    "pasar_tanpa_bangunan": 3.0,
+    "minimarket": 19.0,
+    "restoran": 2.0
    }
   },
   "Gedangan": {
@@ -792,7 +852,8 @@
     "tenaga_kesling": 1.0,
     "tenaga_gizi": 1.0,
     "puskesmas_rawat_inap": 1.0,
-    "puskesmas_non_rawat_inap": 0.0
+    "puskesmas_non_rawat_inap": 0.0,
+    "pustu": 3.0
    },
    "keluarga-berencana": {
     "pus": 9418.0,
@@ -830,7 +891,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 118.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 655.32,
@@ -908,6 +970,14 @@
     "laki_laki": 30708.0,
     "perempuan": 30288.0,
     "total_penduduk": 60996.0
+   },
+   "perdagangan-industri": {
+    "kelompok_pertokoan": 0.0,
+    "pasar_permanen": 2.0,
+    "pasar_semi_permanen": 0.0,
+    "pasar_tanpa_bangunan": 0.0,
+    "minimarket": 8.0,
+    "restoran": 0.0
    }
   },
   "Sumbermanjing Wetan": {
@@ -952,7 +1022,8 @@
     "tenaga_kesling": 1.0,
     "tenaga_gizi": 6.0,
     "puskesmas_rawat_inap": 2.0,
-    "puskesmas_non_rawat_inap": 0.0
+    "puskesmas_non_rawat_inap": 0.0,
+    "pustu": 5.0
    },
    "keluarga-berencana": {
     "pus": 15260.0,
@@ -990,7 +1061,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 171.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 1399.94,
@@ -1068,6 +1140,14 @@
     "laki_laki": 53513.0,
     "perempuan": 52692.0,
     "total_penduduk": 106205.0
+   },
+   "perdagangan-industri": {
+    "kelompok_pertokoan": 5.0,
+    "pasar_permanen": 4.0,
+    "pasar_semi_permanen": 2.0,
+    "pasar_tanpa_bangunan": 0.0,
+    "minimarket": 19.0,
+    "restoran": 2.0
    }
   },
   "Dampit": {
@@ -1112,7 +1192,8 @@
     "tenaga_kesling": 0.0,
     "tenaga_gizi": 5.0,
     "puskesmas_rawat_inap": 2.0,
-    "puskesmas_non_rawat_inap": 0.0
+    "puskesmas_non_rawat_inap": 0.0,
+    "pustu": 4.0
    },
    "keluarga-berencana": {
     "pus": 19756.0,
@@ -1150,7 +1231,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 116.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 2481.63,
@@ -1228,6 +1310,14 @@
     "laki_laki": 67197.0,
     "perempuan": 67382.0,
     "total_penduduk": 134579.0
+   },
+   "perdagangan-industri": {
+    "kelompok_pertokoan": 12.0,
+    "pasar_permanen": 3.0,
+    "pasar_semi_permanen": 1.0,
+    "pasar_tanpa_bangunan": 2.0,
+    "minimarket": 34.0,
+    "restoran": 13.0
    }
   },
   "Tirtoyudo": {
@@ -1310,7 +1400,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 67.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 860.81,
@@ -1432,7 +1523,8 @@
     "tenaga_kesling": 1.0,
     "tenaga_gizi": 1.0,
     "puskesmas_rawat_inap": 1.0,
-    "puskesmas_non_rawat_inap": 0.0
+    "puskesmas_non_rawat_inap": 0.0,
+    "pustu": 2.0
    },
    "keluarga-berencana": {
     "pus": 8955.0,
@@ -1470,7 +1562,8 @@
    },
    "tenaga-kerja-transmigrasi": {
     "transmigran_kk": 0.0,
-    "transmigran_jiwa": 0.0
+    "transmigran_jiwa": 0.0,
+    "pekerja_migran": 69.0
    },
    "pertanian-perkebunan": {
     "luas_panen_padi": 801.08,
@@ -1548,6 +1641,14 @@
     "laki_laki": 30830.0,
     "perempuan": 30083.0,
     "total_penduduk": 60913.0
+   },
+   "perdagangan-industri": {
+    "kelompok_pertokoan": 0.0,
+    "pasar_permanen": 2.0,
+    "pasar_semi_permanen": 1.0,
+    "pasar_tanpa_bangunan": 0.0,
+    "minimarket": 9.0,
+    "restoran": 0.0
    }
   }
  },
@@ -2848,6 +2949,22 @@
  "catatan_verifikasi": [
   "[GAGAL CEK] perikanan.produksi_budidaya Kalipare: [0.0, 0.0, 108.24, 0.0, 650.89, 0.0, 289.9] (hal. 390)",
   "[GAGAL CEK] perikanan.produksi_budidaya Tirtoyudo: [0.0, 554.35, 18.17, 0.0, 0.0, 0.0, 573.06] (hal. 390)",
-  "[CEK SILANG] penduduk Tirtoyudo: kecamatan {'laki_laki': 34614.0, 'perempuan': 33978.0} vs kabupaten 69469.0"
- ]
+  "[CEK SILANG] penduduk Tirtoyudo: kecamatan {'laki_laki': 34614.0, 'perempuan': 33978.0} vs kabupaten 69469.0",
+  "[TAHUN BERBEDA] pustu Tirtoyudo: 4.0 unit (data 2024) tidak dimasukkan ke 2025",
+  "[INFO] Pekerja migran = jumlah seluruh negara penempatan (Kab. Malang total 1459)."
+ ],
+ "kecamatan_tahun_lain": {
+  "2024": {
+   "Tirtoyudo": {
+    "perdagangan-industri": {
+     "kelompok_pertokoan": 2.0,
+     "pasar_permanen": 2.0,
+     "pasar_semi_permanen": 1.0,
+     "pasar_tanpa_bangunan": 1.0,
+     "minimarket": 11.0,
+     "restoran": 0.0
+    }
+   }
+  }
+ }
 }

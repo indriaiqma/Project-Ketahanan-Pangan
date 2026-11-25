@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
  * Impor data resmi BPS untuk 9 kecamatan Malang Selatan.
  *
  *   php artisan data:bps            impor / perbarui data dari database/data/bps-malang-selatan-2025.json
+ *                                   dan daftar sekolah dari database/data/sekolah-malang-selatan.json
  *
  * Sumber: BPS Kabupaten Malang, "Kabupaten Malang Dalam Angka 2026" dan
  * "Kecamatan ... Dalam Angka 2026" (Tirtoyudo: edisi 2025). Cara ekstraksi dan
@@ -26,6 +27,9 @@ class DataBps extends Command
 {
     /** Awalan sumber_data untuk menandai baris hasil impor ini. */
     public const PENANDA = 'BPS Kabupaten Malang';
+
+    /** Penanda sumber daftar sekolah (Data Referensi Pendidikan Kemendikdasmen). */
+    public const PENANDA_SEKOLAH = 'Kemendikdasmen, Data Referensi Pendidikan';
 
     protected $signature = 'data:bps {--file=database/data/bps-malang-selatan-2025.json} {--force : Jalankan tanpa konfirmasi}';
 
@@ -66,6 +70,17 @@ class DataBps extends Command
             }
         }
 
+        // Data dengan tahun berbeda (mis. Tirtoyudo hanya punya publikasi kecamatan data 2024)
+        foreach ($data['kecamatan_tahun_lain'] ?? [] as $thn => $perKec) {
+            foreach ($perKec as $kec => $modul) {
+                if ($wid = $wilayah[$kec] ?? null) {
+                    foreach ($modul as $kunci => $nilai) {
+                        $this->simpanRekap($kunci, $nilai, $wid, (int) $thn, $data, $kec, $admin);
+                    }
+                }
+            }
+        }
+
         $this->desaLama = ModulDataEntri::where('modul', 'daftar-desa')->get()
             ->keyBy(fn ($e) => (int) $e->kecamatan.'|'.$e->kode)->all();
         foreach ($data['desa'] ?? [] as $kec => $daftar) {
@@ -75,6 +90,8 @@ class DataBps extends Command
                 }
             }
         }
+
+        $this->imporSekolah($wilayah, $admin);
 
         Cache::forget(RingkasanBidang::CACHE_KEY);
         $this->info("Data BPS: {$this->hasil['baru']} baris baru, {$this->hasil['diperbarui']} diperbarui, {$this->hasil['dilewati']} dilewati (sudah ada data petugas).");
@@ -163,6 +180,63 @@ class DataBps extends Command
         $this->hasil[$lama ? 'diperbarui' : 'baru']++;
     }
 
+    /** Daftar sekolah formal (SD–MA) per kecamatan dari Data Referensi Pendidikan. */
+    private function imporSekolah($wilayah, ?int $admin): void
+    {
+        $berkas = base_path('database/data/sekolah-malang-selatan.json');
+        $data = is_file($berkas) ? json_decode((string) file_get_contents($berkas), true) : null;
+        if (! is_array($data) || empty($data['sekolah'])) {
+            return;
+        }
+
+        $lama = ModulDataEntri::where('modul', 'daftar-sekolah')->get()->keyBy(fn ($e) => (string) $e->npsn);
+        $sumber = self::PENANDA_SEKOLAH.' (diakses '.$data['diakses'].')';
+
+        foreach ($data['sekolah'] as $s) {
+            $wid = $wilayah[$s['kecamatan']] ?? null;
+            if (! $wid) {
+                continue;
+            }
+            $baris = $lama->get($s['npsn']);
+            if ($baris && ! $this->dariBps($baris->sumber_data)) {
+                $this->hasil['dilewati']++;
+
+                continue;
+            }
+
+            $nilai = [
+                'nama' => $s['nama'],
+                'npsn' => $s['npsn'],
+                'jenjang' => $s['jenjang'],
+                'status' => $s['status'],
+                'kecamatan' => $wid,
+                'desa' => $s['desa'],
+                'alamat' => $s['alamat'],
+                'akreditasi' => $s['akreditasi'],
+                'tahun_akreditasi' => $s['tahun_akreditasi'],
+                'sk_akreditasi' => $s['sk_akreditasi'],
+                'akses_internet' => $s['akses_internet'],
+                'sumber_listrik' => $s['sumber_listrik'],
+                'luas_tanah' => $s['luas_tanah'],
+                'koordinat' => $s['koordinat'],
+                'siswa' => null,
+                'guru' => null,
+            ];
+
+            $baris ??= new ModulDataEntri;
+            $baru = ! $baris->exists;
+            $baris->fill([
+                'modul' => 'daftar-sekolah',
+                'nilai' => $nilai,
+                'sumber_data' => $sumber,
+                'keterangan' => 'https://referensi.data.kemendikdasmen.go.id/satpen/detail/'.$s['npsn'],
+            ]);
+            $baris->created_by ??= $admin;
+            $baris->save();
+            $this->hasil[$baru ? 'baru' : 'diperbarui']++;
+        }
+    }
+
     private function sumber(array $data, string $kunci, string $kec): string
     {
         $tabel = collect($data['sumber_tabel'][$kunci] ?? [])
@@ -176,6 +250,7 @@ class DataBps extends Command
     private function dariBps(?string $sumber): bool
     {
         // Hanya baris impor BPS sebelumnya atau data contoh yang boleh diperbarui
-        return $sumber !== null && (str_starts_with($sumber, self::PENANDA) || $sumber === DataDummy::PENANDA);
+        return $sumber !== null && (str_starts_with($sumber, self::PENANDA) || str_starts_with($sumber, self::PENANDA_SEKOLAH)
+            || $sumber === DataDummy::PENANDA);
     }
 }
