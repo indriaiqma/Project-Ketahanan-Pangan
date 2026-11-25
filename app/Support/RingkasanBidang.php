@@ -144,12 +144,16 @@ class RingkasanBidang
 
         $jumlah = [];
         foreach (array_merge(array_keys($def['fields']), array_keys($def['total'])) as $k) {
-            $jumlah[$k] = $periode->sum(fn ($r) => (float) $r->{$k});
+            $jumlah[$k] = ModulData::jumlahkan($periode, $k);
         }
 
-        // Utamakan persentase bertarget, lalu field ringkasan, lalu metrik pertama
-        $kunci = collect($def['persentase'])->filter(fn ($p) => isset($p['target']) || isset($p['target_maks']))->keys()->first()
-            ?? $def['ringkasan'] ?? $def['metrik'][0] ?? array_key_first($def['fields']);
+        // Utamakan persentase bertarget, lalu field ringkasan, lalu metrik; pilih yang datanya tersedia
+        $kandidat = collect($def['persentase'])->filter(fn ($p) => isset($p['target']) || isset($p['target_maks']))->keys()
+            ->push($def['ringkasan'])->merge($def['metrik'])->push(array_key_first($def['fields']))->filter()->unique();
+        $kunci = $kandidat->first(fn ($k) => ModulData::nilai($def, $jumlah, $k) !== null);
+        if ($kunci === null) {
+            return null;
+        }
         $info = ModulData::info($def, $kunci);
         $nilai = ModulData::nilai($def, $jumlah, $kunci);
         $p = $def['persentase'][$kunci] ?? null;

@@ -73,7 +73,7 @@
     <select id="f-status" name="status" class="select">
         <option value="">Semua status</option>
         @foreach (array_keys(ModulData::STATUS) as $nilai)
-            @continue($nilai === 'bawah' && ! ModulData::punyaTarget($def))
+            @continue(in_array($nilai, ['baik', 'bawah'], true) && ! ModulData::punyaTarget($def))
             <option value="{{ $nilai }}" @selected(request('status') === $nilai)>{{ ModulData::labelStatus($def, $nilai) }}</option>
         @endforeach
     </select>
@@ -135,9 +135,12 @@
             </div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <span class="status-pill baik"><span class="dot"></span>{{ ModulData::labelStatus($def, 'baik') }} {{ $hitungStatus['baik'] ?? 0 }}</span>
             @if (ModulData::punyaTarget($def))
-                <span class="status-pill bawah"><span class="dot"></span>Di bawah target {{ $hitungStatus['bawah'] ?? 0 }}</span>
+                @if ($hitungStatus['baik'] ?? 0)<span class="status-pill baik"><span class="dot"></span>Baik {{ $hitungStatus['baik'] }}</span>@endif
+                @if ($hitungStatus['bawah'] ?? 0)<span class="status-pill bawah"><span class="dot"></span>Di bawah target {{ $hitungStatus['bawah'] }}</span>@endif
+                @if ($hitungStatus['lapor'] ?? 0)<span class="status-pill lapor" title="Indikator bertarget belum dapat dihitung karena datanya belum tersedia"><span class="dot"></span>Sudah lapor {{ $hitungStatus['lapor'] }}</span>@endif
+            @else
+                <span class="status-pill lapor"><span class="dot"></span>Sudah lapor {{ ($hitungStatus['baik'] ?? 0) + ($hitungStatus['lapor'] ?? 0) }}</span>
             @endif
             <span class="status-pill belum"><span class="dot"></span>Belum lapor {{ $hitungStatus['belum'] ?? 0 }}</span>
         </div>
@@ -185,13 +188,13 @@
                                 @php($nRincian = $rincian['jumlah'][$r['wilayah']->id] ?? 0)
                                 <td class="r nowrap">
                                     <a href="{{ route($rute['modul'], ['bidang' => $bidang['slug'], 'modul' => $rincian['modul']['slug'], 'kecamatan' => $r['wilayah']->id]) }}"
-                                       class="rincian-link" title="Lihat {{ mb_strtolower($rincian['modul']['nama']) }} di {{ $r['wilayah']->nama }}">
-                                        {{ angka($nRincian, 0) }} {{ $rincian['satuan'] }} <i class="bi bi-chevron-right"></i>
+                                       @class(['rincian-link', 'kosong' => ! $nRincian]) title="Lihat {{ mb_strtolower($rincian['modul']['nama']) }} di {{ $r['wilayah']->nama }}">
+                                        {{ $nRincian ? angka($nRincian, 0).' '.$rincian['satuan'] : 'Belum ada' }} <i class="bi bi-chevron-right"></i>
                                     </a>
                                 </td>
                             @endif
                             <td>
-                                <span @class(['status-pill', $r['status']])><span class="dot"></span>{{ ModulData::labelStatus($def, $r['status']) }}</span>
+                                <span @class(['status-pill', ModulData::kelasStatus($def, $r['status'])])><span class="dot"></span>{{ ModulData::labelStatus($def, $r['status']) }}</span>
                             </td>
                             @if ($adaAksi)
                             <td>

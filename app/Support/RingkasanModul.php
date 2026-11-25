@@ -66,7 +66,7 @@ class RingkasanModul
             .' · '.angka($data->count(), 0).' wilayah';
         if ($utama = $def['ringkasan']) {
             $info = ModulData::info($def, $utama);
-            $teks .= ' · '.ModulData::format($def, $utama, $data->sum(fn ($r) => (float) $r->{$utama})).' '.$info['satuan'];
+            $teks .= ' · '.ModulData::format($def, $utama, ModulData::jumlahkan($data, $utama)).' '.$info['satuan'];
         }
 
         return self::hasil(1, $teks, $terakhirDiubah);

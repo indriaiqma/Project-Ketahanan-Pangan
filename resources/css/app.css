@@ -996,6 +996,7 @@ a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
 .status-pill.baik { background: var(--brand-100); color: var(--brand-700); }
 .status-pill.bawah { background: var(--amber-50); color: #a5680a; }
 .status-pill.belum { background: var(--line-soft); color: var(--ink-500); }
+.status-pill.lapor { background: var(--sky-50, #eaf4fb); color: #1f6fa8; }
 
 .periode-form { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .periode-form .select { width: auto; min-width: 140px; }
@@ -1144,6 +1145,7 @@ a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
 
 .rincian-link { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; background: var(--brand-50); color: var(--brand-700); font-size: 12.5px; font-weight: 600; }
 .rincian-link i { font-size: 10px; }
+.rincian-link.kosong { background: var(--line-soft); color: var(--ink-500); font-weight: 500; }
 .rincian-link:hover { background: var(--brand-100); color: var(--brand-800); }
 
 .side-khusus a .tag-baru { margin-left: auto; font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: rgba(255, 255, 255, .12); }

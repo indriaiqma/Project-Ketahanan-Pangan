@@ -21,7 +21,7 @@
 @section('content')
 
 <x-page-header compact :title="($baru ? 'Input Data ' : 'Ubah Data ').$modul['nama']"
-    description="Satu data mewakili satu wilayah pada satu periode. Kolom bertanda * wajib diisi; persentase dihitung otomatis.">
+    description="Satu data mewakili satu wilayah pada satu periode. Kolom bertanda * wajib diisi; angka yang belum tersedia boleh dikosongkan. Persentase dihitung otomatis.">
     <x-slot:breadcrumb>
         <a href="{{ route('admin.bidang.show', $bidang['slug']) }}">{{ $bidang['nama'] }}</a>
         <i class="bi bi-chevron-right"></i>
@@ -69,12 +69,12 @@
         @foreach (ModulData::grupField($def) as $grup => $fields)
             <div class="form-section">
                 <h3>{{ $grup }}</h3>
-                <p>Isi dengan angka (0 jika tidak ada). Gunakan titik untuk desimal, mis. 12.5</p>
+                <p>Isi dengan angka (0 jika memang tidak ada). Kosongkan bila datanya belum tersedia. Gunakan titik untuk desimal, mis. 12.5</p>
                 <div class="form-grid">
                     @foreach ($fields as $kunci => $f)
                         @php($desimal = ($f['tipe'] ?? 'bulat') === 'desimal')
-                        <x-field :label="$f['label']" :name="$kunci" type="number" required min="0" :step="$desimal ? '0.01' : '1'" :data-desimal="$desimal ? '1' : null"
-                                 :value="$baris?->{$kunci}" :suffix="$f['satuan'] ?? null" placeholder="0"
+                        <x-field :label="$f['label']" :name="$kunci" type="number" min="0" :step="$desimal ? '0.01' : '1'" :data-desimal="$desimal ? '1' : null"
+                                 :value="$baris?->{$kunci}" :suffix="$f['satuan'] ?? null" placeholder="–"
                                  :hint="isset($f['maks']) ? ($f['hint'] ?? 'Tidak boleh melebihi '.mb_strtolower(ModulData::info($def, $f['maks'])['label']).'.') : ($f['hint'] ?? null)"
                                  data-angka :data-maks="$f['maks'] ?? null"
                                  :data-maks-dari="isset($f['maks'], $def['total'][$f['maks']]) ? implode(',', $def['total'][$f['maks']]['dari']) : null"

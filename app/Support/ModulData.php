@@ -25,6 +25,7 @@ class ModulData
     public const STATUS = [
         'baik' => 'Baik',
         'bawah' => 'Di bawah target',
+        'lapor' => 'Sudah lapor',
         'belum' => 'Belum lapor',
     ];
 
@@ -137,6 +138,13 @@ class ModulData
     public static function hitungTotal(array $def, array $data): array
     {
         foreach ($def['total'] as $kunci => $t) {
+            // Total kosong bila seluruh komponennya kosong (data belum tersedia)
+            $ada = array_filter($t['dari'], fn ($f) => isset($data[$f]) && $data[$f] !== '');
+            if (! $ada) {
+                $data[$kunci] = null;
+
+                continue;
+            }
             $jumlah = array_sum(array_map(fn ($f) => (float) ($data[$f] ?? 0), $t['dari']));
             $data[$kunci] = self::desimal($def, $kunci) ? round($jumlah, 2) : (int) $jumlah;
         }
@@ -152,12 +160,32 @@ class ModulData
     {
         $hasil = [];
         foreach ($def['persentase'] as $kunci => $p) {
-            $pembilang = (float) data_get($baris, $p['pembilang'], 0);
+            $pembilang = data_get($baris, $p['pembilang']);
             $penyebut = (float) data_get($baris, $p['penyebut'], 0);
-            $hasil[$kunci] = $penyebut > 0 ? round($pembilang / $penyebut * 100, 2) : null;
+            // Kosong bila pembilang belum diisi atau penyebut 0/kosong
+            $hasil[$kunci] = $pembilang !== null && $penyebut > 0 ? round((float) $pembilang / $penyebut * 100, 2) : null;
         }
 
         return $hasil;
+    }
+
+    /**
+     * Jumlah satu kunci dari banyak baris (mis. seluruh kecamatan pada satu periode).
+     * Null bila tidak ada satu pun baris yang mengisinya, agar tidak tampil sebagai 0.
+     */
+    public static function jumlahkan(iterable $baris, string $kunci): ?float
+    {
+        $ada = false;
+        $jumlah = 0.0;
+        foreach ($baris as $r) {
+            $v = data_get($r, $kunci);
+            if ($v !== null && $v !== '') {
+                $ada = true;
+                $jumlah += (float) $v;
+            }
+        }
+
+        return $ada ? $jumlah : null;
     }
 
     /** Apakah modul punya target (menentukan arti status "Baik"). */
@@ -177,23 +205,33 @@ class ModulData
             return 'belum';
         }
 
+        // Hanya indikator bertarget yang datanya tersedia yang dinilai;
+        // data yang belum ada bukan berarti "di bawah target"
+        $dinilai = false;
         foreach (self::persen($def, $baris) as $kunci => $nilai) {
             $p = $def['persentase'][$kunci];
-            if (isset($p['target']) && ($nilai === null || $nilai < $p['target'])) {
-                return 'bawah';
+            if ($nilai === null || (! isset($p['target']) && ! isset($p['target_maks']))) {
+                continue;
             }
-            if (isset($p['target_maks']) && ($nilai === null || $nilai > $p['target_maks'])) {
+            $dinilai = true;
+            if (! self::capaiTarget($p, $nilai)) {
                 return 'bawah';
             }
         }
 
-        return 'baik';
+        return $dinilai ? 'baik' : 'lapor';
     }
 
     /** Label status; tanpa target, data yang masuk cukup disebut "Sudah lapor". */
     public static function labelStatus(array $def, string $status): string
     {
         return $status === 'baik' && ! self::punyaTarget($def) ? 'Sudah lapor' : self::STATUS[$status];
+    }
+
+    /** Status untuk tampilan: tanpa target, "baik" dan "lapor" sama-sama "Sudah lapor". */
+    public static function kelasStatus(array $def, string $status): string
+    {
+        return $status === 'baik' && ! self::punyaTarget($def) ? 'lapor' : $status;
     }
 
     /** Teks syarat status "Baik", mis. "Perekaman KTP-el ≥ 95% dan Stunting ≤ 14%". */
@@ -293,10 +331,11 @@ class ModulData
             $kolom => ['required', 'integer', 'min:1', "max:$maksPeriode", $unik],
         ];
 
+        // Field angka boleh kosong: data resmi sering belum lengkap ("–" berbeda dengan 0)
         foreach ($def['fields'] as $kunci => $f) {
             $rules[$kunci] = ($f['tipe'] ?? 'bulat') === 'desimal'
-                ? ['required', 'numeric', 'min:0', 'max:999999999999', 'decimal:0,2']
-                : ['required', 'integer', 'min:0', 'max:2000000000'];
+                ? ['nullable', 'numeric', 'min:0', 'max:999999999999', 'decimal:0,2']
+                : ['nullable', 'integer', 'min:0', 'max:2000000000'];
             if (! empty($f['maks']) && isset($def['total'][$f['maks']])) {
                 // Batas atas berupa total otomatis (mis. kasus ditangani <= total kasus)
                 $total = $def['total'][$f['maks']];
@@ -307,8 +346,15 @@ class ModulData
                     }
                 };
             } elseif (! empty($f['maks'])) {
-                // Nilai bagian tidak boleh melebihi totalnya
-                $rules[$kunci][] = 'lte:'.$f['maks'];
+                // Nilai bagian tidak boleh melebihi totalnya (bila keduanya diisi)
+                $maks = $f['maks'];
+                $label = mb_strtolower(self::info($def, $maks)['label']);
+                $rules[$kunci][] = function ($atribut, $nilai, $gagal) use ($maks, $label) {
+                    $batas = request($maks);
+                    if ($nilai !== null && $batas !== null && $batas !== '' && (float) $nilai > (float) $batas) {
+                        $gagal("Tidak boleh melebihi $label (".angka((float) $batas, 0).').');
+                    }
+                };
             }
         }
 

@@ -1,0 +1,2853 @@
+{
+ "tahun": 2025,
+ "sumber_kabupaten": "BPS Kabupaten Malang, Kabupaten Malang Dalam Angka 2026",
+ "url_kabupaten": "https://malangkab.bps.go.id/id/publication/2026/02/27/3e4ad4dd423b017bdf8a76c7/kabupaten-malang-dalam-angka-2026.html",
+ "publikasi_kecamatan": {
+  "Ampelgading": 2026,
+  "Bantur": 2026,
+  "Dampit": 2026,
+  "Donomulyo": 2026,
+  "Gedangan": 2026,
+  "Kalipare": 2026,
+  "Pagak": 2026,
+  "Sumbermanjing Wetan": 2026,
+  "Tirtoyudo": 2025
+ },
+ "sumber_tabel": {
+  "data-desa-kelurahan": [
+   "Kecamatan Ampelgading Dalam Angka 2026 (Tabel 1.1, 2.1.1)",
+   "Kecamatan Bantur Dalam Angka 2026 (Tabel 1.1, 2.1.1)",
+   "Kecamatan Dampit Dalam Angka 2026 (Tabel 1.1, 2.1.1)",
+   "Kecamatan Donomulyo Dalam Angka 2026 (Tabel 1.1, 2.1.1)",
+   "Kecamatan Gedangan Dalam Angka 2026 (Tabel 1.1, 2.1.1)",
+   "Kecamatan Kalipare Dalam Angka 2026 (Tabel 1.1, 2.1.1)",
+   "Kecamatan Pagak Dalam Angka 2026 (Tabel 1.1, 2.1.1)",
+   "Kecamatan Sumbermanjing Wetan Dalam Angka 2026 (Tabel 1.1, 2.1.1)",
+   "Kecamatan Tirtoyudo Dalam Angka 2025 (Tabel 1.1, 2.1.1)",
+   "Tabel 2.1.2",
+   "Tabel 2.1.3"
+  ],
+  "pendidikan": [
+   "Tabel 4.1.3",
+   "Tabel 4.1.4",
+   "Tabel 4.1.5",
+   "Tabel 4.1.6",
+   "Tabel 4.1.7",
+   "Tabel 4.1.8",
+   "Tabel 4.1.9"
+  ],
+  "kesehatan": [
+   "Tabel 4.2.2",
+   "Tabel 4.2.3"
+  ],
+  "keluarga-berencana": [
+   "Tabel 4.2.19",
+   "Tabel 4.2.20"
+  ],
+  "sosial": [
+   "Tabel 4.3.12"
+  ],
+  "kepemudaan-olahraga": [
+   "Tabel 4.3.13"
+  ],
+  "trantibumlinmas": [
+   "Tabel 4.3.15"
+  ],
+  "tenaga-kerja-transmigrasi": [
+   "Tabel 3.2.8"
+  ],
+  "pertanian-perkebunan": [
+   "Tabel 5.2.2",
+   "Tabel 5.3.3",
+   "Tabel 5.3.4",
+   "Tabel 5.3.5"
+  ],
+  "peternakan": [
+   "Tabel 5.4.2",
+   "Tabel 5.4.3",
+   "Tabel 5.4.4"
+  ],
+  "perikanan": [
+   "Tabel 5.5.1",
+   "Tabel 5.5.4",
+   "Tabel 5.5.5"
+  ],
+  "esdm": [
+   "Tabel 6.1.2"
+  ],
+  "perumahan-permukiman": [
+   "Tabel 6.1.4"
+  ],
+  "lingkungan-hidup": [
+   "Tabel 4.3.20"
+  ],
+  "budaya-pariwisata": [
+   "Tabel 7.1",
+   "Tabel 7.4",
+   "Tabel 7.7"
+  ],
+  "statistik-kominfo": [
+   "Tabel 8.2.1",
+   "Tabel 8.2.3",
+   "Tabel 8.2.5"
+  ],
+  "umkm-koperasi": [
+   "Tabel 9.1",
+   "Tabel 9.2",
+   "Tabel 9.5"
+  ],
+  "rekap-kependudukan": [
+   "Kecamatan Ampelgading Dalam Angka 2026 (Tabel 3.1)",
+   "Kecamatan Bantur Dalam Angka 2026 (Tabel 3.1)",
+   "Kecamatan Dampit Dalam Angka 2026 (Tabel 3.1)",
+   "Kecamatan Donomulyo Dalam Angka 2026 (Tabel 3.1)",
+   "Kecamatan Gedangan Dalam Angka 2026 (Tabel 3.1)",
+   "Kecamatan Kalipare Dalam Angka 2026 (Tabel 3.1)",
+   "Kecamatan Pagak Dalam Angka 2026 (Tabel 3.1)",
+   "Kecamatan Sumbermanjing Wetan Dalam Angka 2026 (Tabel 3.1)",
+   "Kecamatan Tirtoyudo Dalam Angka 2025 (Tabel 3.1)",
+   "Tabel 3.1.1"
+  ]
+ },
+ "kecamatan": {
+  "Donomulyo": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 10.0,
+    "jumlah_kelurahan": 0.0,
+    "jumlah_dusun": 39.0,
+    "jumlah_rw": 117.0,
+    "jumlah_rt": 499.0,
+    "luas_wilayah": 192.6
+   },
+   "pendidikan": {
+    "sekolah_sd": 45.0,
+    "guru_sd": 283.0,
+    "murid_sd": 4008.0,
+    "sekolah_mi": 4.0,
+    "guru_mi": 43.0,
+    "murid_mi": 994.0,
+    "sekolah_smp": 8.0,
+    "guru_smp": 81.0,
+    "murid_smp": 1450.0,
+    "sekolah_mts": 4.0,
+    "guru_mts": 81.0,
+    "murid_mts": 1280.0,
+    "sekolah_sma": 1.0,
+    "guru_sma": 10.0,
+    "murid_sma": 57.0,
+    "sekolah_smk": 4.0,
+    "guru_smk": 86.0,
+    "murid_smk": 1703.0,
+    "sekolah_ma": 1.0,
+    "guru_ma": 33.0,
+    "murid_ma": 501.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 31.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 60.0,
+    "tenaga_kebidanan": 51.0,
+    "tenaga_kefarmasian": 24.0,
+    "tenaga_kesmas": 1.0,
+    "tenaga_kesling": 1.0,
+    "tenaga_gizi": 3.0,
+    "puskesmas_rawat_inap": 1.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 9843.0,
+    "kb_iud": 555.0,
+    "kb_mow": 172.0,
+    "kb_mop": 6.0,
+    "kb_kondom": 270.0,
+    "kb_implan": 1552.0,
+    "kb_suntik": 3181.0,
+    "kb_pil": 1043.0,
+    "kb_mal": 1.0,
+    "klinik_kb": 8.0,
+    "ppkbd": 10.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 0.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 9684.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 10.0,
+    "kt_tumbuh": 0.0,
+    "kt_berkembang": 10.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 3.0,
+    "korban_meninggal": 3.0,
+    "korban_luka": 0.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 0.0,
+    "kerugian": 0.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 2721.33,
+    "produksi_padi": 17410.84,
+    "luas_panen_jagung": 6324.0,
+    "produksi_jagung": 43719.0,
+    "luas_panen_ubi_kayu": 467.0,
+    "produksi_ubi_kayu": 12178.42,
+    "produksi_kelapa": 1692.0,
+    "produksi_kopi": 44.0,
+    "produksi_kakao": 88.0,
+    "produksi_tebu": 310640.0
+   },
+   "peternakan": {
+    "sapi_perah": 138.0,
+    "sapi_potong": 13382.0,
+    "kerbau": 38.0,
+    "kuda": 3.0,
+    "kambing": 20685.0,
+    "domba": 750.0,
+    "ayam_buras": 106784.0,
+    "ayam_petelur": 25443.0,
+    "ayam_pedaging": 1062010.0,
+    "itik": 19391.0,
+    "entok": 6049.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 187.0,
+    "rtp_tangkap_umum": 22.0,
+    "rtp_budidaya": 20.0,
+    "produksi_budidaya": 42.27
+   },
+   "esdm": {
+    "pelanggan_listrik": 24813.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 4468.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 30.2
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 14.0,
+    "wisata_coban": 0.0,
+    "wisata_pemandian": 1.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 2.0,
+    "wisata_sejarah": 0.0,
+    "wisata_gua": 2.0,
+    "wisata_buatan": 0.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 0.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 2.0,
+    "rumah_makan": 0.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 10.0,
+    "desa_sinyal_3g": 0.0,
+    "desa_sinyal_2g": 0.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 15.0,
+    "kantor_pos": 1.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 54.0,
+    "kud": 1.0,
+    "kpri": 1.0,
+    "koppas": 0.0,
+    "kopwan": 10.0,
+    "koperasi_lainnya": 42.0,
+    "ksp": 5.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": 35396.0,
+    "perempuan": 35111.0,
+    "total_penduduk": 70507.0
+   }
+  },
+  "Kalipare": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 9.0,
+    "jumlah_kelurahan": 0.0,
+    "jumlah_dusun": 39.0,
+    "jumlah_rw": 60.0,
+    "jumlah_rt": 459.0,
+    "luas_wilayah": 112.63
+   },
+   "pendidikan": {
+    "sekolah_sd": 42.0,
+    "guru_sd": 256.0,
+    "murid_sd": 3401.0,
+    "sekolah_mi": 11.0,
+    "guru_mi": 125.0,
+    "murid_mi": 1910.0,
+    "sekolah_smp": 11.0,
+    "guru_smp": 105.0,
+    "murid_smp": 1446.0,
+    "sekolah_mts": 4.0,
+    "guru_mts": 35.0,
+    "murid_mts": 756.0,
+    "sekolah_sma": 1.0,
+    "guru_sma": 23.0,
+    "murid_sma": 319.0,
+    "sekolah_smk": 2.0,
+    "guru_smk": 27.0,
+    "murid_smk": 826.0,
+    "sekolah_ma": 1.0,
+    "guru_ma": 11.0,
+    "murid_ma": 119.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 10.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 30.0,
+    "tenaga_kebidanan": 39.0,
+    "tenaga_kefarmasian": 13.0,
+    "tenaga_kesmas": 3.0,
+    "tenaga_kesling": 1.0,
+    "tenaga_gizi": 2.0,
+    "puskesmas_rawat_inap": 1.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 8796.0,
+    "kb_iud": 276.0,
+    "kb_mow": 171.0,
+    "kb_mop": 2.0,
+    "kb_kondom": 204.0,
+    "kb_implan": 752.0,
+    "kb_suntik": 3093.0,
+    "kb_pil": 819.0,
+    "kb_mal": 0.0,
+    "klinik_kb": 3.0,
+    "ppkbd": 9.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 6.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 8437.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 9.0,
+    "kt_tumbuh": 5.0,
+    "kt_berkembang": 4.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 2.0,
+    "korban_meninggal": 1.0,
+    "korban_luka": 0.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 0.0,
+    "kerugian": 0.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 896.08,
+    "produksi_padi": 5721.74,
+    "luas_panen_jagung": 2301.0,
+    "produksi_jagung": 15781.0,
+    "luas_panen_ubi_kayu": 108.0,
+    "produksi_ubi_kayu": 2816.42,
+    "produksi_kelapa": 1175.0,
+    "produksi_kopi": 11.5,
+    "produksi_kakao": 16.0,
+    "produksi_tebu": 199325.0
+   },
+   "peternakan": {
+    "sapi_perah": 624.0,
+    "sapi_potong": 13286.0,
+    "kerbau": 11.0,
+    "kuda": 4.0,
+    "kambing": 16488.0,
+    "domba": 371.0,
+    "ayam_buras": 84592.0,
+    "ayam_petelur": 202932.0,
+    "ayam_pedaging": 0.0,
+    "itik": 23222.0,
+    "entok": 3066.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 0.0,
+    "rtp_tangkap_umum": 132.0,
+    "rtp_budidaya": 254.0,
+    "produksi_budidaya": null
+   },
+   "esdm": {
+    "pelanggan_listrik": 23555.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 0.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 31.0
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 0.0,
+    "wisata_coban": 0.0,
+    "wisata_pemandian": 0.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 1.0,
+    "wisata_sejarah": 0.0,
+    "wisata_gua": 0.0,
+    "wisata_buatan": 0.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 0.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 0.0,
+    "rumah_makan": 0.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 8.0,
+    "desa_sinyal_3g": 1.0,
+    "desa_sinyal_2g": 0.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 15.0,
+    "kantor_pos": 1.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 37.0,
+    "kud": 1.0,
+    "kpri": 1.0,
+    "koppas": 0.0,
+    "kopwan": 9.0,
+    "koperasi_lainnya": 26.0,
+    "ksp": 4.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": 35624.0,
+    "perempuan": 35728.0,
+    "total_penduduk": 71352.0
+   }
+  },
+  "Pagak": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 8.0,
+    "jumlah_kelurahan": 0.0,
+    "jumlah_dusun": 22.0,
+    "jumlah_rw": 77.0,
+    "jumlah_rt": 328.0,
+    "luas_wilayah": 82.47
+   },
+   "pendidikan": {
+    "sekolah_sd": 30.0,
+    "guru_sd": 206.0,
+    "murid_sd": 3600.0,
+    "sekolah_mi": 6.0,
+    "guru_mi": 62.0,
+    "murid_mi": 724.0,
+    "sekolah_smp": 7.0,
+    "guru_smp": 78.0,
+    "murid_smp": 1610.0,
+    "sekolah_mts": 2.0,
+    "guru_mts": 17.0,
+    "murid_mts": 144.0,
+    "sekolah_sma": 2.0,
+    "guru_sma": 76.0,
+    "murid_sma": 1425.0,
+    "sekolah_smk": 2.0,
+    "guru_smk": 42.0,
+    "murid_smk": 808.0,
+    "sekolah_ma": 0.0,
+    "guru_ma": 0.0,
+    "murid_ma": 0.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 19.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 33.0,
+    "tenaga_kebidanan": 52.0,
+    "tenaga_kefarmasian": 13.0,
+    "tenaga_kesmas": 3.0,
+    "tenaga_kesling": 2.0,
+    "tenaga_gizi": 5.0,
+    "puskesmas_rawat_inap": 2.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 8496.0,
+    "kb_iud": 308.0,
+    "kb_mow": 174.0,
+    "kb_mop": 2.0,
+    "kb_kondom": 61.0,
+    "kb_implan": 718.0,
+    "kb_suntik": 3678.0,
+    "kb_pil": 875.0,
+    "kb_mal": 3.0,
+    "klinik_kb": 5.0,
+    "ppkbd": 8.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 74.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 5674.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 8.0,
+    "kt_tumbuh": 3.0,
+    "kt_berkembang": 5.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 5.0,
+    "korban_meninggal": 0.0,
+    "korban_luka": 0.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 1.0,
+    "kerugian": 0.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 803.44,
+    "produksi_padi": 5126.77,
+    "luas_panen_jagung": 1253.0,
+    "produksi_jagung": 8595.0,
+    "luas_panen_ubi_kayu": 0.0,
+    "produksi_ubi_kayu": 0.0,
+    "produksi_kelapa": 42.0,
+    "produksi_kopi": 31.8,
+    "produksi_kakao": 168.0,
+    "produksi_tebu": 267835.0
+   },
+   "peternakan": {
+    "sapi_perah": 212.0,
+    "sapi_potong": 5472.0,
+    "kerbau": 0.0,
+    "kuda": 6.0,
+    "kambing": 7533.0,
+    "domba": 401.0,
+    "ayam_buras": 19412.0,
+    "ayam_petelur": 12779.0,
+    "ayam_pedaging": 680921.0,
+    "itik": 2750.0,
+    "entok": 837.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 0.0,
+    "rtp_tangkap_umum": 85.0,
+    "rtp_budidaya": 87.0,
+    "produksi_budidaya": 333.69
+   },
+   "esdm": {
+    "pelanggan_listrik": 19485.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 1312.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 22.5
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 0.0,
+    "wisata_coban": 0.0,
+    "wisata_pemandian": 0.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 1.0,
+    "wisata_sejarah": 0.0,
+    "wisata_gua": 0.0,
+    "wisata_buatan": 3.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 1.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 0.0,
+    "rumah_makan": 25.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 7.0,
+    "desa_sinyal_3g": 0.0,
+    "desa_sinyal_2g": 1.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 13.0,
+    "kantor_pos": 1.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 38.0,
+    "kud": 1.0,
+    "kpri": 3.0,
+    "koppas": 0.0,
+    "kopwan": 8.0,
+    "koperasi_lainnya": 26.0,
+    "ksp": 2.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": 26995.0,
+    "perempuan": 26867.0,
+    "total_penduduk": 53862.0
+   }
+  },
+  "Bantur": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 10.0,
+    "jumlah_kelurahan": 0.0,
+    "jumlah_dusun": 34.0,
+    "jumlah_rw": 96.0,
+    "jumlah_rt": 494.0,
+    "luas_wilayah": 64.57
+   },
+   "pendidikan": {
+    "sekolah_sd": 36.0,
+    "guru_sd": 296.0,
+    "murid_sd": 4561.0,
+    "sekolah_mi": 17.0,
+    "guru_mi": 141.0,
+    "murid_mi": 1739.0,
+    "sekolah_smp": 11.0,
+    "guru_smp": 129.0,
+    "murid_smp": 2012.0,
+    "sekolah_mts": 14.0,
+    "guru_mts": 122.0,
+    "murid_mts": 1581.0,
+    "sekolah_sma": 1.0,
+    "guru_sma": 25.0,
+    "murid_sma": 329.0,
+    "sekolah_smk": 5.0,
+    "guru_smk": 48.0,
+    "murid_smk": 789.0,
+    "sekolah_ma": 8.0,
+    "guru_ma": 57.0,
+    "murid_ma": 638.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 13.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 38.0,
+    "tenaga_kebidanan": 45.0,
+    "tenaga_kefarmasian": 12.0,
+    "tenaga_kesmas": 4.0,
+    "tenaga_kesling": 2.0,
+    "tenaga_gizi": 2.0,
+    "puskesmas_rawat_inap": 2.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 10999.0,
+    "kb_iud": 194.0,
+    "kb_mow": 201.0,
+    "kb_mop": 1.0,
+    "kb_kondom": 96.0,
+    "kb_implan": 885.0,
+    "kb_suntik": 4795.0,
+    "kb_pil": 1054.0,
+    "kb_mal": 12.0,
+    "klinik_kb": 3.0,
+    "ppkbd": 10.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 3.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 9101.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 10.0,
+    "kt_tumbuh": 5.0,
+    "kt_berkembang": 5.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 2.0,
+    "korban_meninggal": 4.0,
+    "korban_luka": 0.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 0.0,
+    "kerugian": 0.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 1718.21,
+    "produksi_padi": 11678.02,
+    "luas_panen_jagung": 2866.0,
+    "produksi_jagung": 19564.0,
+    "luas_panen_ubi_kayu": 0.0,
+    "produksi_ubi_kayu": 0.0,
+    "produksi_kelapa": 1281.0,
+    "produksi_kopi": 22.8,
+    "produksi_kakao": 33.0,
+    "produksi_tebu": 402985.0
+   },
+   "peternakan": {
+    "sapi_perah": 1329.0,
+    "sapi_potong": 11008.0,
+    "kerbau": 2.0,
+    "kuda": 1.0,
+    "kambing": 12983.0,
+    "domba": 205.0,
+    "ayam_buras": 78267.0,
+    "ayam_petelur": 49071.0,
+    "ayam_pedaging": 1354940.0,
+    "itik": 7994.0,
+    "entok": 1396.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 78.0,
+    "rtp_tangkap_umum": 0.0,
+    "rtp_budidaya": 60.0,
+    "produksi_budidaya": 69.88
+   },
+   "esdm": {
+    "pelanggan_listrik": 25238.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 2769.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 39.1
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 10.0,
+    "wisata_coban": 1.0,
+    "wisata_pemandian": 1.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 1.0,
+    "wisata_sejarah": 0.0,
+    "wisata_gua": 0.0,
+    "wisata_buatan": 0.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 1.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 8.0,
+    "rumah_makan": 0.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 10.0,
+    "desa_sinyal_3g": 0.0,
+    "desa_sinyal_2g": 0.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 22.0,
+    "kantor_pos": 1.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 43.0,
+    "kud": 1.0,
+    "kpri": 3.0,
+    "koppas": 0.0,
+    "kopwan": 10.0,
+    "koperasi_lainnya": 29.0,
+    "ksp": 3.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": 40241.0,
+    "perempuan": 39992.0,
+    "total_penduduk": 80233.0
+   }
+  },
+  "Gedangan": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 8.0,
+    "jumlah_kelurahan": 0.0,
+    "jumlah_dusun": 42.0,
+    "jumlah_rw": 85.0,
+    "jumlah_rt": 356.0,
+    "luas_wilayah": 130.53
+   },
+   "pendidikan": {
+    "sekolah_sd": 33.0,
+    "guru_sd": 240.0,
+    "murid_sd": 4094.0,
+    "sekolah_mi": 12.0,
+    "guru_mi": 97.0,
+    "murid_mi": 1234.0,
+    "sekolah_smp": 10.0,
+    "guru_smp": 77.0,
+    "murid_smp": 988.0,
+    "sekolah_mts": 5.0,
+    "guru_mts": 40.0,
+    "murid_mts": 764.0,
+    "sekolah_sma": 2.0,
+    "guru_sma": 14.0,
+    "murid_sma": 214.0,
+    "sekolah_smk": 4.0,
+    "guru_smk": 88.0,
+    "murid_smk": 1829.0,
+    "sekolah_ma": 1.0,
+    "guru_ma": 6.0,
+    "murid_ma": 33.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 6.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 24.0,
+    "tenaga_kebidanan": 24.0,
+    "tenaga_kefarmasian": 5.0,
+    "tenaga_kesmas": 2.0,
+    "tenaga_kesling": 1.0,
+    "tenaga_gizi": 1.0,
+    "puskesmas_rawat_inap": 1.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 9418.0,
+    "kb_iud": 313.0,
+    "kb_mow": 155.0,
+    "kb_mop": 7.0,
+    "kb_kondom": 66.0,
+    "kb_implan": 1272.0,
+    "kb_suntik": 4091.0,
+    "kb_pil": 672.0,
+    "kb_mal": 8.0,
+    "klinik_kb": 2.0,
+    "ppkbd": 8.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 12.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 6781.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 8.0,
+    "kt_tumbuh": 5.0,
+    "kt_berkembang": 3.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 2.0,
+    "korban_meninggal": 0.0,
+    "korban_luka": 0.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 0.0,
+    "kerugian": 0.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 655.32,
+    "produksi_padi": 4191.33,
+    "luas_panen_jagung": 703.0,
+    "produksi_jagung": 4830.0,
+    "luas_panen_ubi_kayu": 40.0,
+    "produksi_ubi_kayu": 1043.12,
+    "produksi_kelapa": 1309.0,
+    "produksi_kopi": 52.0,
+    "produksi_kakao": 22.0,
+    "produksi_tebu": 292740.0
+   },
+   "peternakan": {
+    "sapi_perah": 69.0,
+    "sapi_potong": 15897.0,
+    "kerbau": 6.0,
+    "kuda": 15.0,
+    "kambing": 11481.0,
+    "domba": 345.0,
+    "ayam_buras": 33550.0,
+    "ayam_petelur": 67036.0,
+    "ayam_pedaging": 277459.0,
+    "itik": 3827.0,
+    "entok": 366.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 52.0,
+    "rtp_tangkap_umum": 5.0,
+    "rtp_budidaya": 25.0,
+    "produksi_budidaya": 783.46
+   },
+   "esdm": {
+    "pelanggan_listrik": 19547.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 0.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 25.4
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 8.0,
+    "wisata_coban": 0.0,
+    "wisata_pemandian": 1.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 1.0,
+    "wisata_sejarah": 0.0,
+    "wisata_gua": 1.0,
+    "wisata_buatan": 1.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 0.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 8.0,
+    "rumah_makan": 0.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 8.0,
+    "desa_sinyal_3g": 0.0,
+    "desa_sinyal_2g": 0.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 11.0,
+    "kantor_pos": 1.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 36.0,
+    "kud": 1.0,
+    "kpri": 1.0,
+    "koppas": 0.0,
+    "kopwan": 8.0,
+    "koperasi_lainnya": 26.0,
+    "ksp": 2.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": 30708.0,
+    "perempuan": 30288.0,
+    "total_penduduk": 60996.0
+   }
+  },
+  "Sumbermanjing Wetan": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 15.0,
+    "jumlah_kelurahan": 0.0,
+    "jumlah_dusun": 53.0,
+    "jumlah_rw": 115.0,
+    "jumlah_rt": 552.0,
+    "luas_wilayah": 259.258
+   },
+   "pendidikan": {
+    "sekolah_sd": 51.0,
+    "guru_sd": 374.0,
+    "murid_sd": 6542.0,
+    "sekolah_mi": 14.0,
+    "guru_mi": 151.0,
+    "murid_mi": 2452.0,
+    "sekolah_smp": 14.0,
+    "guru_smp": 114.0,
+    "murid_smp": 2080.0,
+    "sekolah_mts": 12.0,
+    "guru_mts": 134.0,
+    "murid_mts": 1888.0,
+    "sekolah_sma": 2.0,
+    "guru_sma": 37.0,
+    "murid_sma": 510.0,
+    "sekolah_smk": 2.0,
+    "guru_smk": 37.0,
+    "murid_smk": 1078.0,
+    "sekolah_ma": 3.0,
+    "guru_ma": 26.0,
+    "murid_ma": 294.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 25.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 66.0,
+    "tenaga_kebidanan": 54.0,
+    "tenaga_kefarmasian": 17.0,
+    "tenaga_kesmas": 5.0,
+    "tenaga_kesling": 1.0,
+    "tenaga_gizi": 6.0,
+    "puskesmas_rawat_inap": 2.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 15260.0,
+    "kb_iud": 295.0,
+    "kb_mow": 412.0,
+    "kb_mop": 10.0,
+    "kb_kondom": 79.0,
+    "kb_implan": 1661.0,
+    "kb_suntik": 6415.0,
+    "kb_pil": 1546.0,
+    "kb_mal": 2.0,
+    "klinik_kb": 11.0,
+    "ppkbd": 15.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 204.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 10982.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 15.0,
+    "kt_tumbuh": 10.0,
+    "kt_berkembang": 5.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 12.0,
+    "korban_meninggal": 0.0,
+    "korban_luka": 1.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 23.0,
+    "kerugian": 25.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 1399.94,
+    "produksi_padi": 8925.69,
+    "luas_panen_jagung": 540.0,
+    "produksi_jagung": 3709.0,
+    "luas_panen_ubi_kayu": 35.0,
+    "produksi_ubi_kayu": 912.73,
+    "produksi_kelapa": 1437.0,
+    "produksi_kopi": 1322.0,
+    "produksi_kakao": 276.0,
+    "produksi_tebu": 260355.0
+   },
+   "peternakan": {
+    "sapi_perah": 52.0,
+    "sapi_potong": 4809.0,
+    "kerbau": 5.0,
+    "kuda": 4.0,
+    "kambing": 31474.0,
+    "domba": 1033.0,
+    "ayam_buras": 34259.0,
+    "ayam_petelur": 3896.0,
+    "ayam_pedaging": 84254.0,
+    "itik": 1203.0,
+    "entok": 505.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 4769.0,
+    "rtp_tangkap_umum": 0.0,
+    "rtp_budidaya": 34.0,
+    "produksi_budidaya": 348.0
+   },
+   "esdm": {
+    "pelanggan_listrik": 32441.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 5357.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 33.2
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 13.0,
+    "wisata_coban": 1.0,
+    "wisata_pemandian": 0.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 3.0,
+    "wisata_sejarah": 0.0,
+    "wisata_gua": 1.0,
+    "wisata_buatan": 0.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 0.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 14.0,
+    "rumah_makan": 8.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 15.0,
+    "desa_sinyal_3g": 0.0,
+    "desa_sinyal_2g": 0.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 28.0,
+    "kantor_pos": 1.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 62.0,
+    "kud": 2.0,
+    "kpri": 1.0,
+    "koppas": 1.0,
+    "kopwan": 15.0,
+    "koperasi_lainnya": 43.0,
+    "ksp": 3.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": 53513.0,
+    "perempuan": 52692.0,
+    "total_penduduk": 106205.0
+   }
+  },
+  "Dampit": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 11.0,
+    "jumlah_kelurahan": 1.0,
+    "jumlah_dusun": 42.0,
+    "jumlah_rw": 115.0,
+    "jumlah_rt": 713.0,
+    "luas_wilayah": 135.57
+   },
+   "pendidikan": {
+    "sekolah_sd": 51.0,
+    "guru_sd": 395.0,
+    "murid_sd": 7858.0,
+    "sekolah_mi": 17.0,
+    "guru_mi": 152.0,
+    "murid_mi": 2714.0,
+    "sekolah_smp": 13.0,
+    "guru_smp": 151.0,
+    "murid_smp": 3016.0,
+    "sekolah_mts": 10.0,
+    "guru_mts": 110.0,
+    "murid_mts": 2141.0,
+    "sekolah_sma": 2.0,
+    "guru_sma": 64.0,
+    "murid_sma": 1168.0,
+    "sekolah_smk": 5.0,
+    "guru_smk": 104.0,
+    "murid_smk": 2981.0,
+    "sekolah_ma": 4.0,
+    "guru_ma": 37.0,
+    "murid_ma": 704.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 40.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 63.0,
+    "tenaga_kebidanan": 59.0,
+    "tenaga_kefarmasian": 21.0,
+    "tenaga_kesmas": 1.0,
+    "tenaga_kesling": 0.0,
+    "tenaga_gizi": 5.0,
+    "puskesmas_rawat_inap": 2.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 19756.0,
+    "kb_iud": 966.0,
+    "kb_mow": 464.0,
+    "kb_mop": 10.0,
+    "kb_kondom": 240.0,
+    "kb_implan": 1802.0,
+    "kb_suntik": 8747.0,
+    "kb_pil": 1677.0,
+    "kb_mal": 4.0,
+    "klinik_kb": 7.0,
+    "ppkbd": 12.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 21.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 12386.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 12.0,
+    "kt_tumbuh": 6.0,
+    "kt_berkembang": 6.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 5.0,
+    "korban_meninggal": 0.0,
+    "korban_luka": 0.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 23.0,
+    "kerugian": 20.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 2481.63,
+    "produksi_padi": 18170.09,
+    "luas_panen_jagung": 1500.0,
+    "produksi_jagung": 10297.0,
+    "luas_panen_ubi_kayu": 0.0,
+    "produksi_ubi_kayu": 0.0,
+    "produksi_kelapa": 2301.0,
+    "produksi_kopi": 2848.0,
+    "produksi_kakao": 147.0,
+    "produksi_tebu": 357765.0
+   },
+   "peternakan": {
+    "sapi_perah": 25.0,
+    "sapi_potong": 6708.0,
+    "kerbau": 28.0,
+    "kuda": 5.0,
+    "kambing": 49412.0,
+    "domba": 787.0,
+    "ayam_buras": 238365.0,
+    "ayam_petelur": 66873.0,
+    "ayam_pedaging": 1004013.0,
+    "itik": 84942.0,
+    "entok": 8621.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 0.0,
+    "rtp_tangkap_umum": 18.0,
+    "rtp_budidaya": 135.0,
+    "produksi_budidaya": 99.76
+   },
+   "esdm": {
+    "pelanggan_listrik": 44377.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 5951.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 57.2
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 0.0,
+    "wisata_coban": 0.0,
+    "wisata_pemandian": 4.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 3.0,
+    "wisata_sejarah": 0.0,
+    "wisata_gua": 0.0,
+    "wisata_buatan": 0.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 1.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 1.0,
+    "rumah_makan": 8.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 12.0,
+    "desa_sinyal_3g": 0.0,
+    "desa_sinyal_2g": 0.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 28.0,
+    "kantor_pos": 1.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 71.0,
+    "kud": 1.0,
+    "kpri": 1.0,
+    "koppas": 0.0,
+    "kopwan": 12.0,
+    "koperasi_lainnya": 57.0,
+    "ksp": 5.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": 67197.0,
+    "perempuan": 67382.0,
+    "total_penduduk": 134579.0
+   }
+  },
+  "Tirtoyudo": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 13.0,
+    "jumlah_kelurahan": 0.0,
+    "jumlah_dusun": null,
+    "jumlah_rw": 62.0,
+    "jumlah_rt": 303.0,
+    "luas_wilayah": 160.83
+   },
+   "pendidikan": {
+    "sekolah_sd": 36.0,
+    "guru_sd": 258.0,
+    "murid_sd": 5402.0,
+    "sekolah_mi": 4.0,
+    "guru_mi": 22.0,
+    "murid_mi": 395.0,
+    "sekolah_smp": 12.0,
+    "guru_smp": 130.0,
+    "murid_smp": 2178.0,
+    "sekolah_mts": 5.0,
+    "guru_mts": 38.0,
+    "murid_mts": 448.0,
+    "sekolah_sma": 2.0,
+    "guru_sma": 23.0,
+    "murid_sma": 313.0,
+    "sekolah_smk": 3.0,
+    "guru_smk": 42.0,
+    "murid_smk": 485.0,
+    "sekolah_ma": 1.0,
+    "guru_ma": 1.0,
+    "murid_ma": 22.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 13.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 27.0,
+    "tenaga_kebidanan": 37.0,
+    "tenaga_kefarmasian": 6.0,
+    "tenaga_kesmas": 1.0,
+    "tenaga_kesling": 1.0,
+    "tenaga_gizi": 3.0,
+    "puskesmas_rawat_inap": 1.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 11095.0,
+    "kb_iud": 479.0,
+    "kb_mow": 505.0,
+    "kb_mop": 4.0,
+    "kb_kondom": 100.0,
+    "kb_implan": 1173.0,
+    "kb_suntik": 4360.0,
+    "kb_pil": 1096.0,
+    "kb_mal": 1.0,
+    "klinik_kb": 2.0,
+    "ppkbd": 13.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 169.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 7237.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 13.0,
+    "kt_tumbuh": 9.0,
+    "kt_berkembang": 4.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 21.0,
+    "korban_meninggal": 0.0,
+    "korban_luka": 0.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 24.0,
+    "kerugian": 25.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 860.81,
+    "produksi_padi": 5658.1,
+    "luas_panen_jagung": 832.0,
+    "produksi_jagung": 5593.0,
+    "luas_panen_ubi_kayu": 261.0,
+    "produksi_ubi_kayu": 6806.35,
+    "produksi_kelapa": 2100.0,
+    "produksi_kopi": 4338.6,
+    "produksi_kakao": 8.0,
+    "produksi_tebu": 98260.0
+   },
+   "peternakan": {
+    "sapi_perah": 21.0,
+    "sapi_potong": 1397.0,
+    "kerbau": 6.0,
+    "kuda": 0.0,
+    "kambing": 47122.0,
+    "domba": 1070.0,
+    "ayam_buras": 33132.0,
+    "ayam_petelur": 31380.0,
+    "ayam_pedaging": 95601.0,
+    "itik": 263.0,
+    "entok": 1663.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 279.0,
+    "rtp_tangkap_umum": 0.0,
+    "rtp_budidaya": 19.0,
+    "produksi_budidaya": null
+   },
+   "esdm": {
+    "pelanggan_listrik": 23890.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 1836.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 29.4
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 7.0,
+    "wisata_coban": 0.0,
+    "wisata_pemandian": 0.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 3.0,
+    "wisata_sejarah": 0.0,
+    "wisata_gua": 0.0,
+    "wisata_buatan": 0.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 0.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 12.0,
+    "rumah_makan": 1.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 13.0,
+    "desa_sinyal_3g": 0.0,
+    "desa_sinyal_2g": 0.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 12.0,
+    "kantor_pos": 0.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 39.0,
+    "kud": 1.0,
+    "kpri": 1.0,
+    "koppas": 0.0,
+    "kopwan": 13.0,
+    "koperasi_lainnya": 24.0,
+    "ksp": 0.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": null,
+    "perempuan": null,
+    "total_penduduk": 69469.0
+   }
+  },
+  "Ampelgading": {
+   "data-desa-kelurahan": {
+    "jumlah_desa": 13.0,
+    "jumlah_kelurahan": 0.0,
+    "jumlah_dusun": 39.0,
+    "jumlah_rw": 93.0,
+    "jumlah_rt": 317.0,
+    "luas_wilayah": 84.98
+   },
+   "pendidikan": {
+    "sekolah_sd": 30.0,
+    "guru_sd": 219.0,
+    "murid_sd": 3883.0,
+    "sekolah_mi": 9.0,
+    "guru_mi": 62.0,
+    "murid_mi": 1073.0,
+    "sekolah_smp": 8.0,
+    "guru_smp": 77.0,
+    "murid_smp": 1365.0,
+    "sekolah_mts": 7.0,
+    "guru_mts": 56.0,
+    "murid_mts": 710.0,
+    "sekolah_sma": 2.0,
+    "guru_sma": 14.0,
+    "murid_sma": 209.0,
+    "sekolah_smk": 2.0,
+    "guru_smk": 39.0,
+    "murid_smk": 861.0,
+    "sekolah_ma": 1.0,
+    "guru_ma": 0.0,
+    "murid_ma": 63.0
+   },
+   "kesehatan": {
+    "tenaga_medis": 8.0,
+    "psikolog_klinis": 0.0,
+    "tenaga_keperawatan": 29.0,
+    "tenaga_kebidanan": 25.0,
+    "tenaga_kefarmasian": 5.0,
+    "tenaga_kesmas": 1.0,
+    "tenaga_kesling": 1.0,
+    "tenaga_gizi": 1.0,
+    "puskesmas_rawat_inap": 1.0,
+    "puskesmas_non_rawat_inap": 0.0
+   },
+   "keluarga-berencana": {
+    "pus": 8955.0,
+    "kb_iud": 436.0,
+    "kb_mow": 252.0,
+    "kb_mop": 3.0,
+    "kb_kondom": 106.0,
+    "kb_implan": 1053.0,
+    "kb_suntik": 3005.0,
+    "kb_pil": 1226.0,
+    "kb_mal": 2.0,
+    "klinik_kb": 2.0,
+    "ppkbd": 13.0
+   },
+   "sosial": {
+    "pmks_wanita_rawan_sosek": 12.0,
+    "pmks_wanita_korban_kekerasan": 0.0,
+    "pmks_lansia": 7291.0,
+    "pmks_lansia_korban_kekerasan": 0.0
+   },
+   "kepemudaan-olahraga": {
+    "karang_taruna": 13.0,
+    "kt_tumbuh": 9.0,
+    "kt_berkembang": 4.0,
+    "kt_maju": 0.0,
+    "kt_percontohan": 0.0
+   },
+   "trantibumlinmas": {
+    "kejadian_bencana": 9.0,
+    "korban_meninggal": 1.0,
+    "korban_luka": 0.0,
+    "rumah_hancur": 0.0,
+    "rumah_rusak": 0.0,
+    "kerugian": 170.0
+   },
+   "tenaga-kerja-transmigrasi": {
+    "transmigran_kk": 0.0,
+    "transmigran_jiwa": 0.0
+   },
+   "pertanian-perkebunan": {
+    "luas_panen_padi": 801.08,
+    "produksi_padi": 5268.89,
+    "luas_panen_jagung": 118.0,
+    "produksi_jagung": 789.0,
+    "luas_panen_ubi_kayu": 255.0,
+    "produksi_ubi_kayu": 6649.89,
+    "produksi_kelapa": 636.0,
+    "produksi_kopi": 1868.83,
+    "produksi_kakao": 31.0,
+    "produksi_tebu": 25200.0
+   },
+   "peternakan": {
+    "sapi_perah": 19.0,
+    "sapi_potong": 770.0,
+    "kerbau": 90.0,
+    "kuda": 0.0,
+    "kambing": 48290.0,
+    "domba": 471.0,
+    "ayam_buras": 26472.0,
+    "ayam_petelur": 4850.0,
+    "ayam_pedaging": 105028.0,
+    "itik": 1076.0,
+    "entok": 1203.0
+   },
+   "perikanan": {
+    "rtp_tangkap_laut": 133.0,
+    "rtp_tangkap_umum": 0.0,
+    "rtp_budidaya": 28.0,
+    "produksi_budidaya": 27.87
+   },
+   "esdm": {
+    "pelanggan_listrik": 20103.0
+   },
+   "perumahan-permukiman": {
+    "pelanggan_air_bersih": 1773.0
+   },
+   "lingkungan-hidup": {
+    "sampah_dikelola": 39.6
+   },
+   "budaya-pariwisata": {
+    "wisata_pantai": 1.0,
+    "wisata_coban": 5.0,
+    "wisata_pemandian": 1.0,
+    "wisata_agro": 0.0,
+    "desa_wisata": 2.0,
+    "wisata_sejarah": 1.0,
+    "wisata_gua": 0.0,
+    "wisata_buatan": 1.0,
+    "wisata_pesarean": 0.0,
+    "wisata_lainnya": 1.0,
+    "hotel_berbintang": 0.0,
+    "akomodasi_lainnya": 0.0,
+    "rumah_makan": 1.0
+   },
+   "statistik-kominfo": {
+    "desa_sinyal_4g": 11.0,
+    "desa_sinyal_3g": 2.0,
+    "desa_sinyal_2g": 0.0,
+    "desa_tanpa_sinyal": 0.0,
+    "menara_bts": 13.0,
+    "kantor_pos": 1.0
+   },
+   "umkm-koperasi": {
+    "koperasi_aktif": 35.0,
+    "kud": 1.0,
+    "kpri": 1.0,
+    "koppas": 0.0,
+    "kopwan": 13.0,
+    "koperasi_lainnya": 20.0,
+    "ksp": 0.0
+   },
+   "rekap-kependudukan": {
+    "laki_laki": 30830.0,
+    "perempuan": 30083.0,
+    "total_penduduk": 60913.0
+   }
+  }
+ },
+ "desa": {
+  "Ampelgading": [
+   {
+    "kode": "001",
+    "nama": "Lebakharjo",
+    "jenis": "Desa",
+    "luas": 8.02,
+    "luas_km2_dari_ha": false,
+    "dusun": 6.0,
+    "rw": 21.0,
+    "rt": 49.0,
+    "laki": 3879.0,
+    "perempuan": 3708.0,
+    "jumlah": 7587.0
+   },
+   {
+    "kode": "002",
+    "nama": "Wirotaman",
+    "jenis": "Desa",
+    "luas": 7.45,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 4.0,
+    "rt": 19.0,
+    "laki": 2098.0,
+    "perempuan": 2015.0,
+    "jumlah": 4113.0
+   },
+   {
+    "kode": "003",
+    "nama": "Tamanasri",
+    "jenis": "Desa",
+    "luas": 4.01,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 5.0,
+    "rt": 17.0,
+    "laki": 1885.0,
+    "perempuan": 1788.0,
+    "jumlah": 3673.0
+   },
+   {
+    "kode": "004",
+    "nama": "Sonowangi",
+    "jenis": "Desa",
+    "luas": 6.94,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 9.0,
+    "rt": 28.0,
+    "laki": 2367.0,
+    "perempuan": 2329.0,
+    "jumlah": 4696.0
+   },
+   {
+    "kode": "005",
+    "nama": "Tirtomarto",
+    "jenis": "Desa",
+    "luas": 6.98,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 11.0,
+    "rt": 31.0,
+    "laki": 2978.0,
+    "perempuan": 2896.0,
+    "jumlah": 5874.0
+   },
+   {
+    "kode": "006",
+    "nama": "Purwoharjo",
+    "jenis": "Desa",
+    "luas": 2.16,
+    "luas_km2_dari_ha": false,
+    "dusun": 1.0,
+    "rw": 2.0,
+    "rt": 10.0,
+    "laki": 1108.0,
+    "perempuan": 1056.0,
+    "jumlah": 2164.0
+   },
+   {
+    "kode": "007",
+    "nama": "Sidorenggo",
+    "jenis": "Desa",
+    "luas": 6.38,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 6.0,
+    "rt": 32.0,
+    "laki": 3911.0,
+    "perempuan": 3839.0,
+    "jumlah": 7750.0
+   },
+   {
+    "kode": "008",
+    "nama": "Tirtomoyo",
+    "jenis": "Desa",
+    "luas": 6.12,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 8.0,
+    "rt": 33.0,
+    "laki": 3047.0,
+    "perempuan": 2915.0,
+    "jumlah": 5962.0
+   },
+   {
+    "kode": "009",
+    "nama": "Tawangagung",
+    "jenis": "Desa",
+    "luas": 4.12,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 6.0,
+    "rt": 18.0,
+    "laki": 1631.0,
+    "perempuan": 1662.0,
+    "jumlah": 3293.0
+   },
+   {
+    "kode": "010",
+    "nama": "Simojayan",
+    "jenis": "Desa",
+    "luas": 7.37,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 4.0,
+    "rt": 17.0,
+    "laki": 2786.0,
+    "perempuan": 2782.0,
+    "jumlah": 5568.0
+   },
+   {
+    "kode": "011",
+    "nama": "Argoyuwono",
+    "jenis": "Desa",
+    "luas": 6.08,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 4.0,
+    "rt": 21.0,
+    "laki": 1722.0,
+    "perempuan": 1711.0,
+    "jumlah": 3433.0
+   },
+   {
+    "kode": "012",
+    "nama": "Mulyoasri",
+    "jenis": "Desa",
+    "luas": 10.2,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 8.0,
+    "rt": 30.0,
+    "laki": 2524.0,
+    "perempuan": 2482.0,
+    "jumlah": 5006.0
+   },
+   {
+    "kode": "013",
+    "nama": "Tamansari",
+    "jenis": "Desa",
+    "luas": 9.15,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 5.0,
+    "rt": 12.0,
+    "laki": 894.0,
+    "perempuan": 900.0,
+    "jumlah": 1794.0
+   }
+  ],
+  "Bantur": [
+   {
+    "kode": "001",
+    "nama": "Bandungrejo",
+    "jenis": "Desa",
+    "luas": 2.99,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 14.0,
+    "rt": 61.0,
+    "laki": 5025.0,
+    "perempuan": 4960.0,
+    "jumlah": 9985.0
+   },
+   {
+    "kode": "002",
+    "nama": "Sumberbening",
+    "jenis": "Desa",
+    "luas": 2.64,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 6.0,
+    "rt": 35.0,
+    "laki": 3252.0,
+    "perempuan": 3168.0,
+    "jumlah": 6420.0
+   },
+   {
+    "kode": "003",
+    "nama": "Srigonco",
+    "jenis": "Desa",
+    "luas": 18.53,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 6.0,
+    "rt": 41.0,
+    "laki": 2774.0,
+    "perempuan": 2717.0,
+    "jumlah": 5491.0
+   },
+   {
+    "kode": "004",
+    "nama": "Wonorejo",
+    "jenis": "Desa",
+    "luas": 3.64,
+    "luas_km2_dari_ha": false,
+    "dusun": 1.0,
+    "rw": 3.0,
+    "rt": 11.0,
+    "laki": 776.0,
+    "perempuan": 770.0,
+    "jumlah": 1546.0
+   },
+   {
+    "kode": "005",
+    "nama": "Bantur",
+    "jenis": "Desa",
+    "luas": 2.24,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 14.0,
+    "rt": 74.0,
+    "laki": 6629.0,
+    "perempuan": 6505.0,
+    "jumlah": 13134.0
+   },
+   {
+    "kode": "006",
+    "nama": "Pringgodani",
+    "jenis": "Desa",
+    "luas": 12.25,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 4.0,
+    "rt": 33.0,
+    "laki": 4124.0,
+    "perempuan": 4136.0,
+    "jumlah": 8260.0
+   },
+   {
+    "kode": "007",
+    "nama": "Rejosari",
+    "jenis": "Desa",
+    "luas": 1.04,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 22.0,
+    "rt": 74.0,
+    "laki": 4064.0,
+    "perempuan": 4046.0,
+    "jumlah": 8110.0
+   },
+   {
+    "kode": "008",
+    "nama": "Wonokerto",
+    "jenis": "Desa",
+    "luas": 10.1,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 11.0,
+    "rt": 54.0,
+    "laki": 4950.0,
+    "perempuan": 4986.0,
+    "jumlah": 9936.0
+   },
+   {
+    "kode": "009",
+    "nama": "Rejoyoso",
+    "jenis": "Desa",
+    "luas": 9.55,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 8.0,
+    "rt": 63.0,
+    "laki": 4549.0,
+    "perempuan": 4535.0,
+    "jumlah": 9084.0
+   },
+   {
+    "kode": "010",
+    "nama": "Karangsari",
+    "jenis": "Desa",
+    "luas": 1.59,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 8.0,
+    "rt": 48.0,
+    "laki": 4098.0,
+    "perempuan": 4169.0,
+    "jumlah": 8267.0
+   }
+  ],
+  "Dampit": [
+   {
+    "kode": "001",
+    "nama": "Sukodono",
+    "jenis": "Desa",
+    "luas": 18.61,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 6.0,
+    "rt": 52.0,
+    "laki": 5306.0,
+    "perempuan": 5156.0,
+    "jumlah": 10462.0
+   },
+   {
+    "kode": "002",
+    "nama": "Srimulyo",
+    "jenis": "Desa",
+    "luas": 20.66,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 8.0,
+    "rt": 82.0,
+    "laki": 6891.0,
+    "perempuan": 6824.0,
+    "jumlah": 13715.0
+   },
+   {
+    "kode": "003",
+    "nama": "Baturetno",
+    "jenis": "Desa",
+    "luas": 6.65,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 8.0,
+    "rt": 37.0,
+    "laki": 1694.0,
+    "perempuan": 1728.0,
+    "jumlah": 3422.0
+   },
+   {
+    "kode": "004",
+    "nama": "Bumirejo",
+    "jenis": "Desa",
+    "luas": 13.73,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 13.0,
+    "rt": 50.0,
+    "laki": 5324.0,
+    "perempuan": 5273.0,
+    "jumlah": 10597.0
+   },
+   {
+    "kode": "005",
+    "nama": "Sumbersuko",
+    "jenis": "Desa",
+    "luas": 10.07,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 4.0,
+    "rt": 34.0,
+    "laki": 3767.0,
+    "perempuan": 3720.0,
+    "jumlah": 7487.0
+   },
+   {
+    "kode": "006",
+    "nama": "Amadanom",
+    "jenis": "Desa",
+    "luas": 6.11,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 4.0,
+    "rt": 41.0,
+    "laki": 3371.0,
+    "perempuan": 3373.0,
+    "jumlah": 6744.0
+   },
+   {
+    "kode": "007",
+    "nama": "Dampit",
+    "jenis": "Kelurahan",
+    "luas": 13.0,
+    "luas_km2_dari_ha": false,
+    "dusun": 0.0,
+    "rw": 14.0,
+    "rt": 132.0,
+    "laki": 13049.0,
+    "perempuan": 13325.0,
+    "jumlah": 26374.0
+   },
+   {
+    "kode": "008",
+    "nama": "Pamotan",
+    "jenis": "Desa",
+    "luas": 16.45,
+    "luas_km2_dari_ha": false,
+    "dusun": 7.0,
+    "rw": 25.0,
+    "rt": 105.0,
+    "laki": 9957.0,
+    "perempuan": 10143.0,
+    "jumlah": 20100.0
+   },
+   {
+    "kode": "009",
+    "nama": "Majangtengah",
+    "jenis": "Desa",
+    "luas": 10.0,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 7.0,
+    "rt": 51.0,
+    "laki": 7055.0,
+    "perempuan": 7128.0,
+    "jumlah": 14183.0
+   },
+   {
+    "kode": "010",
+    "nama": "Rembun",
+    "jenis": "Desa",
+    "luas": 4.16,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 5.0,
+    "rt": 26.0,
+    "laki": 2975.0,
+    "perempuan": 2949.0,
+    "jumlah": 5924.0
+   },
+   {
+    "kode": "011",
+    "nama": "Pojok",
+    "jenis": "Desa",
+    "luas": 2.41,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 2.0,
+    "rt": 13.0,
+    "laki": 1810.0,
+    "perempuan": 1838.0,
+    "jumlah": 3648.0
+   },
+   {
+    "kode": "012",
+    "nama": "Jambangan",
+    "jenis": "Desa",
+    "luas": 13.73,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 19.0,
+    "rt": 90.0,
+    "laki": 5998.0,
+    "perempuan": 5925.0,
+    "jumlah": 11923.0
+   }
+  ],
+  "Donomulyo": [
+   {
+    "kode": "001",
+    "nama": "Sumberoto",
+    "jenis": "Desa",
+    "luas": 21.3,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 10.0,
+    "rt": 47.0,
+    "laki": 4348.0,
+    "perempuan": 4303.0,
+    "jumlah": 8651.0
+   },
+   {
+    "kode": "002",
+    "nama": "Purworejo",
+    "jenis": "Desa",
+    "luas": 17.09,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 14.0,
+    "rt": 69.0,
+    "laki": 4297.0,
+    "perempuan": 4202.0,
+    "jumlah": 8499.0
+   },
+   {
+    "kode": "003",
+    "nama": "Mentaraman",
+    "jenis": "Desa",
+    "luas": 19.03,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 9.0,
+    "rt": 33.0,
+    "laki": 2992.0,
+    "perempuan": 2988.0,
+    "jumlah": 5980.0
+   },
+   {
+    "kode": "004",
+    "nama": "Donomulyo",
+    "jenis": "Desa",
+    "luas": 29.32,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 21.0,
+    "rt": 70.0,
+    "laki": 6246.0,
+    "perempuan": 6423.0,
+    "jumlah": 12669.0
+   },
+   {
+    "kode": "005",
+    "nama": "Tempursari",
+    "jenis": "Desa",
+    "luas": 8.16,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 12.0,
+    "rt": 46.0,
+    "laki": 2630.0,
+    "perempuan": 2600.0,
+    "jumlah": 5230.0
+   },
+   {
+    "kode": "006",
+    "nama": "Tlogosari",
+    "jenis": "Desa",
+    "luas": 8.53,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 4.0,
+    "rt": 34.0,
+    "laki": 1719.0,
+    "perempuan": 1773.0,
+    "jumlah": 3492.0
+   },
+   {
+    "kode": "007",
+    "nama": "Kedungsalam",
+    "jenis": "Desa",
+    "luas": 33.56,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 20.0,
+    "rt": 93.0,
+    "laki": 5722.0,
+    "perempuan": 5473.0,
+    "jumlah": 11195.0
+   },
+   {
+    "kode": "008",
+    "nama": "Banjarjo",
+    "jenis": "Desa",
+    "luas": 21.66,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 11.0,
+    "rt": 45.0,
+    "laki": 3196.0,
+    "perempuan": 3203.0,
+    "jumlah": 6399.0
+   },
+   {
+    "kode": "009",
+    "nama": "Tulungrejo",
+    "jenis": "Desa",
+    "luas": 16.86,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 6.0,
+    "rt": 21.0,
+    "laki": 1773.0,
+    "perempuan": 1748.0,
+    "jumlah": 3521.0
+   },
+   {
+    "kode": "010",
+    "nama": "Purwodadi",
+    "jenis": "Desa",
+    "luas": 17.09,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 10.0,
+    "rt": 41.0,
+    "laki": 2473.0,
+    "perempuan": 2398.0,
+    "jumlah": 4871.0
+   }
+  ],
+  "Gedangan": [
+   {
+    "kode": "001",
+    "nama": "Tumpakrejo",
+    "jenis": "Desa",
+    "luas": 24.94,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 11.0,
+    "rt": 60.0,
+    "laki": 3582.0,
+    "perempuan": 3367.0,
+    "jumlah": 6949.0
+   },
+   {
+    "kode": "002",
+    "nama": "Sindurejo",
+    "jenis": "Desa",
+    "luas": 18.99,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 5.0,
+    "rt": 32.0,
+    "laki": 3095.0,
+    "perempuan": 2953.0,
+    "jumlah": 6048.0
+   },
+   {
+    "kode": "003",
+    "nama": "Gajahrejo",
+    "jenis": "Desa",
+    "luas": 19.03,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 5.0,
+    "rt": 41.0,
+    "laki": 3096.0,
+    "perempuan": 3040.0,
+    "jumlah": 6136.0
+   },
+   {
+    "kode": "004",
+    "nama": "Sidodadi",
+    "jenis": "Desa",
+    "luas": 15.79,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 9.0,
+    "rt": 30.0,
+    "laki": 3930.0,
+    "perempuan": 3845.0,
+    "jumlah": 7775.0
+   },
+   {
+    "kode": "005",
+    "nama": "Gedangan",
+    "jenis": "Desa",
+    "luas": 14.69,
+    "luas_km2_dari_ha": false,
+    "dusun": 8.0,
+    "rw": 18.0,
+    "rt": 69.0,
+    "laki": 5385.0,
+    "perempuan": 5370.0,
+    "jumlah": 10755.0
+   },
+   {
+    "kode": "006",
+    "nama": "Segaran",
+    "jenis": "Desa",
+    "luas": 11.52,
+    "luas_km2_dari_ha": false,
+    "dusun": 6.0,
+    "rw": 9.0,
+    "rt": 30.0,
+    "laki": 4035.0,
+    "perempuan": 3996.0,
+    "jumlah": 8031.0
+   },
+   {
+    "kode": "007",
+    "nama": "Sumberejo",
+    "jenis": "Desa",
+    "luas": 15.0,
+    "luas_km2_dari_ha": false,
+    "dusun": 6.0,
+    "rw": 21.0,
+    "rt": 71.0,
+    "laki": 5400.0,
+    "perempuan": 5508.0,
+    "jumlah": 10908.0
+   },
+   {
+    "kode": "008",
+    "nama": "Girimulyo",
+    "jenis": "Desa",
+    "luas": 10.57,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 7.0,
+    "rt": 23.0,
+    "laki": 2185.0,
+    "perempuan": 2209.0,
+    "jumlah": 4394.0
+   }
+  ],
+  "Kalipare": [
+   {
+    "kode": "001",
+    "nama": "Arjosari",
+    "jenis": "Desa",
+    "luas": 12.39,
+    "luas_km2_dari_ha": false,
+    "dusun": 6.0,
+    "rw": 6.0,
+    "rt": 37.0,
+    "laki": 3753.0,
+    "perempuan": 3764.0,
+    "jumlah": 7517.0
+   },
+   {
+    "kode": "002",
+    "nama": "Tumpakrejo",
+    "jenis": "Desa",
+    "luas": 9.39,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 6.0,
+    "rt": 60.0,
+    "laki": 3357.0,
+    "perempuan": 3309.0,
+    "jumlah": 6666.0
+   },
+   {
+    "kode": "003",
+    "nama": "Kaliasri",
+    "jenis": "Desa",
+    "luas": 15.48,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 4.0,
+    "rt": 31.0,
+    "laki": 2443.0,
+    "perempuan": 2455.0,
+    "jumlah": 4898.0
+   },
+   {
+    "kode": "004",
+    "nama": "Putukrejo",
+    "jenis": "Desa",
+    "luas": 11.73,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 4.0,
+    "rt": 29.0,
+    "laki": 2161.0,
+    "perempuan": 2208.0,
+    "jumlah": 4369.0
+   },
+   {
+    "kode": "005",
+    "nama": "Sumberpetung",
+    "jenis": "Desa",
+    "luas": 13.07,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 14.0,
+    "rt": 65.0,
+    "laki": 4186.0,
+    "perempuan": 4132.0,
+    "jumlah": 8318.0
+   },
+   {
+    "kode": "006",
+    "nama": "Kalipare",
+    "jenis": "Desa",
+    "luas": 9.22,
+    "luas_km2_dari_ha": false,
+    "dusun": 7.0,
+    "rw": 7.0,
+    "rt": 101.0,
+    "laki": 7098.0,
+    "perempuan": 7148.0,
+    "jumlah": 14246.0
+   },
+   {
+    "kode": "007",
+    "nama": "Sukowilangun",
+    "jenis": "Desa",
+    "luas": 16.23,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 8.0,
+    "rt": 47.0,
+    "laki": 3328.0,
+    "perempuan": 3405.0,
+    "jumlah": 6733.0
+   },
+   {
+    "kode": "008",
+    "nama": "Arjowilangun",
+    "jenis": "Desa",
+    "luas": 10.03,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 7.0,
+    "rt": 68.0,
+    "laki": 7367.0,
+    "perempuan": 7428.0,
+    "jumlah": 14795.0
+   },
+   {
+    "kode": "009",
+    "nama": "Kalirejo",
+    "jenis": "Desa",
+    "luas": 15.09,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 4.0,
+    "rt": 21.0,
+    "laki": 1931.0,
+    "perempuan": 1879.0,
+    "jumlah": 3810.0
+   }
+  ],
+  "Pagak": [
+   {
+    "kode": "001",
+    "nama": "Sumbermanjing Kulon",
+    "jenis": "Desa",
+    "luas": 10.95,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 15.0,
+    "rt": 58.0,
+    "laki": 3992.0,
+    "perempuan": 4181.0,
+    "jumlah": 8173.0
+   },
+   {
+    "kode": "002",
+    "nama": "Pandanrejo",
+    "jenis": "Desa",
+    "luas": 4.83,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 6.0,
+    "rt": 24.0,
+    "laki": 1300.0,
+    "perempuan": 1324.0,
+    "jumlah": 2624.0
+   },
+   {
+    "kode": "003",
+    "nama": "Sumberkerto",
+    "jenis": "Desa",
+    "luas": 17.07,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 6.0,
+    "rt": 28.0,
+    "laki": 2380.0,
+    "perempuan": 2348.0,
+    "jumlah": 4728.0
+   },
+   {
+    "kode": "004",
+    "nama": "Sempol",
+    "jenis": "Desa",
+    "luas": 14.7,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 9.0,
+    "rt": 37.0,
+    "laki": 3240.0,
+    "perempuan": 3228.0,
+    "jumlah": 6468.0
+   },
+   {
+    "kode": "005",
+    "nama": "Pagak",
+    "jenis": "Desa",
+    "luas": 17.84,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 19.0,
+    "rt": 68.0,
+    "laki": 4664.0,
+    "perempuan": 4640.0,
+    "jumlah": 9304.0
+   },
+   {
+    "kode": "006",
+    "nama": "Sumberejo",
+    "jenis": "Desa",
+    "luas": 6.48,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 10.0,
+    "rt": 55.0,
+    "laki": 4147.0,
+    "perempuan": 4028.0,
+    "jumlah": 8175.0
+   },
+   {
+    "kode": "007",
+    "nama": "Gampingan",
+    "jenis": "Desa",
+    "luas": 8.32,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 3.0,
+    "rt": 22.0,
+    "laki": 3921.0,
+    "perempuan": 3808.0,
+    "jumlah": 7729.0
+   },
+   {
+    "kode": "008",
+    "nama": "Tlogorejo",
+    "jenis": "Desa",
+    "luas": 2.29,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 9.0,
+    "rt": 36.0,
+    "laki": 3351.0,
+    "perempuan": 3310.0,
+    "jumlah": 6661.0
+   }
+  ],
+  "Sumbermanjing Wetan": [
+   {
+    "kode": "001",
+    "nama": "Sitiarjo",
+    "jenis": "Desa",
+    "luas": 34.399,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 15.0,
+    "rt": 65.0,
+    "laki": 3995.0,
+    "perempuan": 4041.0,
+    "jumlah": 8036.0
+   },
+   {
+    "kode": "002",
+    "nama": "Tambakrejo",
+    "jenis": "Desa",
+    "luas": 27.388,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 8.0,
+    "rt": 47.0,
+    "laki": 3994.0,
+    "perempuan": 3955.0,
+    "jumlah": 7949.0
+   },
+   {
+    "kode": "003",
+    "nama": "Kedungbanteng",
+    "jenis": "Desa",
+    "luas": 12.15,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 9.0,
+    "rt": 39.0,
+    "laki": 3937.0,
+    "perempuan": 3925.0,
+    "jumlah": 7862.0
+   },
+   {
+    "kode": "004",
+    "nama": "Tambakasri",
+    "jenis": "Desa",
+    "luas": 21.7,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 7.0,
+    "rt": 52.0,
+    "laki": 4914.0,
+    "perempuan": 4705.0,
+    "jumlah": 9619.0
+   },
+   {
+    "kode": "005",
+    "nama": "Tegalrejo",
+    "jenis": "Desa",
+    "luas": 22.63,
+    "luas_km2_dari_ha": false,
+    "dusun": 5.0,
+    "rw": 5.0,
+    "rt": 17.0,
+    "laki": 1475.0,
+    "perempuan": 1383.0,
+    "jumlah": 2858.0
+   },
+   {
+    "kode": "006",
+    "nama": "Ringinkembar",
+    "jenis": "Desa",
+    "luas": 18.3,
+    "luas_km2_dari_ha": false,
+    "dusun": 7.0,
+    "rw": 9.0,
+    "rt": 34.0,
+    "laki": 2696.0,
+    "perempuan": 2630.0,
+    "jumlah": 5326.0
+   },
+   {
+    "kode": "007",
+    "nama": "Sumberagung",
+    "jenis": "Desa",
+    "luas": 14.995,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 4.0,
+    "rt": 37.0,
+    "laki": 3340.0,
+    "perempuan": 3188.0,
+    "jumlah": 6528.0
+   },
+   {
+    "kode": "008",
+    "nama": "Harjokuncaran",
+    "jenis": "Desa",
+    "luas": 19.18,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 10.0,
+    "rt": 35.0,
+    "laki": 5461.0,
+    "perempuan": 5428.0,
+    "jumlah": 10889.0
+   },
+   {
+    "kode": "009",
+    "nama": "Argotirto",
+    "jenis": "Desa",
+    "luas": 17.42,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 18.0,
+    "rt": 42.0,
+    "laki": 4136.0,
+    "perempuan": 4070.0,
+    "jumlah": 8206.0
+   },
+   {
+    "kode": "010",
+    "nama": "Ringinsari",
+    "jenis": "Desa",
+    "luas": 8.4,
+    "luas_km2_dari_ha": false,
+    "dusun": 4.0,
+    "rw": 4.0,
+    "rt": 22.0,
+    "laki": 2657.0,
+    "perempuan": 2665.0,
+    "jumlah": 5322.0
+   },
+   {
+    "kode": "011",
+    "nama": "Druju",
+    "jenis": "Desa",
+    "luas": 17.129,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 9.0,
+    "rt": 49.0,
+    "laki": 6244.0,
+    "perempuan": 6143.0,
+    "jumlah": 12387.0
+   },
+   {
+    "kode": "012",
+    "nama": "Sumbermanjing Wetan",
+    "jenis": "Desa",
+    "luas": 6.38,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 5.0,
+    "rt": 20.0,
+    "laki": 2082.0,
+    "perempuan": 2112.0,
+    "jumlah": 4194.0
+   },
+   {
+    "kode": "013",
+    "nama": "Klepu",
+    "jenis": "Desa",
+    "luas": 9.688,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 5.0,
+    "rt": 43.0,
+    "laki": 4584.0,
+    "perempuan": 4467.0,
+    "jumlah": 9051.0
+   },
+   {
+    "kode": "014",
+    "nama": "Sekarbanyu",
+    "jenis": "Desa",
+    "luas": 10.08,
+    "luas_km2_dari_ha": false,
+    "dusun": 3.0,
+    "rw": 3.0,
+    "rt": 14.0,
+    "laki": 1453.0,
+    "perempuan": 1506.0,
+    "jumlah": 2959.0
+   },
+   {
+    "kode": "015",
+    "nama": "Sidoasri",
+    "jenis": "Desa",
+    "luas": 19.419,
+    "luas_km2_dari_ha": false,
+    "dusun": 2.0,
+    "rw": 4.0,
+    "rt": 36.0,
+    "laki": 2545.0,
+    "perempuan": 2474.0,
+    "jumlah": 5019.0
+   }
+  ],
+  "Tirtoyudo": [
+   {
+    "kode": "001",
+    "nama": "Purwodadi",
+    "jenis": "Desa",
+    "luas": 10.41,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 6.0,
+    "rt": 28.0,
+    "laki": 3090.0,
+    "perempuan": 2973.0,
+    "jumlah": 6063.0
+   },
+   {
+    "kode": "002",
+    "nama": "Pujiharjo",
+    "jenis": "Desa",
+    "luas": 58.16,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 6.0,
+    "rt": 33.0,
+    "laki": 3521.0,
+    "perempuan": 3359.0,
+    "jumlah": 6880.0
+   },
+   {
+    "kode": "003",
+    "nama": "Sumbertangkil",
+    "jenis": "Desa",
+    "luas": 12.35,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 7.0,
+    "rt": 30.0,
+    "laki": 3222.0,
+    "perempuan": 3152.0,
+    "jumlah": 6374.0
+   },
+   {
+    "kode": "004",
+    "nama": "Kepatihan",
+    "jenis": "Desa",
+    "luas": 11.53,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 5.0,
+    "rt": 18.0,
+    "laki": 1789.0,
+    "perempuan": 1754.0,
+    "jumlah": 3543.0
+   },
+   {
+    "kode": "005",
+    "nama": "Jogomulyan",
+    "jenis": "Desa",
+    "luas": 9.97,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 5.0,
+    "rt": 21.0,
+    "laki": 2020.0,
+    "perempuan": 2020.0,
+    "jumlah": 4040.0
+   },
+   {
+    "kode": "006",
+    "nama": "Tirtoyudo",
+    "jenis": "Desa",
+    "luas": 8.46,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 4.0,
+    "rt": 24.0,
+    "laki": 3143.0,
+    "perempuan": 3110.0,
+    "jumlah": 6253.0
+   },
+   {
+    "kode": "007",
+    "nama": "Gadungsari",
+    "jenis": "Desa",
+    "luas": 3.64,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 2.0,
+    "rt": 15.0,
+    "laki": 1993.0,
+    "perempuan": 1996.0,
+    "jumlah": 3989.0
+   },
+   {
+    "kode": "008",
+    "nama": "Tlogosari",
+    "jenis": "Desa",
+    "luas": 4.75,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 3.0,
+    "rt": 16.0,
+    "laki": 1938.0,
+    "perempuan": 1997.0,
+    "jumlah": 3935.0
+   },
+   {
+    "kode": "009",
+    "nama": "Sukorejo",
+    "jenis": "Desa",
+    "luas": 5.07,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 3.0,
+    "rt": 12.0,
+    "laki": 1863.0,
+    "perempuan": 1925.0,
+    "jumlah": 3788.0
+   },
+   {
+    "kode": "010",
+    "nama": "Ampelgading",
+    "jenis": "Desa",
+    "luas": 10.64,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 4.0,
+    "rt": 33.0,
+    "laki": 4499.0,
+    "perempuan": 4455.0,
+    "jumlah": 8954.0
+   },
+   {
+    "kode": "011",
+    "nama": "Tamankuncaran",
+    "jenis": "Desa",
+    "luas": 6.76,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 5.0,
+    "rt": 18.0,
+    "laki": 2130.0,
+    "perempuan": 2141.0,
+    "jumlah": 4271.0
+   },
+   {
+    "kode": "012",
+    "nama": "Wonoagung",
+    "jenis": "Desa",
+    "luas": 4.69,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 4.0,
+    "rt": 19.0,
+    "laki": 1802.0,
+    "perempuan": 1754.0,
+    "jumlah": 3556.0
+   },
+   {
+    "kode": "013",
+    "nama": "Tamansatriyan",
+    "jenis": "Desa",
+    "luas": 14.4,
+    "luas_km2_dari_ha": true,
+    "dusun": null,
+    "rw": 8.0,
+    "rt": 36.0,
+    "laki": 3604.0,
+    "perempuan": 3342.0,
+    "jumlah": 6946.0
+   }
+  ]
+ },
+ "catatan_verifikasi": [
+  "[GAGAL CEK] perikanan.produksi_budidaya Kalipare: [0.0, 0.0, 108.24, 0.0, 650.89, 0.0, 289.9] (hal. 390)",
+  "[GAGAL CEK] perikanan.produksi_budidaya Tirtoyudo: [0.0, 554.35, 18.17, 0.0, 0.0, 0.0, 573.06] (hal. 390)",
+  "[CEK SILANG] penduduk Tirtoyudo: kecamatan {'laki_laki': 34614.0, 'perempuan': 33978.0} vs kabupaten 69469.0"
+ ]
+}

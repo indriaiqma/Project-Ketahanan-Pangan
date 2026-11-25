@@ -78,7 +78,7 @@ class ModulDataController extends Controller
         // Jumlah seluruh wilayah pada periode ini -> kartu metrik
         $jumlah = [];
         foreach (array_merge(array_keys($def['fields']), array_keys($def['total'])) as $k) {
-            $jumlah[$k] = $data->sum(fn ($r) => (float) $r->{$k});
+            $jumlah[$k] = ModulData::jumlahkan($data, $k);
         }
         $metrik = collect($def['metrik'])->map(fn ($k) => [
             'kunci' => $k,
