@@ -20,7 +20,8 @@ class Surel
             if ($host === '' || in_array($host, ['mailpit', 'localhost', '127.0.0.1', 'smtp.mailgun.org'], true)) {
                 return false;
             }
-            if (! config('mail.mailers.smtp.username')) {
+            // Username & password SMTP (mis. App Password Gmail) wajib terisi
+            if (! config('mail.mailers.smtp.username') || ! config('mail.mailers.smtp.password')) {
                 return false;
             }
         }
