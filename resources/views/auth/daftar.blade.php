@@ -54,7 +54,7 @@
                 <label for="email">Email <span class="req">*</span></label>
                 <div class="input-group">
                     <i class="bi bi-envelope lead"></i>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" class="input" required maxlength="255" autocomplete="email" placeholder="nama@instansi.go.id">
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" class="input" required maxlength="255" autocomplete="email" placeholder="nama@gmail.com">
                 </div>
             </div>
             <div class="field">

@@ -26,7 +26,7 @@
             <label for="email">Email</label>
             <div class="input-group">
                 <i class="bi bi-envelope lead"></i>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" class="input" placeholder="nama@instansi.go.id" required autofocus autocomplete="username">
+                <input id="email" type="email" name="email" value="{{ old('email') }}" class="input" placeholder="nama@gmail.com" required autofocus autocomplete="username">
             </div>
         </div>
         <div class="field">

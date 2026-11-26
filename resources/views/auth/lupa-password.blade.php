@@ -46,7 +46,7 @@
                 <label for="email">Email akun</label>
                 <div class="input-group">
                     <i class="bi bi-envelope lead"></i>
-                    <input id="email" type="email" name="email" value="{{ old('email') }}" class="input" placeholder="nama@instansi.go.id" required autofocus autocomplete="username">
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" class="input" placeholder="nama@gmail.com" required autofocus autocomplete="username">
                 </div>
             </div>
             <button type="submit" class="btn btn-primary btn-block" data-loading="Mengirim…"><i class="bi bi-send"></i> Kirim Tautan Reset ke Email</button>

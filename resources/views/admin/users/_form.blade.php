@@ -16,7 +16,7 @@
             <p>Nama dan email digunakan untuk identitas serta login.</p>
             <div class="form-grid">
                 <x-field label="Nama Lengkap" name="name" :value="$user?->name" required maxlength="255" icon="person" />
-                <x-field label="Email" name="email" type="email" :value="$user?->email" required icon="envelope" />
+                <x-field label="Email" name="email" type="email" :value="$user?->email" required icon="envelope" placeholder="nama@gmail.com" />
             </div>
         </div>
 
