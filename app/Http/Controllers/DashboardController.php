@@ -2,27 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\KawasanHutan;
-use App\Models\LahanKritis;
+use App\Models\PermintaanResetPassword;
+use App\Models\User;
 use App\Support\Bidang;
 use App\Support\RingkasanBidang;
 use App\Support\RingkasanModul;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
 
 class DashboardController extends Controller
 {
+    /**
+     * Kunci cache lama ringkasan kehutanan. Masih dihapus oleh model KawasanHutan
+     * & LahanKritis; ringkasan dashboard kini memakai RingkasanBidang::CACHE_KEY.
+     */
+    public const CACHE_KEY = 'dashboard.data';
+
     /**
      * =========================================================
      * BERANDA PUBLIK (landing page)
      * =========================================================
      */
-    /**
-     * Kunci cache ringkasan dashboard. Dihapus otomatis saat data
-     * kawasan hutan / lahan kritis berubah (lihat booted() di model).
-     */
-    public const CACHE_KEY = 'dashboard.data';
-
     public function index()
     {
         // Landing page publik: hasil input Admin & Petugas di seluruh bidang,
@@ -32,20 +30,37 @@ class DashboardController extends Controller
 
     /**
      * =========================================================
-     * DASHBOARD ADMIN
+     * DASHBOARD PANEL PENGELOLA
      * =========================================================
+     * Ringkasan seluruh bidang & modul yang boleh dilihat pengguna:
+     * Admin melihat semua, Petugas hanya sub bidang tugasnya.
      */
     public function adminIndex()
     {
         $user = auth()->user();
         $dibatasi = Bidang::dibatasi($user);
+        $ringkasan = RingkasanBidang::landing($user);
 
-        return view('admin.dashboard', $this->getDashboardData() + [
-            // Petugas: dashboard berisi modul tugasnya sendiri
+        // Tautan sorotan & pembaruan mengarah ke halaman modul di panel
+        $keAdmin = fn ($s) => ['href' => route('admin.bidang.modul', ['bidang' => $s['bidang'], 'modul' => $s['modul']])] + $s;
+        $ringkasan['sorotan'] = $ringkasan['sorotan']->map($keAdmin);
+        $ringkasan['pembaruan'] = $ringkasan['pembaruan']->map($keAdmin);
+
+        // Semua bidang (termasuk menu khusus) untuk kartu kelengkapan data
+        $semua = $ringkasan['bidang']->concat($ringkasan['khusus']);
+
+        // Modul aktif yang belum berisi data -> perlu tindakan
+        $modulKosong = $semua->flatMap(fn ($r) => $r['modul'])
+            ->filter(fn ($m) => $m['aktif'] && ! $m['statistik']['jumlah'])
+            ->values();
+
+        return view('admin.dashboard', $ringkasan + [
+            'semua' => $semua,
+            'modulKosong' => $modulKosong,
             'dibatasi' => $dibatasi,
             'tugas' => $dibatasi ? $this->modulTugas($user) : [],
-            // Ringkasan kehutanan hanya untuk yang boleh melihat Sub Bidang Sarpras II
-            'lihatKehutanan' => Bidang::bolehLihatSub($user, 'sarana-prasarana', 'sarpras-2'),
+            'menungguPendaftaran' => $user->isAdmin() ? User::menungguPersetujuan()->count() : 0,
+            'menungguReset' => $user->isAdmin() ? PermintaanResetPassword::menunggu()->count() : 0,
         ]);
     }
 
@@ -67,133 +82,5 @@ class DashboardController extends Controller
                 },
             ])->all(),
         ]))->values()->all();
-    }
-
-
-    /**
-     * =========================================================
-     * DATA DASHBOARD
-     * =========================================================
-     *
-     * Data digunakan oleh dashboard panel pengelola.
-     */
-    private function getDashboardData(): array
-    {
-        return Cache::remember(self::CACHE_KEY, now()->addMinutes(5), fn () => $this->hitungDashboardData());
-    }
-
-    private function hitungDashboardData(): array
-    {
-        // Database (Supabase) berada jauh, jadi setiap query mahal.
-        // Semua angka dashboard diambil dengan 2 query rekap per kecamatan,
-        // lalu dihitung di PHP.
-
-        // =====================================================
-        // KAWASAN HUTAN (1 query)
-        // =====================================================
-
-        $kawasan = KawasanHutan::selectRaw('
-                kecamatan,
-                COUNT(*) as jumlah,
-                COALESCE(SUM(luas_ha), 0) as total_luas,
-                MAX(updated_at) as terakhir
-            ')
-            ->groupBy('kecamatan')
-            ->orderBy('kecamatan')
-            ->get();
-
-        $totalKawasan           = (int) $kawasan->sum('jumlah');
-        $totalLuasKawasan       = (float) $kawasan->sum('total_luas');
-        $jumlahKecamatanKawasan = $kawasan->whereNotNull('kecamatan')->count();
-
-        $kawasanPerKecamatan = $kawasan
-            ->whereNotNull('kecamatan')
-            ->mapWithKeys(fn ($r) => [$r->kecamatan => (float) $r->total_luas])
-            ->all();
-
-
-        // =====================================================
-        // LAHAN KRITIS (1 query)
-        // =====================================================
-
-        // Tingkat kekritisan (dalam + luar kawasan hutan)
-        $kategori = [
-            'sangat_kritis'    => ['Sangat Kritis',    '#e5484d'],
-            'kritis'           => ['Kritis',           '#f5a524'],
-            'agak_kritis'      => ['Agak Kritis',      '#7cb82f'],
-            'potensial_kritis' => ['Potensial Kritis', '#2f80c2'],
-            'tidak_kritis'     => ['Tidak Kritis',     '#c9d1cc'],
-        ];
-
-        $selectKategori = collect($kategori)->keys()
-            ->map(fn ($k) => "COALESCE(SUM(dalam_{$k} + luar_{$k}), 0) as {$k}")
-            ->implode(', ');
-
-        $lahan = LahanKritis::selectRaw("
-                kecamatan,
-                {$selectKategori},
-                COALESCE(SUM(total_ha), 0) as total_ha,
-                MAX(updated_at) as terakhir
-            ")
-            ->groupBy('kecamatan')
-            ->orderBy('kecamatan')
-            ->get();
-
-        $jumlahKecamatanLahanKritis = $lahan->whereNotNull('kecamatan')->count();
-        $totalLahanKritis           = (float) $lahan->sum('total_ha');
-        $totalSangatKritis          = (float) $lahan->sum('sangat_kritis');
-        $totalKritis                = (float) $lahan->sum('kritis');
-
-        $ringkasan = collect($kategori)
-            ->map(fn ($meta, $k) => [
-                'label' => $meta[0],
-                'ha'    => (float) $lahan->sum($k),
-                'color' => $meta[1],
-            ])
-            ->values()
-            ->all();
-
-        // Grafik per kecamatan: [sangat kritis, kritis, agak kritis]
-        $lahanPerKecamatan = $lahan
-            ->whereNotNull('kecamatan')
-            ->mapWithKeys(fn ($r) => [
-                $r->kecamatan => [
-                    (float) $r->sangat_kritis,
-                    (float) $r->kritis,
-                    (float) $r->agak_kritis,
-                ],
-            ])
-            ->all();
-
-
-        // =====================================================
-        // PEMBARUAN TERAKHIR
-        // =====================================================
-
-        $terakhir = $kawasan->pluck('terakhir')
-            ->merge($lahan->pluck('terakhir'))
-            ->filter()
-            ->max();
-
-        $terakhirDiperbarui = $terakhir
-            ? Carbon::parse($terakhir)->locale('id')->translatedFormat('d F Y, H:i')
-            : null;
-
-
-        return compact(
-            'totalKawasan',
-            'totalLuasKawasan',
-            'jumlahKecamatanKawasan',
-
-            'jumlahKecamatanLahanKritis',
-            'totalLahanKritis',
-            'totalSangatKritis',
-            'totalKritis',
-
-            'ringkasan',
-            'lahanPerKecamatan',
-            'kawasanPerKecamatan',
-            'terakhirDiperbarui'
-        );
     }
 }

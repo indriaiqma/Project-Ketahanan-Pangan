@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Cache;
  */
 class RingkasanBidang
 {
-    public const CACHE_KEY = 'publik.ringkasan';
+    public const CACHE_KEY = 'publik.ringkasan.v2';
 
     /* ==================================================================
      | Data mentah (di-cache)
@@ -92,9 +92,7 @@ class RingkasanBidang
 
             // Jumlah data per kecamatan (modul rekap)
             if ($kolom) {
-                foreach ($baris->countBy('wilayah_id') as $id => $jml) {
-                    $perWilayah[$id] = ($perWilayah[$id] ?? 0) + $jml;
-                }
+                $perWilayah[$m['bidang'].'/'.$m['slug']] = $baris->countBy('wilayah_id')->all();
             }
         }
 
@@ -108,7 +106,9 @@ class RingkasanBidang
             'statistik' => $statistik,
             'sorotan' => collect($sorotan)->sortByDesc('waktu')->values()->all(),
             'pembaruan' => $pembaruan->sortByDesc('waktu')->take(30)->values()->all(),
-            'wilayah' => $wilayah->map(fn ($w) => ['nama' => $w->nama, 'jumlah' => $perWilayah[$w->id] ?? 0])->all(),
+            'wilayah' => $wilayah->map(fn ($w) => ['id' => $w->id, 'nama' => $w->nama])->all(),
+            // Jumlah data per kecamatan per modul ("bidang/slug" => [wilayah_id => jumlah])
+            'per_wilayah' => $perWilayah,
         ];
     }
 
@@ -215,6 +215,22 @@ class RingkasanBidang
         })->values();
     }
 
+    /** Jumlah data rekap per kecamatan, hanya dari modul yang boleh dilihat user. */
+    private static function cakupanWilayah(array $mentah, Collection $boleh): Collection
+    {
+        $jumlah = [];
+        foreach ($mentah['per_wilayah'] ?? [] as $kunci => $perId) {
+            if (! isset($boleh[$kunci])) {
+                continue;
+            }
+            foreach ($perId as $id => $jml) {
+                $jumlah[$id] = ($jumlah[$id] ?? 0) + $jml;
+            }
+        }
+
+        return collect($mentah['wilayah'])->map(fn ($w) => ['nama' => $w['nama'], 'jumlah' => $jumlah[$w['id'] ?? 0] ?? 0]);
+    }
+
     /** Data landing page: bidang, sorotan indikator, pembaruan terbaru, cakupan wilayah. */
     public static function landing(?User $user = null): array
     {
@@ -236,7 +252,7 @@ class RingkasanBidang
             'khusus' => $bidang->where('khusus', true)->values(),
             'sorotan' => $saring($mentah['sorotan'])->take(8),
             'pembaruan' => $saring($mentah['pembaruan'])->take(6),
-            'wilayah' => collect($mentah['wilayah']),
+            'wilayah' => self::cakupanWilayah($mentah, $boleh),
             'total' => [
                 'bidang' => $bidang->where('khusus', false)->count(),
                 'modul' => $bidang->sum('jumlah_modul'),
