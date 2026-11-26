@@ -59,22 +59,43 @@
                         </div>
                     </div>
                     <div class="pd-body">
+                        @php($ajukanAdmin = $d->role === 'admin')
                         <div class="pd-diajukan">
                             <span class="muted">Mengajukan:</span>
-                            @foreach ($diajukan as $n)
-                                @php([$b, $s] = explode('|', $n, 2) + [1 => ''])
-                                <span class="badge sky">{{ \App\Support\Bidang::labelPenugasan($b, $s !== '' ? $s : null) }}</span>
-                            @endforeach
+                            @if ($ajukanAdmin)
+                                <span class="badge green"><i class="bi bi-shield-fill-check"></i> Administrator</span>
+                            @else
+                                <span class="badge sky"><i class="bi bi-person-badge"></i> Petugas</span>
+                                @foreach ($diajukan as $n)
+                                    @php([$b, $s] = explode('|', $n, 2) + [1 => ''])
+                                    <span class="badge">{{ \App\Support\Bidang::labelPenugasan($b, $s !== '' ? $s : null) }}</span>
+                                @endforeach
+                            @endif
                         </div>
                         @if ($d->catatan_pendaftaran)
                             <p class="pd-catatan"><i class="bi bi-chat-left-text"></i> {{ $d->catatan_pendaftaran }}</p>
                         @endif
+                        @if ($ajukanAdmin)
+                            <div class="alert alert-warning pd-peringatan" role="note">
+                                <i class="bi bi-shield-exclamation"></i>
+                                <div><b>Pengajuan akun Administrator.</b> Administrator dapat mengubah dan menghapus semua data serta mengelola pengguna. Pastikan identitas dan kewenangan pendaftar sudah dikonfirmasi langsung sebelum menyetujui.</div>
+                            </div>
+                        @endif
 
                         <div class="pd-aksi">
+                            @if ($ajukanAdmin)
+                                <form action="{{ route('admin.users.setujui', $d) }}" method="POST"
+                                      data-confirm="Setujui {{ $d->name }} sebagai Administrator dengan akses penuh?">
+                                    @csrf
+                                    <input type="hidden" name="role" value="admin">
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-shield-check"></i> Setujui sebagai Administrator</button>
+                                </form>
+                            @endif
                             <form action="{{ route('admin.users.setujui', $d) }}" method="POST" class="pd-setujui">
                                 @csrf
-                                <details>
-                                    <summary>Atur penugasan sebelum menyetujui</summary>
+                                <input type="hidden" name="role" value="petugas">
+                                <details @if ($ajukanAdmin) class="pd-alternatif" @endif>
+                                    <summary>{{ $ajukanAdmin ? 'Atau setujui sebagai Petugas saja (pilih sub bidang)' : 'Atur penugasan sebelum menyetujui' }}</summary>
                                     <div class="pilih-sub-grid">
                                         @foreach (\App\Support\Bidang::opsiPenugasan() as $grup)
                                             <div class="pilih-sub-grup">
@@ -88,8 +109,13 @@
                                             </div>
                                         @endforeach
                                     </div>
+                                    @if ($ajukanAdmin)
+                                        <button type="submit" class="btn btn-outline btn-sm" style="margin-top:8px"><i class="bi bi-person-badge"></i> Setujui sebagai Petugas</button>
+                                    @endif
                                 </details>
-                                <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-check2-circle"></i> Setujui sebagai Petugas</button>
+                                @unless ($ajukanAdmin)
+                                    <button type="submit" class="btn btn-primary btn-sm"><i class="bi bi-check2-circle"></i> Setujui sebagai Petugas</button>
+                                @endunless
                             </form>
                             <form action="{{ route('admin.users.tolak', $d) }}" method="POST" class="pd-tolak"
                                   data-confirm="Tolak pendaftaran {{ $d->name }}?">

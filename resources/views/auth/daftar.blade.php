@@ -1,14 +1,14 @@
-{{-- Pendaftaran akun Petugas; aktif setelah disetujui Administrator --}}
+{{-- Pendaftaran akun Petugas/Administrator; aktif setelah disetujui Administrator yang sudah terdaftar --}}
 @extends('layouts.auth')
 
-@section('title', 'Daftar Akun Petugas')
+@section('title', 'Daftar Akun')
 
 @section('aside')
-    <h1>Daftar sebagai Petugas</h1>
-    <p>Ajukan akun untuk menginput dan mengelola data sub bidang tugas Anda di Bakorwil III Malang.</p>
+    <h1>Daftar Akun SIKP</h1>
+    <p>Ajukan akun Petugas untuk mengelola data sub bidang tugas Anda, atau akun Administrator untuk pengelolaan penuh sistem.</p>
     <ul>
-        <li><i class="bi bi-1-circle-fill"></i> <span><b>Isi data diri</b> dan pilih sub bidang yang Anda kelola</span></li>
-        <li><i class="bi bi-2-circle-fill"></i> <span><b>Administrator memeriksa</b> dan menyetujui pendaftaran</span></li>
+        <li><i class="bi bi-1-circle-fill"></i> <span><b>Pilih jenis akun</b> dan isi data diri Anda</span></li>
+        <li><i class="bi bi-2-circle-fill"></i> <span><b>Administrator terdaftar memeriksa</b> dan menyetujui pendaftaran</span></li>
         <li><i class="bi bi-3-circle-fill"></i> <span><b>Masuk</b> dengan email dan password yang Anda buat</span></li>
     </ul>
 @endsection
@@ -16,8 +16,8 @@
 @section('content')
     <a href="{{ route('login') }}" class="back top"><i class="bi bi-arrow-left"></i> Kembali ke halaman masuk</a>
 
-    <h2>Daftar Akun Petugas</h2>
-    <p class="sub">Akun baru dapat digunakan setelah <b>disetujui Administrator</b>. Akun Administrator hanya dibuat oleh Administrator.</p>
+    <h2>Daftar Akun</h2>
+    <p class="sub">Akun baru dapat digunakan setelah <b>disetujui oleh Administrator yang sudah terdaftar</b>.</p>
 
     @if ($errors->any())
         <div class="alert alert-error" role="alert" style="margin-bottom:18px">
@@ -40,6 +40,32 @@
             <label for="situs_web">Situs web</label>
             <input id="situs_web" type="text" name="situs_web" tabindex="-1" autocomplete="off">
         </div>
+
+        @php($jenis = old('jenis_akun', 'petugas'))
+        <fieldset class="field pilih-jenis">
+            <legend>Jenis akun yang diajukan <span class="req">*</span></legend>
+            <div class="jenis-grid">
+                <label class="jenis-opsi">
+                    <input type="radio" name="jenis_akun" value="petugas" @checked($jenis === 'petugas')>
+                    <span class="jenis-isi">
+                        <i class="bi bi-person-badge-fill"></i>
+                        <b>Petugas</b>
+                        <small>Input &amp; kelola data sub bidang tugas</small>
+                    </span>
+                </label>
+                <label class="jenis-opsi">
+                    <input type="radio" name="jenis_akun" value="admin" @checked($jenis === 'admin')>
+                    <span class="jenis-isi">
+                        <i class="bi bi-shield-fill-check"></i>
+                        <b>Administrator</b>
+                        <small>Akses penuh &amp; kelola pengguna</small>
+                    </span>
+                </label>
+            </div>
+            <p class="hint" data-hanya-admin @if ($jenis !== 'admin') hidden @endif>
+                <i class="bi bi-info-circle"></i> Akun Administrator memiliki akses penuh, sehingga wajib disertai keterangan dan diverifikasi ketat oleh Administrator yang sudah terdaftar.
+            </p>
+        </fieldset>
 
         <div class="field">
             <label for="name">Nama lengkap <span class="req">*</span></label>
@@ -74,7 +100,7 @@
             </div>
         </div>
 
-        <fieldset class="field pilih-sub">
+        <fieldset class="field pilih-sub" data-hanya-petugas @if ($jenis === 'admin') hidden disabled @endif>
             <legend>Sub bidang yang diajukan <span class="req">*</span></legend>
             <p class="hint">Pilih sub bidang yang datanya akan Anda kelola. Administrator dapat menyesuaikannya saat menyetujui.</p>
             @php($dipilih = collect(old('penugasan', [])))
@@ -110,8 +136,12 @@
         </div>
 
         <div class="field">
-            <label for="catatan">Catatan untuk Administrator <span class="muted">(opsional)</span></label>
-            <input id="catatan" type="text" name="catatan" value="{{ old('catatan') }}" class="input" maxlength="255" placeholder="Mis. NIP, atasan langsung, atau keterangan lain">
+            <label for="catatan">
+                <span data-hanya-petugas @if ($jenis === 'admin') hidden @endif>Catatan untuk Administrator <span class="muted">(opsional)</span></span>
+                <span data-hanya-admin @if ($jenis !== 'admin') hidden @endif>Keterangan pengajuan Administrator <span class="req">*</span></span>
+            </label>
+            <input id="catatan" type="text" name="catatan" value="{{ old('catatan') }}" class="input" maxlength="255" @required($jenis === 'admin')
+                   placeholder="Mis. NIP, jabatan, atasan langsung, dan alasan pengajuan">
         </div>
 
         <label class="check pernyataan">
@@ -123,4 +153,21 @@
     </form>
 
     <p class="auth-alt">Sudah punya akun? <a href="{{ route('login') }}">Masuk di sini</a></p>
+
+    <script>
+        // Petugas memilih sub bidang; Administrator wajib mengisi keterangan
+        document.addEventListener('DOMContentLoaded', () => {
+            const atur = () => {
+                const admin = document.querySelector('input[name="jenis_akun"]:checked')?.value === 'admin';
+                document.querySelectorAll('[data-hanya-admin]').forEach((el) => { el.hidden = !admin; });
+                document.querySelectorAll('[data-hanya-petugas]').forEach((el) => {
+                    el.hidden = admin;
+                    if (el.tagName === 'FIELDSET') el.disabled = admin;
+                });
+                document.getElementById('catatan').required = admin;
+            };
+            document.querySelectorAll('input[name="jenis_akun"]').forEach((r) => r.addEventListener('change', atur));
+            atur();
+        });
+    </script>
 @endsection

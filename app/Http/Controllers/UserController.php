@@ -27,22 +27,24 @@ class UserController extends Controller
     }
 
     /**
-     * Setujui pendaftaran akun Petugas. Penugasan memakai pilihan Administrator
-     * (bawaan: sub bidang yang diajukan pendaftar).
+     * Setujui pendaftaran akun. Administrator yang menyetujui menentukan role akhir
+     * (bawaan: role yang diajukan) dan, untuk Petugas, sub bidang penugasannya.
      */
     public function setujui(Request $request, User $user)
     {
         abort_unless($user->status_akun === 'menunggu', 404);
 
-        $request->merge(['role' => 'petugas']);
-        $request->validate($this->aturanPenugasan($request), [
+        $request->merge(['role' => $request->input('role', $user->role)]);
+        $request->validate([
+            'role' => ['required', Rule::in(array_keys(User::ROLES))],
+        ] + $this->aturanPenugasan($request), [
             'penugasan.required' => 'Pilih minimal satu sub bidang untuk petugas ini.',
         ]);
 
         DB::transaction(function () use ($request, $user) {
             $user->forceFill([
                 'status_akun' => 'aktif',
-                'role' => 'petugas',
+                'role' => $request->role,
                 'alasan_ditolak' => null,
                 'diverifikasi_oleh' => auth()->id(),
                 'diverifikasi_pada' => now(),
@@ -53,7 +55,7 @@ class UserController extends Controller
         $this->kabari($user, 'disetujui');
 
         return redirect()->route('admin.users.index')
-            ->with('success', "Akun {$user->name} disetujui dan sudah dapat digunakan untuk masuk.");
+            ->with('success', "Akun {$user->name} disetujui sebagai {$user->roleLabel()} dan sudah dapat digunakan untuk masuk.");
     }
 
     /** Tolak pendaftaran akun (alasan opsional, disampaikan ke pendaftar saat mencoba masuk). */

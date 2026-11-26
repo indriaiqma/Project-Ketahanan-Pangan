@@ -1235,3 +1235,21 @@ a.modul-row:hover .go { transform: translateX(3px); color: var(--brand-600); }
 .form-daftar .pilih-sub-grup > b { grid-column: 1 / -1; }
 .form-daftar .pilih-sub-grup .check { margin: 0; }
 .form-daftar .field-2, .form-daftar .field-2 + .field { margin-top: 16px; }
+
+/* Pilihan jenis akun di halaman Daftar */
+.pilih-jenis { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
+.pilih-jenis legend { font-size: 13px; font-weight: 600; color: var(--ink-700); margin-bottom: 8px; padding: 0; }
+.pilih-jenis .hint { margin: 10px 0 0; font-size: 12.5px; color: #7a4d06; background: var(--amber-50); border: 1px solid #f3dca6; border-radius: var(--radius); padding: 8px 10px; display: flex; gap: 6px; }
+.jenis-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.jenis-opsi { position: relative; cursor: pointer; }
+.jenis-opsi input { position: absolute; opacity: 0; pointer-events: none; }
+.jenis-isi { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: var(--radius); background: #fff; transition: border-color .15s, background .15s, box-shadow .15s; }
+.jenis-isi i { font-size: 20px; color: var(--ink-500); margin-bottom: 4px; }
+.jenis-isi b { font-size: 14px; color: var(--ink-900); }
+.jenis-isi small { font-size: 12px; color: var(--ink-500); }
+.jenis-opsi:hover .jenis-isi { border-color: #bfdccb; }
+.jenis-opsi input:checked + .jenis-isi { border-color: var(--brand-600); background: var(--brand-50); box-shadow: 0 0 0 3px rgba(24, 119, 77, .12); }
+.jenis-opsi input:checked + .jenis-isi i { color: var(--brand-600); }
+.jenis-opsi input:focus-visible + .jenis-isi { outline: 2px solid var(--brand-600); outline-offset: 2px; }
+.form-daftar .pilih-jenis + .field { margin-top: 0; }
+.pd-peringatan { margin: 0; font-size: 13px; }

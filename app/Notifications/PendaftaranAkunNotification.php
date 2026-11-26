@@ -30,15 +30,16 @@ class PendaftaranAkunNotification extends Notification
 
         return match ($this->jenis) {
             'masuk' => $pesan
-                ->subject('Pendaftaran Akun Baru Menunggu Persetujuan · SIKP Malang Selatan')
+                ->subject("Pendaftaran Akun {$p->roleLabel()} Baru Menunggu Persetujuan · SIKP Malang Selatan")
                 ->greeting('Halo, '.$notifiable->name)
-                ->line("Ada pendaftaran akun Petugas baru: {$p->name} ({$p->email}), {$p->jabatan}.")
+                ->line("Ada pendaftaran akun {$p->roleLabel()} baru: {$p->name} ({$p->email}), {$p->jabatan}.")
+                ->lineIf($p->role === 'admin', 'Pengajuan ini untuk akun Administrator dengan akses penuh. Verifikasi identitas pendaftar secara langsung.')
                 ->line('Periksa data pendaftar sebelum menyetujui.')
                 ->action('Tinjau Pendaftaran', route('admin.users.index')),
             'disetujui' => $pesan
                 ->subject('Akun Anda Telah Disetujui · SIKP Malang Selatan')
                 ->greeting('Halo, '.$p->name)
-                ->line('Pendaftaran akun Anda telah disetujui Administrator. Anda sekarang dapat masuk ke Panel Pengelola.')
+                ->line("Pendaftaran akun Anda telah disetujui Administrator sebagai {$p->roleLabel()}. Anda sekarang dapat masuk ke Panel Pengelola.")
                 ->action('Masuk ke Panel Pengelola', route('login')),
             default => $pesan
                 ->subject('Pendaftaran Akun Tidak Disetujui · SIKP Malang Selatan')
