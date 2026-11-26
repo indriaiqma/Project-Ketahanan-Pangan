@@ -155,8 +155,8 @@ return [
         | MENU KHUSUS (di luar struktur bidang)
         | 'khusus' => true : tampil sebagai menu tersendiri di sidebar panel dan
         |                    navbar situs publik, tidak termasuk daftar bidang.
-        | 'akses_dari'     : penugasan petugas yang otomatis boleh mengelola menu ini
-        |                    (selain Admin dan petugas yang ditugaskan langsung).
+        | Petugas hanya dapat melihat & mengelola menu khusus bila ditugaskan langsung
+        | (centang "Seluruh Pertanian & Peternakan" pada penugasan pengguna).
         */
         [
             'slug' => 'pertanian-peternakan',
@@ -164,7 +164,6 @@ return [
             'tagline' => 'Produksi Pertanian, Perkebunan & Peternakan Malang Selatan',
             'icon' => 'flower1',
             'khusus' => true,
-            'akses_dari' => [['pembangunan-ekonomi', 'ekonomi-2']],
             'sub_bidang' => [],
             'modul' => [
                 ['slug' => 'pertanian-perkebunan', 'nama' => 'Pertanian & Perkebunan', 'status' => 'aktif', 'icon' => 'flower1', 'data' => 'pertanian-perkebunan'],

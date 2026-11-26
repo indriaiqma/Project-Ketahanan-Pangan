@@ -72,7 +72,7 @@ Data disusun berjenjang: **Bidang → Sub Bidang → Modul**. Saat ini terdapat 
 | | Sarpras II | Kawasan Hutan, Lahan Kritis, Lingkungan Hidup, ESDM |
 | **Menu khusus: Pertanian & Peternakan** | – | Pertanian & Perkebunan, Peternakan |
 
-**Menu khusus** tampil sebagai menu tersendiri di sidebar panel dan navbar situs publik. Yang dapat mengelolanya: Administrator, petugas yang ditugaskan langsung ke menu ini, dan petugas Sub Bidang Pembangunan Ekonomi II (diatur lewat `'akses_dari'` di [config/bidang.php](config/bidang.php)).
+**Menu khusus** tampil sebagai menu tersendiri di sidebar panel dan navbar situs publik. Yang dapat melihat dan mengelolanya di panel: Administrator dan petugas yang **ditugaskan langsung** ke menu ini (centang *Seluruh Pertanian & Peternakan* pada penugasan). Petugas Sub Bidang Pembangunan Ekonomi II tidak otomatis mendapat akses.
 
 Ada dua jenis modul:
 

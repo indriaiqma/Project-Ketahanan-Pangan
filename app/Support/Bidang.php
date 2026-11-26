@@ -189,8 +189,7 @@ class Bidang
             return true;
         }
 
-        return $user->aksesBidang->contains('bidang', $bidang)
-            || collect(self::cari($bidang)['akses_dari'] ?? [])->contains(fn ($a) => $user->canEditModul($a[0], $a[1] ?? null));
+        return $user->aksesBidang->contains('bidang', $bidang);
     }
 
     /**
