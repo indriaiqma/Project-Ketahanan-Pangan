@@ -113,8 +113,13 @@ return [
     |
     */
 
+    /*
+    | Logo di kepala email (URL publik agar tampil di Gmail dan klien email lain)
+    */
+    'logo_url' => env('MAIL_LOGO_URL', 'https://sikp-malang-selatan.vercel.app/images/logo-bakorwil.png'),
+
     'markdown' => [
-        'theme' => 'default',
+        'theme' => env('MAIL_THEME', 'sikp'),
 
         'paths' => [
             resource_path('views/vendor/mail'),
